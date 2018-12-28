@@ -1,0 +1,363 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:o="http://omnifaces.org/ui">
+<ui:composition template="/templates/layout.xhtml">
+  <ui:define name="content">
+
+    <h:form prependId="false" id="consultationDataForm" onkeypress="if (event.keyCode == 13) {return false; }">
+
+        <p:dataTable id="consultationTable" value="#{consultationBean.lazyModel}" var="consultation" resizableColumns="true" paginator="true"
+                paginatorTemplate=" {CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                rowsPerPageTemplate="5,10,25,50" rows="10" draggableColumns="true" lazy="true"
+                paginatorPosition="bottom" widgetVar="consultationTable" emptyMessage="#{messages.label_no_records_found}"
+                reflow="true">
+        
+          <f:facet name="header" >
+
+              <p:commandButton value="#{messages.create_new_consultation}" icon="ui-icon-plusthick" action="#{consultationBean.prepareNewConsultation()}"
+                      resetValues="true" update=":editConsultationDialog" oncomplete="PF('editConsultationDialogWidget').show()"
+                      rendered="#{consultationBean.isPermitted('consultation:create')}" style="float:left" />
+              
+              <p:commandButton id="toggler" type="button" value="#{messages.table_select_columns}" icon="ui-icon-calculator" />
+              <p:columnToggler datasource="consultationTable" trigger="toggler" />
+          </f:facet>
+          
+          <p:column headerText="#{messages.field_label_consultation_patient}" sortBy="#{consultation.patient}" filterBy="#{consultation.patient}">
+            <f:facet name="filter">
+            <p:selectOneMenu  id="patientFilter"
+                            style="width:145px;"
+                            onchange="PF('consultationTable').filter(); return false;">
+                <f:selectItem noSelectionOption="true" itemLabel="" />
+                <f:selectItems itemLabel="#{patient.nom}"
+                            value="#{consultationBean.patients}" 
+                            var="patient" 
+                            itemValue="#{patient}" />
+                <o:converter converterId="omnifaces.SelectItemsConverter" list="#{consultationBean.patients}" />
+            </p:selectOneMenu>
+            </f:facet>
+            <h:outputText value="#{consultation.patient.nom}" />
+          </p:column>
+
+          <p:column  headerText="#{messages.field_label_consultation_diagnostique}" sortBy="#{consultation.diagnostique}" filterBy="#{consultation.diagnostique}">
+            <f:facet name="filter">
+                <p:inputText id="diagnostiqueFilter"
+                        onkeypress="if (event.keyCode == 13) {PF('consultationTable').filter(); updateDiagnostiqueFilter(); return false; }" >
+                    <p:remoteCommand name="updateDiagnostiqueFilter" update="consultationTable:diagnostiqueFilter" />
+                </p:inputText>
+            </f:facet>
+            <h:outputText value="#{consultation.diagnostique}" />
+          </p:column>
+
+          <p:column headerText="#{messages.field_label_consultation_date}" sortBy="#{consultation.date}" filterBy="#{consultation.date}">
+            <f:facet name="filter">
+                <p:inputText id="dateFilter"
+                        onkeyup="if (event.keyCode == 13) {PF('consultationTable').filter(); updateDateFilter(); return false;}" >
+                    <p:remoteCommand name="updateDateFilter" update="consultationTable:dateFilter" />
+                    <f:convertDateTime />
+                </p:inputText>
+            </f:facet>
+            <h:outputText value="#{consultation.date}"><f:convertDateTime /></h:outputText>
+          </p:column>
+
+          <p:column  headerText="#{messages.field_label_consultation_tensionArterielle}" sortBy="#{consultation.tensionArterielle}" filterBy="#{consultation.tensionArterielle}">
+            <f:facet name="filter">
+                <p:inputText id="tensionArterielleFilter"
+                        onkeypress="if (event.keyCode == 13) {PF('consultationTable').filter(); updateTensionArterielleFilter(); return false; }" >
+                    <p:remoteCommand name="updateTensionArterielleFilter" update="consultationTable:tensionArterielleFilter" />
+                </p:inputText>
+            </f:facet>
+            <h:outputText value="#{consultation.tensionArterielle}" />
+          </p:column>
+
+          <p:column headerText="#{messages.field_label_consultation_temperature}" sortBy="#{consultation.temperature}" filterBy="#{consultation.temperature}">
+            <f:facet name="filter">
+                <p:inputText id="temperatureFilter"
+                        onkeypress="if (event.keyCode == 13) {PF('consultationTable').filter(); updateTemperatureFilter(); return false; }" >
+                    <f:convertNumber />
+                    <p:remoteCommand name="updateTemperatureFilter" update="consultationTable:temperatureFilter" />
+                </p:inputText>
+            </f:facet>
+            <h:outputText value="#{consultation.temperature}"><f:convertNumber /></h:outputText>
+          </p:column>
+
+          <p:column headerText="#{messages.field_label_consultation_poids}" sortBy="#{consultation.poids}" filterBy="#{consultation.poids}">
+            <f:facet name="filter">
+                <p:inputText id="poidsFilter"
+                        onkeypress="if (event.keyCode == 13) {PF('consultationTable').filter(); updatePoidsFilter(); return false; }" >
+                    <f:convertNumber />
+                    <p:remoteCommand name="updatePoidsFilter" update="consultationTable:poidsFilter" />
+                </p:inputText>
+            </f:facet>
+            <h:outputText value="#{consultation.poids}"><f:convertNumber /></h:outputText>
+          </p:column>
+
+          <p:column  headerText="#{messages.field_label_consultation_plainte}" sortBy="#{consultation.plainte}" filterBy="#{consultation.plainte}">
+            <f:facet name="filter">
+                <p:inputText id="plainteFilter"
+                        onkeypress="if (event.keyCode == 13) {PF('consultationTable').filter(); updatePlainteFilter(); return false; }" >
+                    <p:remoteCommand name="updatePlainteFilter" update="consultationTable:plainteFilter" />
+                </p:inputText>
+            </f:facet>
+            <h:outputText value="#{consultation.plainte}" />
+          </p:column>
+
+          <p:column headerText="#{messages.field_label_consultation_examens}" sortBy="#{consultation.examens}" filterBy="#{consultation.examens}">
+            <f:facet name="filter">
+            <p:selectOneMenu  id="examensFilter"
+                            style="width:145px;"
+                            onchange="PF('consultationTable').filter(); return false;">
+                <f:selectItem noSelectionOption="true" itemLabel="" />
+                <f:selectItems itemLabel="#{examen.designation}"
+                            value="#{consultationBean.examenss}" 
+                            var="examen" 
+                            itemValue="#{examen}" />
+                <o:converter converterId="omnifaces.SelectItemsConverter" list="#{consultationBean.examenss}" />
+            </p:selectOneMenu>
+            </f:facet>
+            <h:outputText value="#{consultation.examens.designation}" />
+          </p:column>
+
+          <p:column  headerText="#{messages.field_label_consultation_prescription}" sortBy="#{consultation.prescription}" filterBy="#{consultation.prescription}">
+            <f:facet name="filter">
+                <p:inputText id="prescriptionFilter"
+                        onkeypress="if (event.keyCode == 13) {PF('consultationTable').filter(); updatePrescriptionFilter(); return false; }" >
+                    <p:remoteCommand name="updatePrescriptionFilter" update="consultationTable:prescriptionFilter" />
+                </p:inputText>
+            </f:facet>
+            <h:outputText value="#{consultation.prescription}" />
+          </p:column>
+
+          <p:column  headerText="#{messages.field_label_consultation_resultatsExamen}" sortBy="#{consultation.resultatsExamen}" filterBy="#{consultation.resultatsExamen}">
+            <f:facet name="filter">
+                <p:inputText id="resultatsExamenFilter"
+                        onkeypress="if (event.keyCode == 13) {PF('consultationTable').filter(); updateResultatsExamenFilter(); return false; }" >
+                    <p:remoteCommand name="updateResultatsExamenFilter" update="consultationTable:resultatsExamenFilter" />
+                </p:inputText>
+            </f:facet>
+            <h:outputText value="#{consultation.resultatsExamen}" />
+          </p:column>
+
+          <p:column headerText="#{messages.field_label_consultation_pouls}" sortBy="#{consultation.pouls}" filterBy="#{consultation.pouls}">
+            <f:facet name="filter">
+                <p:inputText id="poulsFilter"
+                        onkeypress="if (event.keyCode == 13) {PF('consultationTable').filter(); updatePoulsFilter(); return false; }" >
+                    <p:remoteCommand name="updatePoulsFilter" update="consultationTable:poulsFilter" />
+                    <f:convertNumber integerOnly="true" />
+                </p:inputText>
+            </f:facet>
+            <h:outputText value="#{consultation.pouls}" ><f:convertNumber /></h:outputText>
+          </p:column>
+
+          <p:column headerText="#{messages.field_label_consultation_frequenceRespiratoire}" sortBy="#{consultation.frequenceRespiratoire}" filterBy="#{consultation.frequenceRespiratoire}">
+            <f:facet name="filter">
+                <p:inputText id="frequenceRespiratoireFilter"
+                        onkeypress="if (event.keyCode == 13) {PF('consultationTable').filter(); updateFrequenceRespiratoireFilter(); return false; }" >
+                    <p:remoteCommand name="updateFrequenceRespiratoireFilter" update="consultationTable:frequenceRespiratoireFilter" />
+                    <f:convertNumber integerOnly="true" />
+                </p:inputText>
+            </f:facet>
+            <h:outputText value="#{consultation.frequenceRespiratoire}" ><f:convertNumber /></h:outputText>
+          </p:column>
+
+          <p:column headerText="#{messages.field_label_consultation_medecin}" sortBy="#{consultation.medecin}" filterBy="#{consultation.medecin}">
+            <f:facet name="filter">
+            <p:selectOneMenu  id="medecinFilter"
+                            style="width:145px;"
+                            onchange="PF('consultationTable').filter(); return false;">
+                <f:selectItem noSelectionOption="true" itemLabel="" />
+                <f:selectItems itemLabel="#{user.username}"
+                            value="#{consultationBean.medecins}" 
+                            var="user" 
+                            itemValue="#{user}" />
+                <o:converter converterId="omnifaces.SelectItemsConverter" list="#{consultationBean.medecins}" />
+            </p:selectOneMenu>
+            </f:facet>
+            <h:outputText value="#{consultation.medecin.username}" />
+          </p:column>
+
+          <p:column headerText="#{messages.field_label_consultation_infirmier}" sortBy="#{consultation.infirmier}" filterBy="#{consultation.infirmier}">
+            <f:facet name="filter">
+            <p:selectOneMenu  id="infirmierFilter"
+                            style="width:145px;"
+                            onchange="PF('consultationTable').filter(); return false;">
+                <f:selectItem noSelectionOption="true" itemLabel="" />
+                <f:selectItems itemLabel="#{user.username}"
+                            value="#{consultationBean.infirmiers}" 
+                            var="user" 
+                            itemValue="#{user}" />
+                <o:converter converterId="omnifaces.SelectItemsConverter" list="#{consultationBean.infirmiers}" />
+            </p:selectOneMenu>
+            </f:facet>
+            <h:outputText value="#{consultation.infirmier.username}" />
+          </p:column>
+
+          <p:column headerText="#{messages.field_label_consultation_laborantin}" sortBy="#{consultation.laborantin}" filterBy="#{consultation.laborantin}">
+            <f:facet name="filter">
+            <p:selectOneMenu  id="laborantinFilter"
+                            style="width:145px;"
+                            onchange="PF('consultationTable').filter(); return false;">
+                <f:selectItem noSelectionOption="true" itemLabel="" />
+                <f:selectItems itemLabel="#{user.username}"
+                            value="#{consultationBean.laborantins}" 
+                            var="user" 
+                            itemValue="#{user}" />
+                <o:converter converterId="omnifaces.SelectItemsConverter" list="#{consultationBean.laborantins}" />
+            </p:selectOneMenu>
+            </f:facet>
+            <h:outputText value="#{consultation.laborantin.username}" />
+          </p:column>
+
+          <p:column styleClass="action-column" headerText="#{messages.table_actions_column}" width="115" exportable="false">
+            
+            <p:commandButton icon="ui-icon-zoomin" update=":viewConsultationDialog" oncomplete="PF('viewConsultationDialogWidget').show()" title="#{messages.label_view}">
+              <f:setPropertyActionListener value="#{consultation}" target="#{consultationBean.consultation}" />
+            </p:commandButton>
+
+            <p:commandButton icon="ui-icon-pencil" update=":editConsultationDialog"
+                resetValues="true" rendered="#{consultationBean.isPermitted(consultation, 'consultation:update')}"
+                action="#{consultationBean.onDialogOpen(consultation)}"
+                oncomplete="PF('editConsultationDialogWidget').show()"
+                title="#{messages.label_edit}" >
+            </p:commandButton>
+
+            <p:commandButton icon="ui-icon-close" rendered="#{consultationBean.isPermitted(consultation, 'consultation:delete')}"
+                oncomplete="PF('deleteConsultationDialogWidget').show()"
+                title="#{messages.label_delete}" >
+                <f:setPropertyActionListener value="#{consultation}"
+                    target="#{consultationBean.consultation}" />
+            </p:commandButton>
+    
+          </p:column>
+          
+        </p:dataTable>
+        
+    </h:form>
+
+    <p:confirmDialog id="deleteConsultationDialog" widgetVar="deleteConsultationDialogWidget"
+        rendered="#{consultationBean.isPermitted(consultationBean.consultation, 'consultation:delete')}" header="#{messages.label_confirm_deletion}"
+        severity="alarm">
+        <f:facet name="message"><h:outputText value="#{messages.label_delete_record}" escape="false"/></f:facet>
+        <p:outputPanel>
+          <h:form>
+            <div style="text-align: center; margin:10px">
+              <p:commandButton value="#{messages.label_yes}" action="#{consultationBean.delete}" update=":consultationDataForm :growlForm:growl" oncomplete="PF('deleteConsultationDialogWidget').hide()" />
+              <p:commandButton value="#{messages.label_no}" onclick="PF('deleteConsultationDialogWidget').hide()" type="button" />
+            </div>
+          </h:form>
+        </p:outputPanel>
+    </p:confirmDialog>
+    
+    <p:dialog dynamic="true" id="editConsultationDialog" header="#{messages.label_consultation_caption}"
+            modal="true" widgetVar="editConsultationDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{consultationBean.reset}"/>
+        <h:form id="editConsultationForm" >
+            <p:outputPanel id="consultationEditPanel">
+                <ui:include src="/pages/consultation/consultationEditInclude.xhtml"/>
+                <div style="text-align: center; margin:10px">
+                    <p:commandButton value="#{messages.label_save}"
+                            icon="ui-icon-disk" action="#{consultationBean.persist}"
+                            update=":editConsultationForm:consultationEditPanel :consultationDataForm :growlForm:growl"
+                            oncomplete="if(!args.validationFailed) PF('editConsultationDialogWidget').hide()" />
+                    <p:commandButton value="#{messages.label_close}" icon="ui-icon-close" onclick="PF('editConsultationDialogWidget').hide()" type="button" />
+                </div>
+            </p:outputPanel>
+        </h:form>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="viewConsultationDialog" header="#{messages.label_consultation_caption}" modal="true" widgetVar="viewConsultationDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{consultationBean.reset}" />
+        <h:form id="viewConsultationForm">
+          <ui:include src="/pages/consultation/consultationViewInclude.xhtml"/>
+          <div style="text-align: center; margin:10px">
+              <p:commandButton value="#{messages.label_close}" icon="ui-icon-close" onclick="PF('viewConsultationDialogWidget').hide()" type="button" />
+          </div>
+        </h:form>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="createPatientFromEditDialog"
+        rendered="#{consultationBean.isPermitted('patient:create')}"
+        header="#{messages.dialog_consultation_create_patient}" modal="true"
+        widgetVar="createPatientFromEditDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{patientBean.reset}" />
+        <p:outputPanel id="createPatientPanel">
+                <h:form id="createPatientForm">
+                    <ui:include src="/pages/patient/patientEditInclude.xhtml">
+                        <ui:param name="hideConsultationSelectInput" value="true" />
+                    </ui:include>
+                    <div style="text-align: center; margin: 10px">
+                        <p:commandButton
+                            action="#{consultationBean.updatePatient(patientBean.patient)}"
+                            value="#{messages.label_save}" icon="ui-icon-disk"
+                            actionListener="#{patientBean.persist}"
+                            update=":editConsultationForm:patientSelectInput :createPatientPanel :growlForm:growl"
+                            oncomplete="if(!args.validationFailed) PF('createPatientFromEditDialogWidget').hide()" />
+                        <p:commandButton value="#{messages.label_close}"
+                            icon="ui-icon-close"
+                            onclick="PF('createPatientFromEditDialogWidget').hide()"
+                            type="button" />
+                    </div>
+                </h:form>
+            </p:outputPanel>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="createExamensFromEditDialog"
+        rendered="#{consultationBean.isPermitted('examen:create')}"
+        header="#{messages.dialog_consultation_create_examens}" modal="true"
+        widgetVar="createExamensFromEditDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{examenBean.reset}" />
+        <p:outputPanel id="createExamensPanel">
+                <h:form id="createExamensForm">
+                    <ui:include src="/pages/examen/examenEditInclude.xhtml">
+                        <ui:param name="hideConsultationSelectInput" value="true" />
+                    </ui:include>
+                    <div style="text-align: center; margin: 10px">
+                        <p:commandButton
+                            action="#{consultationBean.updateExamens(examenBean.examen)}"
+                            value="#{messages.label_save}" icon="ui-icon-disk"
+                            actionListener="#{examenBean.persist}"
+                            update=":editConsultationForm:examensSelectInput :createExamensPanel :growlForm:growl"
+                            oncomplete="if(!args.validationFailed) PF('createExamensFromEditDialogWidget').hide()" />
+                        <p:commandButton value="#{messages.label_close}"
+                            icon="ui-icon-close"
+                            onclick="PF('createExamensFromEditDialogWidget').hide()"
+                            type="button" />
+                    </div>
+                </h:form>
+            </p:outputPanel>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="createOrdonnanceFromEditDialog"
+        rendered="#{consultationBean.isPermitted('ordonnance:create')}"
+        header="#{messages.dialog_consultation_create_ordonnance}" modal="true"
+        widgetVar="createOrdonnanceFromEditDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{ordonnanceBean.reset}" />
+        <p:outputPanel id="createOrdonnanceFromEditPanel">
+                <h:form id="createOrdonnanceFromEditForm">
+                    <ui:include src="/pages/ordonnance/ordonnanceEditInclude.xhtml">
+                        <ui:param name="hideConsultationSelectInput" value="true" />
+                    </ui:include>
+                    <div style="text-align: center; margin: 10px">
+                        <p:commandButton
+                            action="#{consultationBean.updateOrdonnance(ordonnanceBean.ordonnance)}"
+                            value="#{messages.label_save}" icon="ui-icon-disk"
+                            actionListener="#{ordonnanceBean.persist}"
+                            update=":editConsultationForm:ordonnanceSelectInput :createOrdonnanceFromEditPanel :growlForm:growl"
+                            oncomplete="if(!args.validationFailed) PF('createOrdonnanceFromEditDialogWidget').hide()" />
+                        <p:commandButton value="#{messages.label_close}"
+                            icon="ui-icon-close"
+                            onclick="PF('createOrdonnanceFromEditDialogWidget').hide()"
+                            type="button" />
+                    </div>
+                </h:form>
+            </p:outputPanel>
+    </p:dialog>
+    
+  </ui:define>
+</ui:composition>
+</html>

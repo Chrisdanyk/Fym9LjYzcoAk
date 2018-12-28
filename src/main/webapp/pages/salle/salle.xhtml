@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:o="http://omnifaces.org/ui">
+<ui:composition template="/templates/layout.xhtml">
+  <ui:define name="content">
+
+    <h:form prependId="false" id="salleDataForm" onkeypress="if (event.keyCode == 13) {return false; }">
+
+        <p:dataTable id="salleTable" value="#{salleBean.lazyModel}" var="salle" resizableColumns="true" paginator="true"
+                paginatorTemplate=" {CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                rowsPerPageTemplate="5,10,25,50" rows="10" draggableColumns="true" lazy="true"
+                paginatorPosition="bottom" widgetVar="salleTable" emptyMessage="#{messages.label_no_records_found}"
+                reflow="true">
+        
+          <f:facet name="header" >
+
+              <p:commandButton value="#{messages.create_new_salle}" icon="ui-icon-plusthick" action="#{salleBean.prepareNewSalle()}"
+                      resetValues="true" update=":editSalleDialog" oncomplete="PF('editSalleDialogWidget').show()"
+                      rendered="#{salleBean.isPermitted('salle:create')}" style="float:left" />
+              
+              <p:commandButton id="toggler" type="button" value="#{messages.table_select_columns}" icon="ui-icon-calculator" />
+              <p:columnToggler datasource="salleTable" trigger="toggler" />
+          </f:facet>
+          
+          <p:column headerText="#{messages.label_image}">
+              <o:graphicImage value="#{salle.image.content}" dataURI="true"
+                  rendered="#{not empty salle.image.content}" width="50px"/>
+          </p:column>
+          
+          <p:column headerText="#{messages.field_label_salle_pavillon}" sortBy="#{salle.pavillon}" filterBy="#{salle.pavillon}">
+            <f:facet name="filter">
+            <p:selectOneMenu  id="pavillonFilter"
+                            style="width:145px;"
+                            onchange="PF('salleTable').filter(); return false;">
+                <f:selectItem noSelectionOption="true" itemLabel="" />
+                <f:selectItems itemLabel="#{pavillon.designation}"
+                            value="#{salleBean.pavillons}" 
+                            var="pavillon" 
+                            itemValue="#{pavillon}" />
+                <o:converter converterId="omnifaces.SelectItemsConverter" list="#{salleBean.pavillons}" />
+            </p:selectOneMenu>
+            </f:facet>
+            <h:outputText value="#{salle.pavillon.designation}" />
+          </p:column>
+
+          <p:column headerText="#{messages.field_label_salle_prix}" sortBy="#{salle.prix}" filterBy="#{salle.prix}">
+            <f:facet name="filter">
+                <p:inputText id="prixFilter"
+                        onkeypress="if (event.keyCode == 13) {PF('salleTable').filter(); updatePrixFilter(); return false; }" >
+                    <f:convertNumber />
+                    <p:remoteCommand name="updatePrixFilter" update="salleTable:prixFilter" />
+                </p:inputText>
+            </f:facet>
+            <h:outputText value="#{salle.prix}"><f:convertNumber /></h:outputText>
+          </p:column>
+
+          <p:column  headerText="#{messages.field_label_salle_designation}" sortBy="#{salle.designation}" filterBy="#{salle.designation}">
+            <f:facet name="filter">
+                <p:inputText id="designationFilter"
+                        onkeypress="if (event.keyCode == 13) {PF('salleTable').filter(); updateDesignationFilter(); return false; }" >
+                    <p:remoteCommand name="updateDesignationFilter" update="salleTable:designationFilter" />
+                </p:inputText>
+            </f:facet>
+            <h:outputText value="#{salle.designation}" />
+          </p:column>
+
+          <p:column headerText="#{messages.field_label_salle_hospitalisation_plural}" styleClass="action-column" exportable="false">
+            
+            <p:commandButton icon="ui-icon-transfer-e-w"  title="#{messages.field_label_salle_hospitalisation_plural}" action="#{salleBean.onHospitalisationsDialog(salle)}" oncomplete="PF('salleHospitalisationsDialogWidget').show()" update=":salleHospitalisationsDialog"/>
+            
+          </p:column>
+          
+          <p:column styleClass="action-column" headerText="#{messages.table_actions_column}" width="115" exportable="false">
+            
+            <p:commandButton icon="ui-icon-zoomin" update=":viewSalleDialog" oncomplete="PF('viewSalleDialogWidget').show()" title="#{messages.label_view}">
+              <f:setPropertyActionListener value="#{salle}" target="#{salleBean.salle}" />
+            </p:commandButton>
+
+            <p:commandButton icon="ui-icon-pencil" update=":editSalleDialog"
+                resetValues="true" rendered="#{salleBean.isPermitted(salle, 'salle:update')}"
+                action="#{salleBean.onDialogOpen(salle)}"
+                oncomplete="PF('editSalleDialogWidget').show()"
+                title="#{messages.label_edit}" >
+            </p:commandButton>
+
+            <p:commandButton icon="ui-icon-close" rendered="#{salleBean.isPermitted(salle, 'salle:delete')}"
+                oncomplete="PF('deleteSalleDialogWidget').show()"
+                title="#{messages.label_delete}" >
+                <f:setPropertyActionListener value="#{salle}"
+                    target="#{salleBean.salle}" />
+            </p:commandButton>
+    
+          </p:column>
+          
+        </p:dataTable>
+        
+    </h:form>
+
+    <p:confirmDialog id="deleteSalleDialog" widgetVar="deleteSalleDialogWidget"
+        rendered="#{salleBean.isPermitted(salleBean.salle, 'salle:delete')}" header="#{messages.label_confirm_deletion}"
+        severity="alarm">
+        <f:facet name="message"><h:outputText value="#{messages.label_delete_record}" escape="false"/></f:facet>
+        <p:outputPanel>
+          <h:form>
+            <div style="text-align: center; margin:10px">
+              <p:commandButton value="#{messages.label_yes}" action="#{salleBean.delete}" update=":salleDataForm :growlForm:growl" oncomplete="PF('deleteSalleDialogWidget').hide()" />
+              <p:commandButton value="#{messages.label_no}" onclick="PF('deleteSalleDialogWidget').hide()" type="button" />
+            </div>
+          </h:form>
+        </p:outputPanel>
+    </p:confirmDialog>
+    
+    <p:dialog dynamic="true" id="editSalleDialog" header="#{messages.label_salle_caption}"
+            modal="true" widgetVar="editSalleDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{salleBean.reset}"/>
+        <h:form id="editSalleForm" >
+            <p:outputPanel id="salleEditPanel">
+                <ui:include src="/pages/salle/salleEditInclude.xhtml"/>
+                <div style="text-align: center; margin:10px">
+                    <p:commandButton value="#{messages.label_save}"
+                            icon="ui-icon-disk" action="#{salleBean.persist}"
+                            update=":editSalleForm:salleEditPanel :salleDataForm :growlForm:growl"
+                            oncomplete="if(!args.validationFailed) PF('editSalleDialogWidget').hide()" />
+                    <p:commandButton value="#{messages.label_close}" icon="ui-icon-close" onclick="PF('editSalleDialogWidget').hide()" type="button" />
+                </div>
+            </p:outputPanel>
+        </h:form>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="viewSalleDialog" header="#{messages.label_salle_caption}" modal="true" widgetVar="viewSalleDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{salleBean.reset}" />
+        <h:form id="viewSalleForm">
+          <ui:include src="/pages/salle/salleViewInclude.xhtml"/>
+          <div style="text-align: center; margin:10px">
+              <p:commandButton value="#{messages.label_close}" icon="ui-icon-close" onclick="PF('viewSalleDialogWidget').hide()" type="button" />
+          </div>
+        </h:form>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="createPavillonFromEditDialog"
+        rendered="#{salleBean.isPermitted('pavillon:create')}"
+        header="#{messages.dialog_salle_create_pavillon}" modal="true"
+        widgetVar="createPavillonFromEditDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{pavillonBean.reset}" />
+        <p:outputPanel id="createPavillonPanel">
+                <h:form id="createPavillonForm">
+                    <ui:include src="/pages/pavillon/pavillonEditInclude.xhtml">
+                        <ui:param name="hideSalleSelectInput" value="true" />
+                    </ui:include>
+                    <div style="text-align: center; margin: 10px">
+                        <p:commandButton
+                            action="#{salleBean.updatePavillon(pavillonBean.pavillon)}"
+                            value="#{messages.label_save}" icon="ui-icon-disk"
+                            actionListener="#{pavillonBean.persist}"
+                            update=":editSalleForm:pavillonSelectInput :createPavillonPanel :growlForm:growl"
+                            oncomplete="if(!args.validationFailed) PF('createPavillonFromEditDialogWidget').hide()" />
+                        <p:commandButton value="#{messages.label_close}"
+                            icon="ui-icon-close"
+                            onclick="PF('createPavillonFromEditDialogWidget').hide()"
+                            type="button" />
+                    </div>
+                </h:form>
+            </p:outputPanel>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="salleHospitalisationsDialog" header="#{messages.dialog_header_salle_hospitalisation_plural}" modal="true" widgetVar="salleHospitalisationsDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{salleBean.reset}" />
+        <p:outputPanel id="salleHospitalisationsPanel">
+            <h:form id="salleHospitalisationsForm">
+                <ui:include src="/pages/salle/salleHospitalisationInclude.xhtml" />
+                <div style="text-align: center; margin:10px">
+                    <p:commandButton value="#{messages.label_save}"
+                        icon="ui-icon-disk"
+                        action="#{salleBean.onHospitalisationsSubmit}"
+                        update=":growlForm:growl"
+                        oncomplete="if(!args.validationFailed) PF('salleHospitalisationsDialogWidget').hide()"
+                        rendered="#{salleBean.isPermitted(salleBean.salle, 'salle:update')}"
+                        partialSubmit="true" process="@this" />
+                    <p:commandButton value="#{messages.label_close}" icon="ui-icon-close" onclick="PF('salleHospitalisationsDialogWidget').hide()" type="button" />
+                </div>
+            </h:form>
+        </p:outputPanel>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="createHospitalisationDialog"
+        rendered="#{salleBean.isPermitted('hospitalisation:create')}"
+        header="#{messages.dialog_salle_create_hospitalisation}" modal="true"
+        widgetVar="createHospitalisationDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{hospitalisationBean.reset}" />
+        <p:outputPanel id="createHospitalisationPanel">
+                <h:form id="createHospitalisationForm">
+                    <ui:include src="/pages/hospitalisation/hospitalisationEditInclude.xhtml">
+                        <ui:param name="hideSalleSelectInput" value="true" />
+                    </ui:include>
+                    <div style="text-align: center; margin: 10px">
+                        <p:commandButton
+                            action="#{salleBean.updateHospitalisation(hospitalisationBean.hospitalisation)}"
+                            value="#{messages.label_save}" icon="ui-icon-disk"
+                            actionListener="#{hospitalisationBean.persist}"
+                            update=":salleHospitalisationsPanel :createHospitalisationPanel :growlForm:growl"
+                            oncomplete="if(!args.validationFailed) PF('createHospitalisationDialogWidget').hide()" />
+                        <p:commandButton value="#{messages.label_close}"
+                            icon="ui-icon-close"
+                            onclick="PF('createHospitalisationDialogWidget').hide()"
+                            type="button" />
+                    </div>
+                </h:form>
+            </p:outputPanel>
+    </p:dialog>
+    
+  </ui:define>
+</ui:composition>
+</html>

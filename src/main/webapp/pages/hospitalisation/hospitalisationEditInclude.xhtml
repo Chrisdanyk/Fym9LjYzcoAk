@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:o="http://omnifaces.org/ui">
+
+        <p:outputPanel styleClass="ui-fluid">
+
+            <p:panelGrid columns="3" columnClasses="ui-grid-col-4,ui-grid-col-6,ui-grid-col-2" layout="grid" style="max-width:400px">
+            
+                <h:outputLabel value="#{messages.field_label_hospitalisation_salle}:" for="salleSelectInput" rendered="#{not hideSalleSelectInput}"/>
+                <h:panelGroup rendered="#{not hideSalleSelectInput}">
+                    <p:selectOneMenu value="#{hospitalisationBean.hospitalisation.salle}"
+                                    id="salleSelectInput">
+                        <f:selectItem noSelectionOption="true" itemLabel="" />
+                        <f:selectItems value="#{hospitalisationBean.salles}" 
+                                    var="salle" 
+                                    itemLabel="#{salle.designation}"
+                                    itemValue="#{salle}" />
+                        <o:converter converterId="omnifaces.SelectItemsConverter" list="#{hospitalisationBean.salles}" />
+                    </p:selectOneMenu>
+                </h:panelGroup>
+                <h:panelGroup rendered="#{not hideSalleSelectInput}">
+                
+                    <p:commandButton icon="ui-icon-plusthick" title="#{messages.label_create}"
+                              action="#{salleBean.prepareNewSalle()}"
+                              update=":createSalleFromEditDialog"
+                              resetValues="true"
+                              oncomplete="PF('createSalleFromEditDialogWidget').show()"
+                              rendered="#{applicationBean.componentExists('createSalleFromEditDialog') and hospitalisationBean.isPermitted('salle:create')}"
+                              style="vertical-align:top;" partialSubmit="true" process="@this">
+                    </p:commandButton>
+                    
+                    <p:message for="salleSelectInput" display="icon" rendered="#{not hideSalleSelectInput}"/>
+                </h:panelGroup>
+                
+                <h:outputLabel value="#{messages.field_label_hospitalisation_patient}:" for="patientSelectInput" rendered="#{not hidePatientSelectInput}"/>
+                <h:panelGroup rendered="#{not hidePatientSelectInput}">
+                    <p:selectOneMenu value="#{hospitalisationBean.hospitalisation.patient}"
+                                    id="patientSelectInput">
+                        <f:selectItem noSelectionOption="true" itemLabel="" />
+                        <f:selectItems value="#{hospitalisationBean.patients}" 
+                                    var="patient" 
+                                    itemLabel="#{patient.nom}"
+                                    itemValue="#{patient}" />
+                        <o:converter converterId="omnifaces.SelectItemsConverter" list="#{hospitalisationBean.patients}" />
+                    </p:selectOneMenu>
+                </h:panelGroup>
+                <h:panelGroup rendered="#{not hidePatientSelectInput}">
+                
+                    <p:commandButton icon="ui-icon-plusthick" title="#{messages.label_create}"
+                              action="#{patientBean.prepareNewPatient()}"
+                              update=":createPatientFromEditDialog"
+                              resetValues="true"
+                              oncomplete="PF('createPatientFromEditDialogWidget').show()"
+                              rendered="#{applicationBean.componentExists('createPatientFromEditDialog') and hospitalisationBean.isPermitted('patient:create')}"
+                              style="vertical-align:top;" partialSubmit="true" process="@this">
+                    </p:commandButton>
+                    
+                    <p:message for="patientSelectInput" display="icon" rendered="#{not hidePatientSelectInput}"/>
+                </h:panelGroup>
+                
+                <h:outputLabel value="#{messages.field_label_hospitalisation_dateEntree}:" for="dateEntreeEditInput" />
+                <p:calendar id="dateEntreeEditInput" navigator="true" value="#{hospitalisationBean.hospitalisation.dateEntree}" label="#{messages.field_label_hospitalisation_dateEntree}" />
+                <p:message for="dateEntreeEditInput" display="icon" />
+
+                <h:outputLabel value="#{messages.field_label_hospitalisation_dateSortie}:" for="dateSortieEditInput" />
+                <p:calendar id="dateSortieEditInput" navigator="true" value="#{hospitalisationBean.hospitalisation.dateSortie}" label="#{messages.field_label_hospitalisation_dateSortie}" />
+                <p:message for="dateSortieEditInput" display="icon" />
+
+                <h:outputLabel value="#{messages.field_label_hospitalisation_observation}:" for="observationEditInput" />
+                <p:inputText value="#{hospitalisationBean.hospitalisation.observation}" id="observationEditInput" 
+                    label="#{messages.field_label_hospitalisation_observation}" />
+                <p:message for="observationEditInput" display="icon" />
+
+            </p:panelGrid>
+
+        </p:outputPanel>
+</html>

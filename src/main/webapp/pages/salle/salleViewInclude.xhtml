@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:o="http://omnifaces.org/ui">
+
+    <p:outputPanel styleClass="ui-fluid" rendered="#{not salleBean.isPermitted(salleBean.salle, 'salle:read')}">
+        <h:outputText value="#{messages.access_denied}" />
+    </p:outputPanel>
+    
+    <p:panel header="#{messages.label_image}" style="max-width:400px" rendered="#{salleBean.isPermitted(salleBean.salle, 'salle:read')}">
+        <o:graphicImage value="#{salleBean.uploadedImageContents}" dataURI="true"
+            rendered="#{not empty salleBean.uploadedImageContents}" width="200px"/>
+    </p:panel>
+    
+    <h:panelGrid columns="2" styleClass="dialog" columnClasses="col1,col2" rendered="#{salleBean.isPermitted(salleBean.salle, 'salle:read')}">
+        
+        <h:outputText value="#{messages.field_label_salle_pavillon}:" />
+        <h:outputText value="#{salleBean.salle.pavillon.designation}" />
+
+        <h:outputText value="#{messages.field_label_salle_categorie}:" />
+        <p:outputPanel>
+            <ui:repeat value="#{salleBean.salle.categorie.toArray()}" var="categorie">
+                <h:outputText value="#{salleBean.getLabelForCategorie(categorie)}" /><br/>
+            </ui:repeat>
+        </p:outputPanel>
+
+        <h:outputText value="#{messages.field_label_salle_prix}:" />
+        <h:outputText value="#{salleBean.salle.prix}" ><f:convertNumber /></h:outputText>
+
+        <h:outputText value="#{messages.field_label_salle_designation}:" />
+        <h:outputText value="#{salleBean.salle.designation}" />
+
+    </h:panelGrid>
+</html>

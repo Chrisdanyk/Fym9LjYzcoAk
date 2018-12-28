@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:o="http://omnifaces.org/ui">
+
+        <p:outputPanel styleClass="ui-fluid">
+
+            <p:panel id="patientImage" header="#{messages.label_image}" style="max-width:400px">
+                <o:graphicImage value="#{patientBean.uploadedImageContents}" dataURI="true"
+                    rendered="#{not empty patientBean.uploadedImageContents}" width="200px" />
+                <p:fileUpload mode="advanced" fileLimit="1"
+                    fileUploadListener="#{patientBean.handleImageUpload}" update="patientImage :growlForm:growl"
+                    cancelLabel="#{messages.upload_cancel}" uploadLabel="#{messages.upload_upload}" label="#{messages.upload_choose}"
+                    multiple="false" style="overflow:auto;width:380px"/>
+            </p:panel>
+            <p:panelGrid columns="3" columnClasses="ui-grid-col-4,ui-grid-col-6,ui-grid-col-2" layout="grid" style="max-width:400px">
+                <h:outputLabel value="#{messages.field_label_patient_nom}:" for="nomEditInput" />
+                <p:inputText value="#{patientBean.patient.nom}" id="nomEditInput" 
+                    label="#{messages.field_label_patient_nom}" />
+                <p:message for="nomEditInput" display="icon" />
+                <h:outputLabel value="#{messages.field_label_patient_postnom}:" for="postnomEditInput" />
+                <p:inputText value="#{patientBean.patient.postnom}" id="postnomEditInput" 
+                    label="#{messages.field_label_patient_postnom}" />
+                <p:message for="postnomEditInput" display="icon" />
+                <h:outputLabel value="#{messages.field_label_patient_prenom}:" for="prenomEditInput" />
+                <p:inputText value="#{patientBean.patient.prenom}" id="prenomEditInput" 
+                    label="#{messages.field_label_patient_prenom}" />
+                <p:message for="prenomEditInput" display="icon" />
+                <h:outputLabel value="#{messages.field_label_patient_dateNaissance}:" for="dateNaissanceEditInput" />
+                <p:calendar id="dateNaissanceEditInput" navigator="true" value="#{patientBean.patient.dateNaissance}" label="#{messages.field_label_patient_dateNaissance}" />
+                <p:message for="dateNaissanceEditInput" display="icon" />
+                <h:outputLabel value="#{messages.field_label_patient_genre}:" for="genreSelect"/>
+                <p:selectManyCheckbox value="#{patientBean.patient.genre}" converter="omnifaces.GenericEnumConverter"
+                        id="genreSelect" layout="responsive" columns="1">
+                    <f:selectItems value="#{patientBean.genreSelectItems}" />
+                    <f:attribute name="collectionType" value="java.util.HashSet" />
+                </p:selectManyCheckbox>
+                <p:message for="genreSelect" display="icon" />
+                <h:outputLabel value="#{messages.field_label_patient_statutMarital}:" for="statutMaritalSelect"/>
+                <p:selectManyCheckbox value="#{patientBean.patient.statutMarital}" converter="omnifaces.GenericEnumConverter"
+                        id="statutMaritalSelect" layout="responsive" columns="1">
+                    <f:selectItems value="#{patientBean.statutMaritalSelectItems}" />
+                    <f:attribute name="collectionType" value="java.util.HashSet" />
+                </p:selectManyCheckbox>
+                <p:message for="statutMaritalSelect" display="icon" />
+                <h:outputLabel value="#{messages.field_label_patient_telephone}:" for="telephoneEditInput" />
+                <p:inputText value="#{patientBean.patient.telephone}" id="telephoneEditInput" 
+                    label="#{messages.field_label_patient_telephone}" />
+                <p:message for="telephoneEditInput" display="icon" />
+                <h:outputLabel value="#{messages.field_label_patient_adresse}:" for="adresseEditInput" />
+                <p:inputText value="#{patientBean.patient.adresse}" id="adresseEditInput" 
+                    label="#{messages.field_label_patient_adresse}" />
+                <p:message for="adresseEditInput" display="icon" />
+                <h:outputLabel value="#{messages.field_label_patient_email}:" for="emailEditInput" />
+                <p:inputText value="#{patientBean.patient.email}" id="emailEditInput" 
+                    label="#{messages.field_label_patient_email}" />
+                <p:message for="emailEditInput" display="icon" />
+                <h:outputLabel value="#{messages.field_label_patient_groupeSanguin}:" for="groupeSanguinSelect"/>
+                <p:selectManyCheckbox value="#{patientBean.patient.groupeSanguin}" converter="omnifaces.GenericEnumConverter"
+                        id="groupeSanguinSelect" layout="responsive" columns="1">
+                    <f:selectItems value="#{patientBean.groupeSanguinSelectItems}" />
+                    <f:attribute name="collectionType" value="java.util.HashSet" />
+                </p:selectManyCheckbox>
+                <p:message for="groupeSanguinSelect" display="icon" />
+                <h:outputLabel value="#{messages.field_label_patient_hopital}:" for="hopitalSelectInput" rendered="#{not hideHopitalSelectInput}"/>
+                <h:panelGroup rendered="#{not hideHopitalSelectInput}">
+                    <p:selectOneMenu value="#{patientBean.patient.hopital}"
+                                    id="hopitalSelectInput">
+                        <f:selectItem noSelectionOption="true" itemLabel="" />
+                        <f:selectItems value="#{patientBean.hopitals}" 
+                                    var="hopital" 
+                                    itemLabel="#{hopital.designation}"
+                                    itemValue="#{hopital}" />
+                        <o:converter converterId="omnifaces.SelectItemsConverter" list="#{patientBean.hopitals}" />
+                    </p:selectOneMenu>
+                </h:panelGroup>
+                <h:panelGroup rendered="#{not hideHopitalSelectInput}">
+                    <p:commandButton icon="ui-icon-plusthick" title="#{messages.label_create}"
+                              action="#{hopitalBean.prepareNewHopital()}"
+                              update=":createHopitalFromEditDialog"
+                              resetValues="true"
+                              oncomplete="PF('createHopitalFromEditDialogWidget').show()"
+                              rendered="#{applicationBean.componentExists('createHopitalFromEditDialog') and patientBean.isPermitted('hopital:create')}"
+                              style="vertical-align:top;" partialSubmit="true" process="@this">
+                    </p:commandButton>
+                    <p:message for="hopitalSelectInput" display="icon" rendered="#{not hideHopitalSelectInput}"/>
+                </h:panelGroup>
+            </p:panelGrid>
+        </p:outputPanel>
+</html>

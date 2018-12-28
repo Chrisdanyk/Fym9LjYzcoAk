@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:o="http://omnifaces.org/ui">
+
+    <p:outputPanel styleClass="ui-fluid" rendered="#{not medicamentBean.isPermitted(medicamentBean.medicament, 'medicament:read')}">
+        <h:outputText value="#{messages.access_denied}" />
+    </p:outputPanel>
+    
+    <p:panel header="#{messages.label_image}" style="max-width:400px" rendered="#{medicamentBean.isPermitted(medicamentBean.medicament, 'medicament:read')}">
+        <o:graphicImage value="#{medicamentBean.uploadedImageContents}" dataURI="true"
+            rendered="#{not empty medicamentBean.uploadedImageContents}" width="200px"/>
+    </p:panel>
+    
+    <h:panelGrid columns="2" styleClass="dialog" columnClasses="col1,col2" rendered="#{medicamentBean.isPermitted(medicamentBean.medicament, 'medicament:read')}">
+        
+        <h:outputText value="#{messages.field_label_medicament_designation}:" />
+        <h:outputText value="#{medicamentBean.medicament.designation}" />
+
+        <h:outputText value="#{messages.field_label_medicament_type}:" />
+        <p:outputPanel>
+            <ui:repeat value="#{medicamentBean.medicament.type.toArray()}" var="type">
+                <h:outputText value="#{medicamentBean.getLabelForType(type)}" /><br/>
+            </ui:repeat>
+        </p:outputPanel>
+
+        <h:outputText value="#{messages.field_label_medicament_dateFabrication}:" />
+        <h:outputText value="#{medicamentBean.medicament.dateFabrication}" ><f:convertDateTime /></h:outputText>
+
+        <h:outputText value="#{messages.field_label_medicament_dateExpiration}:" />
+        <h:outputText value="#{medicamentBean.medicament.dateExpiration}" ><f:convertDateTime /></h:outputText>
+
+        <h:outputText value="#{messages.field_label_medicament_prix}:" />
+        <h:outputText value="#{medicamentBean.medicament.prix}" ><f:convertNumber /></h:outputText>
+
+        <h:outputText value="#{messages.field_label_medicament_stock}:" />
+        <h:outputText value="#{medicamentBean.medicament.stock}" />
+
+        <h:outputText value="#{messages.field_label_medicament_fournisseurs}:" />
+        <h:outputText value="#{medicamentBean.medicament.fournisseurs.nom}" />
+
+        <h:outputText value="#{messages.field_label_medicament_famille}:" />
+        <h:outputText value="#{medicamentBean.medicament.famille.designation}" />
+
+    </h:panelGrid>
+</html>

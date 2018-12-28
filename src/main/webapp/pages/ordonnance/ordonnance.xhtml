@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:o="http://omnifaces.org/ui">
+<ui:composition template="/templates/layout.xhtml">
+  <ui:define name="content">
+
+    <h:form prependId="false" id="ordonnanceDataForm" onkeypress="if (event.keyCode == 13) {return false; }">
+
+        <p:dataTable id="ordonnanceTable" value="#{ordonnanceBean.lazyModel}" var="ordonnance" resizableColumns="true" paginator="true"
+                paginatorTemplate=" {CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                rowsPerPageTemplate="5,10,25,50" rows="10" draggableColumns="true" lazy="true"
+                paginatorPosition="bottom" widgetVar="ordonnanceTable" emptyMessage="#{messages.label_no_records_found}"
+                reflow="true">
+        
+          <f:facet name="header" >
+
+              <p:commandButton value="#{messages.create_new_ordonnance}" icon="ui-icon-plusthick" action="#{ordonnanceBean.prepareNewOrdonnance()}"
+                      resetValues="true" update=":editOrdonnanceDialog" oncomplete="PF('editOrdonnanceDialogWidget').show()"
+                      rendered="#{ordonnanceBean.isPermitted('ordonnance:create')}" style="float:left" />
+              
+              <p:commandButton id="toggler" type="button" value="#{messages.table_select_columns}" icon="ui-icon-calculator" />
+              <p:columnToggler datasource="ordonnanceTable" trigger="toggler" />
+          </f:facet>
+          
+          <p:column headerText="#{messages.field_label_ordonnance_date}" sortBy="#{ordonnance.date}" filterBy="#{ordonnance.date}">
+            <f:facet name="filter">
+                <p:inputText id="dateFilter"
+                        onkeyup="if (event.keyCode == 13) {PF('ordonnanceTable').filter(); updateDateFilter(); return false;}" >
+                    <p:remoteCommand name="updateDateFilter" update="ordonnanceTable:dateFilter" />
+                    <f:convertDateTime />
+                </p:inputText>
+            </f:facet>
+            <h:outputText value="#{ordonnance.date}"><f:convertDateTime /></h:outputText>
+          </p:column>
+
+          <p:column  headerText="#{messages.field_label_ordonnance_details}" sortBy="#{ordonnance.details}" filterBy="#{ordonnance.details}">
+            <f:facet name="filter">
+                <p:inputText id="detailsFilter"
+                        onkeypress="if (event.keyCode == 13) {PF('ordonnanceTable').filter(); updateDetailsFilter(); return false; }" >
+                    <p:remoteCommand name="updateDetailsFilter" update="ordonnanceTable:detailsFilter" />
+                </p:inputText>
+            </f:facet>
+            <h:outputText value="#{ordonnance.details}" />
+          </p:column>
+
+          <p:column styleClass="action-column" headerText="#{messages.table_actions_column}" width="115" exportable="false">
+            
+            <p:commandButton icon="ui-icon-zoomin" update=":viewOrdonnanceDialog" oncomplete="PF('viewOrdonnanceDialogWidget').show()" title="#{messages.label_view}">
+              <f:setPropertyActionListener value="#{ordonnance}" target="#{ordonnanceBean.ordonnance}" />
+            </p:commandButton>
+
+            <p:commandButton icon="ui-icon-pencil" update=":editOrdonnanceDialog"
+                resetValues="true" rendered="#{ordonnanceBean.isPermitted(ordonnance, 'ordonnance:update')}"
+                action="#{ordonnanceBean.onDialogOpen(ordonnance)}"
+                oncomplete="PF('editOrdonnanceDialogWidget').show()"
+                title="#{messages.label_edit}" >
+            </p:commandButton>
+
+            <p:commandButton icon="ui-icon-close" rendered="#{ordonnanceBean.isPermitted(ordonnance, 'ordonnance:delete')}"
+                oncomplete="PF('deleteOrdonnanceDialogWidget').show()"
+                title="#{messages.label_delete}" >
+                <f:setPropertyActionListener value="#{ordonnance}"
+                    target="#{ordonnanceBean.ordonnance}" />
+            </p:commandButton>
+    
+          </p:column>
+          
+        </p:dataTable>
+        
+    </h:form>
+
+    <p:confirmDialog id="deleteOrdonnanceDialog" widgetVar="deleteOrdonnanceDialogWidget"
+        rendered="#{ordonnanceBean.isPermitted(ordonnanceBean.ordonnance, 'ordonnance:delete')}" header="#{messages.label_confirm_deletion}"
+        severity="alarm">
+        <f:facet name="message"><h:outputText value="#{messages.label_delete_record}" escape="false"/></f:facet>
+        <p:outputPanel>
+          <h:form>
+            <div style="text-align: center; margin:10px">
+              <p:commandButton value="#{messages.label_yes}" action="#{ordonnanceBean.delete}" update=":ordonnanceDataForm :growlForm:growl" oncomplete="PF('deleteOrdonnanceDialogWidget').hide()" />
+              <p:commandButton value="#{messages.label_no}" onclick="PF('deleteOrdonnanceDialogWidget').hide()" type="button" />
+            </div>
+          </h:form>
+        </p:outputPanel>
+    </p:confirmDialog>
+    
+    <p:dialog dynamic="true" id="editOrdonnanceDialog" header="#{messages.label_ordonnance_caption}"
+            modal="true" widgetVar="editOrdonnanceDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{ordonnanceBean.reset}"/>
+        <h:form id="editOrdonnanceForm" >
+            <p:outputPanel id="ordonnanceEditPanel">
+                <ui:include src="/pages/ordonnance/ordonnanceEditInclude.xhtml"/>
+                <div style="text-align: center; margin:10px">
+                    <p:commandButton value="#{messages.label_save}"
+                            icon="ui-icon-disk" action="#{ordonnanceBean.persist}"
+                            update=":editOrdonnanceForm:ordonnanceEditPanel :ordonnanceDataForm :growlForm:growl"
+                            oncomplete="if(!args.validationFailed) PF('editOrdonnanceDialogWidget').hide()" />
+                    <p:commandButton value="#{messages.label_close}" icon="ui-icon-close" onclick="PF('editOrdonnanceDialogWidget').hide()" type="button" />
+                </div>
+            </p:outputPanel>
+        </h:form>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="viewOrdonnanceDialog" header="#{messages.label_ordonnance_caption}" modal="true" widgetVar="viewOrdonnanceDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{ordonnanceBean.reset}" />
+        <h:form id="viewOrdonnanceForm">
+          <ui:include src="/pages/ordonnance/ordonnanceViewInclude.xhtml"/>
+          <div style="text-align: center; margin:10px">
+              <p:commandButton value="#{messages.label_close}" icon="ui-icon-close" onclick="PF('viewOrdonnanceDialogWidget').hide()" type="button" />
+          </div>
+        </h:form>
+    </p:dialog>
+    
+  </ui:define>
+</ui:composition>
+</html>

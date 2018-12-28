@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:o="http://omnifaces.org/ui">
+
+        <p:outputPanel styleClass="ui-fluid">
+
+            <p:panelGrid columns="3" columnClasses="ui-grid-col-4,ui-grid-col-6,ui-grid-col-2" layout="grid" style="max-width:400px">
+            
+                <h:outputLabel value="#{messages.field_label_consultation_patient}:" for="patientSelectInput" rendered="#{not hidePatientSelectInput}"/>
+                <h:panelGroup rendered="#{not hidePatientSelectInput}">
+                    <p:selectOneMenu value="#{consultationBean.consultation.patient}"
+                                    id="patientSelectInput">
+                        <f:selectItem noSelectionOption="true" itemLabel="" />
+                        <f:selectItems value="#{consultationBean.patients}" 
+                                    var="patient" 
+                                    itemLabel="#{patient.nom}"
+                                    itemValue="#{patient}" />
+                        <o:converter converterId="omnifaces.SelectItemsConverter" list="#{consultationBean.patients}" />
+                    </p:selectOneMenu>
+                </h:panelGroup>
+                <h:panelGroup rendered="#{not hidePatientSelectInput}">
+                
+                    <p:commandButton icon="ui-icon-plusthick" title="#{messages.label_create}"
+                              action="#{patientBean.prepareNewPatient()}"
+                              update=":createPatientFromEditDialog"
+                              resetValues="true"
+                              oncomplete="PF('createPatientFromEditDialogWidget').show()"
+                              rendered="#{applicationBean.componentExists('createPatientFromEditDialog') and consultationBean.isPermitted('patient:create')}"
+                              style="vertical-align:top;" partialSubmit="true" process="@this">
+                    </p:commandButton>
+                    
+                    <p:message for="patientSelectInput" display="icon" rendered="#{not hidePatientSelectInput}"/>
+                </h:panelGroup>
+                
+                <h:outputLabel value="#{messages.field_label_consultation_diagnostique}:" for="diagnostiqueEditInput" />
+                <p:inputText value="#{consultationBean.consultation.diagnostique}" id="diagnostiqueEditInput" 
+                    label="#{messages.field_label_consultation_diagnostique}" />
+                <p:message for="diagnostiqueEditInput" display="icon" />
+
+                <h:outputLabel value="#{messages.field_label_consultation_date}:" for="dateEditInput" />
+                <p:calendar id="dateEditInput" navigator="true" value="#{consultationBean.consultation.date}" label="#{messages.field_label_consultation_date}" />
+                <p:message for="dateEditInput" display="icon" />
+
+                <h:outputLabel value="#{messages.field_label_consultation_tensionArterielle}:" for="tensionArterielleEditInput" />
+                <p:inputText value="#{consultationBean.consultation.tensionArterielle}" id="tensionArterielleEditInput" 
+                    label="#{messages.field_label_consultation_tensionArterielle}" />
+                <p:message for="tensionArterielleEditInput" display="icon" />
+
+                <h:outputLabel value="#{messages.field_label_consultation_temperature}:" for="temperatureEditInput" />
+                <p:inputText value="#{consultationBean.consultation.temperature}" id="temperatureEditInput" label="#{messages.field_label_consultation_temperature}" >
+                    <f:convertNumber />
+                </p:inputText>
+                <p:message for="temperatureEditInput" display="icon" />
+
+                <h:outputLabel value="#{messages.field_label_consultation_poids}:" for="poidsEditInput" />
+                <p:inputText value="#{consultationBean.consultation.poids}" id="poidsEditInput" label="#{messages.field_label_consultation_poids}" >
+                    <f:convertNumber />
+                </p:inputText>
+                <p:message for="poidsEditInput" display="icon" />
+
+                <h:outputLabel value="#{messages.field_label_consultation_plainte}:" for="plainteEditInput" />
+                <p:inputText value="#{consultationBean.consultation.plainte}" id="plainteEditInput" 
+                    label="#{messages.field_label_consultation_plainte}" />
+                <p:message for="plainteEditInput" display="icon" />
+
+                <h:outputLabel value="#{messages.field_label_consultation_examens}:" for="examensSelectInput" rendered="#{not hideExamensSelectInput}"/>
+                <h:panelGroup rendered="#{not hideExamensSelectInput}">
+                    <p:selectOneMenu value="#{consultationBean.consultation.examens}"
+                                    id="examensSelectInput">
+                        <f:selectItem noSelectionOption="true" itemLabel="" />
+                        <f:selectItems value="#{consultationBean.examenss}" 
+                                    var="examen" 
+                                    itemLabel="#{examen.designation}"
+                                    itemValue="#{examen}" />
+                        <o:converter converterId="omnifaces.SelectItemsConverter" list="#{consultationBean.examenss}" />
+                    </p:selectOneMenu>
+                </h:panelGroup>
+                <h:panelGroup rendered="#{not hideExamensSelectInput}">
+                
+                    <p:commandButton icon="ui-icon-plusthick" title="#{messages.label_create}"
+                              action="#{examenBean.prepareNewExamen()}"
+                              update=":createExamensFromEditDialog"
+                              resetValues="true"
+                              oncomplete="PF('createExamensFromEditDialogWidget').show()"
+                              rendered="#{applicationBean.componentExists('createExamensFromEditDialog') and consultationBean.isPermitted('examen:create')}"
+                              style="vertical-align:top;" partialSubmit="true" process="@this">
+                    </p:commandButton>
+                    
+                    <p:message for="examensSelectInput" display="icon" rendered="#{not hideExamensSelectInput}"/>
+                </h:panelGroup>
+                
+                <h:outputLabel value="#{messages.field_label_consultation_prescription}:" for="prescriptionEditInput" />
+                <p:inputText value="#{consultationBean.consultation.prescription}" id="prescriptionEditInput" 
+                    label="#{messages.field_label_consultation_prescription}" />
+                <p:message for="prescriptionEditInput" display="icon" />
+
+                <h:outputLabel value="#{messages.field_label_consultation_resultatsExamen}:" for="resultatsExamenEditInput" />
+                <p:inputText value="#{consultationBean.consultation.resultatsExamen}" id="resultatsExamenEditInput" 
+                    label="#{messages.field_label_consultation_resultatsExamen}" />
+                <p:message for="resultatsExamenEditInput" display="icon" />
+
+                <h:outputLabel value="#{messages.field_label_consultation_pouls}:" for="poulsEditInput" />
+                <p:inputText value="#{consultationBean.consultation.pouls}"  id="poulsEditInput" 
+                    label="#{messages.field_label_consultation_pouls}" />
+                <p:message for="poulsEditInput" display="icon" />
+
+                <h:outputLabel value="#{messages.field_label_consultation_frequenceRespiratoire}:" for="frequenceRespiratoireEditInput" />
+                <p:inputText value="#{consultationBean.consultation.frequenceRespiratoire}"  id="frequenceRespiratoireEditInput" 
+                    label="#{messages.field_label_consultation_frequenceRespiratoire}" />
+                <p:message for="frequenceRespiratoireEditInput" display="icon" />
+
+                <h:outputLabel value="#{messages.field_label_consultation_ordonnance}:" for="ordonnanceSelectInput" rendered="#{not hideOrdonnanceSelectInput}"/>
+                <h:panelGroup rendered="#{not hideOrdonnanceSelectInput}">
+                    <p:selectOneMenu value="#{consultationBean.consultation.ordonnance}"
+                                    id="ordonnanceSelectInput">
+                        <f:selectItem noSelectionOption="true" itemLabel="" />
+                        <f:selectItems value="#{consultationBean.availableOrdonnance}" 
+                                    var="ordonnance" 
+                                    itemLabel="#{ordonnance.id}"
+                                    itemValue="#{ordonnance}" />
+                        <o:converter converterId="omnifaces.SelectItemsConverter" list="#{consultationBean.availableOrdonnance}" />
+                    </p:selectOneMenu>
+                </h:panelGroup>
+                <h:panelGroup rendered="#{not hideOrdonnanceSelectInput}">
+                
+                    <p:commandButton icon="ui-icon-plusthick" title="#{messages.label_create}"
+                              action="#{ordonnanceBean.prepareNewOrdonnance()}"
+                              update=":createOrdonnanceFromEditDialog"
+                              resetValues="true"
+                              oncomplete="PF('createOrdonnanceFromEditDialogWidget').show()"
+                              rendered="#{applicationBean.componentExists('createOrdonnanceFromEditDialog') and consultationBean.isPermitted('ordonnance:create')}"
+                              style="vertical-align:top;" partialSubmit="true" process="@this">
+                    </p:commandButton>
+                    
+                    <p:message for="ordonnanceSelectInput" display="icon" rendered="#{not hideOrdonnanceSelectInput}"/>
+                </h:panelGroup>
+                
+                <h:outputLabel value="#{messages.field_label_consultation_medecin}:" for="medecinSelectInput" rendered="#{not hideMedecinSelectInput}"/>
+                <h:panelGroup rendered="#{not hideMedecinSelectInput}">
+                    <p:selectOneMenu value="#{consultationBean.consultation.medecin}"
+                                    id="medecinSelectInput">
+                        <f:selectItem noSelectionOption="true" itemLabel="" />
+                        <f:selectItems value="#{consultationBean.medecins}" 
+                                    var="user" 
+                                    itemLabel="#{user.username}"
+                                    itemValue="#{user}" />
+                        <o:converter converterId="omnifaces.SelectItemsConverter" list="#{consultationBean.medecins}" />
+                    </p:selectOneMenu>
+                </h:panelGroup>
+                <h:panelGroup rendered="#{not hideMedecinSelectInput}">
+                
+                    <p:message for="medecinSelectInput" display="icon" rendered="#{not hideMedecinSelectInput}"/>
+                </h:panelGroup>
+                
+                <h:outputLabel value="#{messages.field_label_consultation_infirmier}:" for="infirmierSelectInput" rendered="#{not hideInfirmierSelectInput}"/>
+                <h:panelGroup rendered="#{not hideInfirmierSelectInput}">
+                    <p:selectOneMenu value="#{consultationBean.consultation.infirmier}"
+                                    id="infirmierSelectInput">
+                        <f:selectItem noSelectionOption="true" itemLabel="" />
+                        <f:selectItems value="#{consultationBean.infirmiers}" 
+                                    var="user" 
+                                    itemLabel="#{user.username}"
+                                    itemValue="#{user}" />
+                        <o:converter converterId="omnifaces.SelectItemsConverter" list="#{consultationBean.infirmiers}" />
+                    </p:selectOneMenu>
+                </h:panelGroup>
+                <h:panelGroup rendered="#{not hideInfirmierSelectInput}">
+                
+                    <p:message for="infirmierSelectInput" display="icon" rendered="#{not hideInfirmierSelectInput}"/>
+                </h:panelGroup>
+                
+                <h:outputLabel value="#{messages.field_label_consultation_laborantin}:" for="laborantinSelectInput" rendered="#{not hideLaborantinSelectInput}"/>
+                <h:panelGroup rendered="#{not hideLaborantinSelectInput}">
+                    <p:selectOneMenu value="#{consultationBean.consultation.laborantin}"
+                                    id="laborantinSelectInput">
+                        <f:selectItem noSelectionOption="true" itemLabel="" />
+                        <f:selectItems value="#{consultationBean.laborantins}" 
+                                    var="user" 
+                                    itemLabel="#{user.username}"
+                                    itemValue="#{user}" />
+                        <o:converter converterId="omnifaces.SelectItemsConverter" list="#{consultationBean.laborantins}" />
+                    </p:selectOneMenu>
+                </h:panelGroup>
+                <h:panelGroup rendered="#{not hideLaborantinSelectInput}">
+                
+                    <p:message for="laborantinSelectInput" display="icon" rendered="#{not hideLaborantinSelectInput}"/>
+                </h:panelGroup>
+                
+            </p:panelGrid>
+
+        </p:outputPanel>
+</html>

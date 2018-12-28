@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:o="http://omnifaces.org/ui">
+<ui:composition template="/templates/layout.xhtml">
+  <ui:define name="content">
+
+    <h:form prependId="false" id="laboDataForm" onkeypress="if (event.keyCode == 13) {return false; }">
+
+        <p:dataTable id="laboTable" value="#{laboBean.lazyModel}" var="labo" resizableColumns="true" paginator="true"
+                paginatorTemplate=" {CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                rowsPerPageTemplate="5,10,25,50" rows="10" draggableColumns="true" lazy="true"
+                paginatorPosition="bottom" widgetVar="laboTable" emptyMessage="#{messages.label_no_records_found}"
+                reflow="true">
+        
+          <f:facet name="header" >
+
+              <p:commandButton value="#{messages.create_new_labo}" icon="ui-icon-plusthick" action="#{laboBean.prepareNewLabo()}"
+                      resetValues="true" update=":editLaboDialog" oncomplete="PF('editLaboDialogWidget').show()"
+                      rendered="#{laboBean.isPermitted('labo:create')}" style="float:left" />
+              
+              <p:commandButton id="toggler" type="button" value="#{messages.table_select_columns}" icon="ui-icon-calculator" />
+              <p:columnToggler datasource="laboTable" trigger="toggler" />
+          </f:facet>
+          
+          <p:column headerText="#{messages.field_label_labo_examen}" sortBy="#{labo.examen}" filterBy="#{labo.examen}">
+            <f:facet name="filter">
+            <p:selectOneMenu  id="examenFilter"
+                            style="width:145px;"
+                            onchange="PF('laboTable').filter(); return false;">
+                <f:selectItem noSelectionOption="true" itemLabel="" />
+                <f:selectItems itemLabel="#{examen.designation}"
+                            value="#{laboBean.examens}" 
+                            var="examen" 
+                            itemValue="#{examen}" />
+                <o:converter converterId="omnifaces.SelectItemsConverter" list="#{laboBean.examens}" />
+            </p:selectOneMenu>
+            </f:facet>
+            <h:outputText value="#{labo.examen.designation}" />
+          </p:column>
+
+          <p:column headerText="#{messages.field_label_labo_patient}" sortBy="#{labo.patient}" filterBy="#{labo.patient}">
+            <f:facet name="filter">
+            <p:selectOneMenu  id="patientFilter"
+                            style="width:145px;"
+                            onchange="PF('laboTable').filter(); return false;">
+                <f:selectItem noSelectionOption="true" itemLabel="" />
+                <f:selectItems itemLabel="#{patient.nom}"
+                            value="#{laboBean.patients}" 
+                            var="patient" 
+                            itemValue="#{patient}" />
+                <o:converter converterId="omnifaces.SelectItemsConverter" list="#{laboBean.patients}" />
+            </p:selectOneMenu>
+            </f:facet>
+            <h:outputText value="#{labo.patient.nom}" />
+          </p:column>
+
+          <p:column  headerText="#{messages.field_label_labo_resultat}" sortBy="#{labo.resultat}" filterBy="#{labo.resultat}">
+            <f:facet name="filter">
+                <p:inputText id="resultatFilter"
+                        onkeypress="if (event.keyCode == 13) {PF('laboTable').filter(); updateResultatFilter(); return false; }" >
+                    <p:remoteCommand name="updateResultatFilter" update="laboTable:resultatFilter" />
+                </p:inputText>
+            </f:facet>
+            <h:outputText value="#{labo.resultat}" />
+          </p:column>
+
+          <p:column headerText="#{messages.field_label_labo_laborantin}" sortBy="#{labo.laborantin}" filterBy="#{labo.laborantin}">
+            <f:facet name="filter">
+            <p:selectOneMenu  id="laborantinFilter"
+                            style="width:145px;"
+                            onchange="PF('laboTable').filter(); return false;">
+                <f:selectItem noSelectionOption="true" itemLabel="" />
+                <f:selectItems itemLabel="#{user.username}"
+                            value="#{laboBean.laborantins}" 
+                            var="user" 
+                            itemValue="#{user}" />
+                <o:converter converterId="omnifaces.SelectItemsConverter" list="#{laboBean.laborantins}" />
+            </p:selectOneMenu>
+            </f:facet>
+            <h:outputText value="#{labo.laborantin.username}" />
+          </p:column>
+
+          <p:column headerText="#{messages.field_label_labo_date}" sortBy="#{labo.date}" filterBy="#{labo.date}">
+            <f:facet name="filter">
+                <p:inputText id="dateFilter"
+                        onkeyup="if (event.keyCode == 13) {PF('laboTable').filter(); updateDateFilter(); return false;}" >
+                    <p:remoteCommand name="updateDateFilter" update="laboTable:dateFilter" />
+                    <f:convertDateTime />
+                </p:inputText>
+            </f:facet>
+            <h:outputText value="#{labo.date}"><f:convertDateTime /></h:outputText>
+          </p:column>
+
+          <p:column styleClass="action-column" headerText="#{messages.table_actions_column}" width="115" exportable="false">
+            
+            <p:commandButton icon="ui-icon-zoomin" update=":viewLaboDialog" oncomplete="PF('viewLaboDialogWidget').show()" title="#{messages.label_view}">
+              <f:setPropertyActionListener value="#{labo}" target="#{laboBean.labo}" />
+            </p:commandButton>
+
+            <p:commandButton icon="ui-icon-pencil" update=":editLaboDialog"
+                resetValues="true" rendered="#{laboBean.isPermitted(labo, 'labo:update')}"
+                action="#{laboBean.onDialogOpen(labo)}"
+                oncomplete="PF('editLaboDialogWidget').show()"
+                title="#{messages.label_edit}" >
+            </p:commandButton>
+
+            <p:commandButton icon="ui-icon-close" rendered="#{laboBean.isPermitted(labo, 'labo:delete')}"
+                oncomplete="PF('deleteLaboDialogWidget').show()"
+                title="#{messages.label_delete}" >
+                <f:setPropertyActionListener value="#{labo}"
+                    target="#{laboBean.labo}" />
+            </p:commandButton>
+    
+          </p:column>
+          
+        </p:dataTable>
+        
+    </h:form>
+
+    <p:confirmDialog id="deleteLaboDialog" widgetVar="deleteLaboDialogWidget"
+        rendered="#{laboBean.isPermitted(laboBean.labo, 'labo:delete')}" header="#{messages.label_confirm_deletion}"
+        severity="alarm">
+        <f:facet name="message"><h:outputText value="#{messages.label_delete_record}" escape="false"/></f:facet>
+        <p:outputPanel>
+          <h:form>
+            <div style="text-align: center; margin:10px">
+              <p:commandButton value="#{messages.label_yes}" action="#{laboBean.delete}" update=":laboDataForm :growlForm:growl" oncomplete="PF('deleteLaboDialogWidget').hide()" />
+              <p:commandButton value="#{messages.label_no}" onclick="PF('deleteLaboDialogWidget').hide()" type="button" />
+            </div>
+          </h:form>
+        </p:outputPanel>
+    </p:confirmDialog>
+    
+    <p:dialog dynamic="true" id="editLaboDialog" header="#{messages.label_labo_caption}"
+            modal="true" widgetVar="editLaboDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{laboBean.reset}"/>
+        <h:form id="editLaboForm" >
+            <p:outputPanel id="laboEditPanel">
+                <ui:include src="/pages/labo/laboEditInclude.xhtml"/>
+                <div style="text-align: center; margin:10px">
+                    <p:commandButton value="#{messages.label_save}"
+                            icon="ui-icon-disk" action="#{laboBean.persist}"
+                            update=":editLaboForm:laboEditPanel :laboDataForm :growlForm:growl"
+                            oncomplete="if(!args.validationFailed) PF('editLaboDialogWidget').hide()" />
+                    <p:commandButton value="#{messages.label_close}" icon="ui-icon-close" onclick="PF('editLaboDialogWidget').hide()" type="button" />
+                </div>
+            </p:outputPanel>
+        </h:form>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="viewLaboDialog" header="#{messages.label_labo_caption}" modal="true" widgetVar="viewLaboDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{laboBean.reset}" />
+        <h:form id="viewLaboForm">
+          <ui:include src="/pages/labo/laboViewInclude.xhtml"/>
+          <div style="text-align: center; margin:10px">
+              <p:commandButton value="#{messages.label_close}" icon="ui-icon-close" onclick="PF('viewLaboDialogWidget').hide()" type="button" />
+          </div>
+        </h:form>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="createExamenFromEditDialog"
+        rendered="#{laboBean.isPermitted('examen:create')}"
+        header="#{messages.dialog_labo_create_examen}" modal="true"
+        widgetVar="createExamenFromEditDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{examenBean.reset}" />
+        <p:outputPanel id="createExamenPanel">
+                <h:form id="createExamenForm">
+                    <ui:include src="/pages/examen/examenEditInclude.xhtml">
+                        <ui:param name="hideLaboSelectInput" value="true" />
+                    </ui:include>
+                    <div style="text-align: center; margin: 10px">
+                        <p:commandButton
+                            action="#{laboBean.updateExamen(examenBean.examen)}"
+                            value="#{messages.label_save}" icon="ui-icon-disk"
+                            actionListener="#{examenBean.persist}"
+                            update=":editLaboForm:examenSelectInput :createExamenPanel :growlForm:growl"
+                            oncomplete="if(!args.validationFailed) PF('createExamenFromEditDialogWidget').hide()" />
+                        <p:commandButton value="#{messages.label_close}"
+                            icon="ui-icon-close"
+                            onclick="PF('createExamenFromEditDialogWidget').hide()"
+                            type="button" />
+                    </div>
+                </h:form>
+            </p:outputPanel>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="createPatientFromEditDialog"
+        rendered="#{laboBean.isPermitted('patient:create')}"
+        header="#{messages.dialog_labo_create_patient}" modal="true"
+        widgetVar="createPatientFromEditDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{patientBean.reset}" />
+        <p:outputPanel id="createPatientPanel">
+                <h:form id="createPatientForm">
+                    <ui:include src="/pages/patient/patientEditInclude.xhtml">
+                        <ui:param name="hideLaboSelectInput" value="true" />
+                    </ui:include>
+                    <div style="text-align: center; margin: 10px">
+                        <p:commandButton
+                            action="#{laboBean.updatePatient(patientBean.patient)}"
+                            value="#{messages.label_save}" icon="ui-icon-disk"
+                            actionListener="#{patientBean.persist}"
+                            update=":editLaboForm:patientSelectInput :createPatientPanel :growlForm:growl"
+                            oncomplete="if(!args.validationFailed) PF('createPatientFromEditDialogWidget').hide()" />
+                        <p:commandButton value="#{messages.label_close}"
+                            icon="ui-icon-close"
+                            onclick="PF('createPatientFromEditDialogWidget').hide()"
+                            type="button" />
+                    </div>
+                </h:form>
+            </p:outputPanel>
+    </p:dialog>
+    
+  </ui:define>
+</ui:composition>
+</html>

@@ -1,0 +1,3125 @@
+{
+  "info1": "======================================================================================================",
+  "info2": "= This Project was generated with generjee. http://generjee.com                                      =",
+  "info3": "= You can import this file into the generjee tool, then change the project model and generate again. =",
+  "info4": "======================================================================================================",
+  "entities": [
+    {
+      "name": "User",
+      "id": "User",
+      "lookupField": "username",
+      "fields": [
+        {
+          "id": 0,
+          "name": "id",
+          "type": "Autoincremented ID",
+          "editable": false,
+          "showInTable": false,
+          "required": true
+        },
+        {
+          "id": "username",
+          "name": "Username",
+          "type": "String",
+          "editable": false,
+          "showInTable": true,
+          "stringLength": 50,
+          "required": true
+        },
+        {
+          "id": "password",
+          "name": "Password",
+          "type": "Password",
+          "editable": false,
+          "showInTable": false,
+          "required": true
+        },
+        {
+          "id": "email",
+          "name": "E-mail",
+          "type": "String",
+          "editable": false,
+          "showInTable": true,
+          "stringLength": 50,
+          "required": true
+        },
+        {
+          "id": "roles",
+          "name": "Roles",
+          "type": "Enumeration",
+          "editable": false,
+          "showInTable": false,
+          "required": true
+        },
+        {
+          "id": "status",
+          "name": "Status",
+          "type": "Enumeration",
+          "editable": false,
+          "showInTable": true,
+          "required": true
+        },
+        {
+          "id": 1,
+          "name": "infos",
+          "type": "Relation",
+          "editable": true,
+          "showInTable": true,
+          "referenceType": "1:1",
+          "referenceEntity": "Infos"
+        },
+        {
+          "id": 2,
+          "name": "hopital",
+          "type": "Relation",
+          "editable": true,
+          "showInTable": true,
+          "referenceType": "n:1",
+          "referenceEntity": "Hopital",
+          "useReverseRelation": true,
+          "reverseName": ""
+        },
+        {
+          "id": 3,
+          "name": "service",
+          "type": "Relation",
+          "editable": true,
+          "showInTable": true,
+          "referenceType": "n:1",
+          "referenceEntity": "Service",
+          "useReverseRelation": true,
+          "reverseName": ""
+        },
+        {
+          "id": 10,
+          "name": "matricule",
+          "type": "String",
+          "editable": true,
+          "showInTable": true,
+          "stringLength": 50,
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "Infos",
+      "id": 1,
+      "lookupField": 0,
+      "imageUploadEnabled": true,
+      "lazyLoading": true,
+      "aclEnabled": true,
+      "authorization": [
+        {
+          "roleId": 1,
+          "roleName": "Administrator",
+          "createPerm": 1,
+          "readPerm": 1,
+          "updatePerm": 1,
+          "deletePerm": 1,
+          "changeOwnerPerm": 1,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 2,
+          "roleName": "Public",
+          "createPerm": "0",
+          "readPerm": "0",
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 3,
+          "roleName": "Medecin",
+          "createPerm": "0",
+          "readPerm": 1,
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 4,
+          "roleName": "Infirmier",
+          "createPerm": "0",
+          "readPerm": 1,
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 5,
+          "roleName": "Laborantin",
+          "createPerm": "0",
+          "readPerm": 1,
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 6,
+          "roleName": "Pharmacien",
+          "createPerm": "0",
+          "readPerm": 1,
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 9,
+          "roleName": "Secretaire",
+          "createPerm": 0,
+          "readPerm": 0,
+          "updatePerm": 0,
+          "deletePerm": 0,
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 10,
+          "roleName": "Comptable",
+          "createPerm": 0,
+          "readPerm": 0,
+          "updatePerm": 0,
+          "deletePerm": 0,
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": "registered001",
+          "roleName": "Registered",
+          "createPerm": 0,
+          "readPerm": 0,
+          "updatePerm": 0,
+          "deletePerm": 0,
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        }
+      ],
+      "fields": [
+        {
+          "id": 0,
+          "name": "id",
+          "type": "Autoincremented ID",
+          "editable": false,
+          "showInTable": false,
+          "required": true
+        },
+        {
+          "id": 1,
+          "name": "nom",
+          "type": "String",
+          "editable": true,
+          "showInTable": true,
+          "stringLength": 50,
+          "required": false
+        },
+        {
+          "id": 2,
+          "name": "postnom",
+          "type": "String",
+          "editable": true,
+          "showInTable": true,
+          "stringLength": 50,
+          "required": false
+        },
+        {
+          "id": 3,
+          "name": "prenom",
+          "type": "String",
+          "editable": true,
+          "showInTable": true,
+          "stringLength": 50,
+          "required": false
+        },
+        {
+          "id": 4,
+          "name": "dateNaissance",
+          "type": "Date",
+          "editable": true,
+          "showInTable": true,
+          "required": false
+        },
+        {
+          "id": 5,
+          "name": "genre",
+          "type": "Enumeration (Multiple)",
+          "editable": true,
+          "showInTable": true,
+          "required": false,
+          "enumerationValues": "M,F"
+        },
+        {
+          "id": 6,
+          "name": "statutMarital",
+          "type": "Enumeration (Multiple)",
+          "editable": true,
+          "showInTable": true,
+          "required": false,
+          "enumerationValues": "Célibataire,Marié(e),Divorcé(e),Veuf(ve)"
+        },
+        {
+          "id": 7,
+          "name": "telephone",
+          "type": "String",
+          "editable": true,
+          "showInTable": true,
+          "stringLength": 50,
+          "required": false
+        },
+        {
+          "id": 8,
+          "name": "adresse",
+          "type": "String",
+          "editable": true,
+          "showInTable": true,
+          "stringLength": 50,
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "Hopital",
+      "id": 2,
+      "lookupField": "1",
+      "imageUploadEnabled": true,
+      "lazyLoading": true,
+      "aclEnabled": true,
+      "authorization": [
+        {
+          "roleId": 1,
+          "roleName": "Administrator",
+          "createPerm": 1,
+          "readPerm": 1,
+          "updatePerm": 1,
+          "deletePerm": 1,
+          "changeOwnerPerm": 1,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 2,
+          "roleName": "Public",
+          "createPerm": "0",
+          "readPerm": "0",
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 3,
+          "roleName": "Medecin",
+          "createPerm": "0",
+          "readPerm": 1,
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 4,
+          "roleName": "Infirmier",
+          "createPerm": "0",
+          "readPerm": 1,
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 5,
+          "roleName": "Laborantin",
+          "createPerm": "0",
+          "readPerm": 1,
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 6,
+          "roleName": "Pharmacien",
+          "createPerm": "0",
+          "readPerm": 1,
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 9,
+          "roleName": "Secretaire",
+          "createPerm": 0,
+          "readPerm": 0,
+          "updatePerm": 0,
+          "deletePerm": 0,
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 10,
+          "roleName": "Comptable",
+          "createPerm": 0,
+          "readPerm": 0,
+          "updatePerm": 0,
+          "deletePerm": 0,
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": "registered001",
+          "roleName": "Registered",
+          "createPerm": 0,
+          "readPerm": 0,
+          "updatePerm": 0,
+          "deletePerm": 0,
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        }
+      ],
+      "fields": [
+        {
+          "id": 0,
+          "name": "id",
+          "type": "Autoincremented ID",
+          "editable": false,
+          "showInTable": false,
+          "required": true
+        },
+        {
+          "id": 1,
+          "name": "designation",
+          "type": "String",
+          "editable": true,
+          "showInTable": true,
+          "stringLength": 50,
+          "required": false
+        },
+        {
+          "id": 2,
+          "name": "adresse",
+          "type": "String",
+          "editable": true,
+          "showInTable": true,
+          "stringLength": 50,
+          "required": false
+        },
+        {
+          "id": 3,
+          "name": "telephone",
+          "type": "String",
+          "editable": true,
+          "showInTable": true,
+          "stringLength": 50,
+          "required": false
+        },
+        {
+          "id": 4,
+          "name": "email",
+          "type": "String",
+          "editable": true,
+          "showInTable": true,
+          "stringLength": 50,
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "Service",
+      "id": 3,
+      "lookupField": "1",
+      "lazyLoading": true,
+      "aclEnabled": true,
+      "authorization": [
+        {
+          "roleId": 1,
+          "roleName": "Administrator",
+          "createPerm": 1,
+          "readPerm": 1,
+          "updatePerm": 1,
+          "deletePerm": 1,
+          "changeOwnerPerm": 1,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 2,
+          "roleName": "Public",
+          "createPerm": "0",
+          "readPerm": "0",
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 3,
+          "roleName": "Medecin",
+          "createPerm": "0",
+          "readPerm": 1,
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 4,
+          "roleName": "Infirmier",
+          "createPerm": "0",
+          "readPerm": 1,
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 5,
+          "roleName": "Laborantin",
+          "createPerm": "0",
+          "readPerm": 1,
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 6,
+          "roleName": "Pharmacien",
+          "createPerm": "0",
+          "readPerm": 1,
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 9,
+          "roleName": "Secretaire",
+          "createPerm": 0,
+          "readPerm": 0,
+          "updatePerm": 0,
+          "deletePerm": 0,
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 10,
+          "roleName": "Comptable",
+          "createPerm": 0,
+          "readPerm": 0,
+          "updatePerm": 0,
+          "deletePerm": 0,
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": "registered001",
+          "roleName": "Registered",
+          "createPerm": 0,
+          "readPerm": 0,
+          "updatePerm": 0,
+          "deletePerm": 0,
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        }
+      ],
+      "fields": [
+        {
+          "id": 0,
+          "name": "id",
+          "type": "Autoincremented ID",
+          "editable": false,
+          "showInTable": false,
+          "required": true
+        },
+        {
+          "id": 1,
+          "name": "designation",
+          "type": "String",
+          "editable": true,
+          "showInTable": true,
+          "stringLength": 50,
+          "required": false
+        },
+        {
+          "id": 3,
+          "name": "description",
+          "type": "String",
+          "editable": true,
+          "showInTable": true,
+          "stringLength": 50,
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "Medicament",
+      "id": 4,
+      "lookupField": "1",
+      "imageUploadEnabled": true,
+      "lazyLoading": true,
+      "aclEnabled": true,
+      "authorization": [
+        {
+          "roleId": 1,
+          "roleName": "Administrator",
+          "createPerm": 1,
+          "readPerm": 1,
+          "updatePerm": 1,
+          "deletePerm": 1,
+          "changeOwnerPerm": 1,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 2,
+          "roleName": "Public",
+          "createPerm": "0",
+          "readPerm": "0",
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 3,
+          "roleName": "Medecin",
+          "createPerm": "0",
+          "readPerm": 1,
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 4,
+          "roleName": "Infirmier",
+          "createPerm": "0",
+          "readPerm": 1,
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 5,
+          "roleName": "Laborantin",
+          "createPerm": "0",
+          "readPerm": 1,
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 6,
+          "roleName": "Pharmacien",
+          "createPerm": "0",
+          "readPerm": 1,
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 9,
+          "roleName": "Secretaire",
+          "createPerm": 0,
+          "readPerm": 0,
+          "updatePerm": 0,
+          "deletePerm": 0,
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 10,
+          "roleName": "Comptable",
+          "createPerm": 0,
+          "readPerm": 0,
+          "updatePerm": 0,
+          "deletePerm": 0,
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": "registered001",
+          "roleName": "Registered",
+          "createPerm": 0,
+          "readPerm": 0,
+          "updatePerm": 0,
+          "deletePerm": 0,
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        }
+      ],
+      "fields": [
+        {
+          "id": 0,
+          "name": "id",
+          "type": "Autoincremented ID",
+          "editable": false,
+          "showInTable": false,
+          "required": true
+        },
+        {
+          "id": 1,
+          "name": "designation",
+          "type": "String",
+          "editable": true,
+          "showInTable": true,
+          "stringLength": 50,
+          "required": false
+        },
+        {
+          "id": 3,
+          "name": "type",
+          "type": "Enumeration (Multiple)",
+          "editable": true,
+          "showInTable": true,
+          "required": false,
+          "enumerationValues": "Sirop,Comprimés,Suppositoires"
+        },
+        {
+          "id": 4,
+          "name": "dateFabrication",
+          "type": "Date",
+          "editable": true,
+          "showInTable": true,
+          "required": false
+        },
+        {
+          "id": 5,
+          "name": "dateExpiration",
+          "type": "Date",
+          "editable": true,
+          "showInTable": true,
+          "required": false
+        },
+        {
+          "id": 6,
+          "name": "prix",
+          "type": "Decimal",
+          "editable": true,
+          "showInTable": true,
+          "integerLength": 5,
+          "fractionLength": 2,
+          "required": false
+        },
+        {
+          "id": 7,
+          "name": "stock",
+          "type": "Number",
+          "editable": true,
+          "showInTable": true,
+          "integerLength": 5,
+          "required": false
+        },
+        {
+          "id": 8,
+          "name": "fournisseurs",
+          "type": "Relation",
+          "editable": true,
+          "showInTable": true,
+          "referenceType": "n:1",
+          "referenceEntity": "Fournisseur",
+          "useReverseRelation": true,
+          "reverseName": ""
+        },
+        {
+          "id": 9,
+          "name": "famille",
+          "type": "Relation",
+          "editable": true,
+          "showInTable": true,
+          "referenceType": "n:1",
+          "referenceEntity": "Famille",
+          "useReverseRelation": true,
+          "reverseName": ""
+        }
+      ]
+    },
+    {
+      "name": "Famille",
+      "id": 5,
+      "lookupField": "1",
+      "lazyLoading": true,
+      "aclEnabled": true,
+      "authorization": [
+        {
+          "roleId": 1,
+          "roleName": "Administrator",
+          "createPerm": 1,
+          "readPerm": 1,
+          "updatePerm": 1,
+          "deletePerm": 1,
+          "changeOwnerPerm": 1,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 2,
+          "roleName": "Public",
+          "createPerm": "0",
+          "readPerm": "0",
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 3,
+          "roleName": "Medecin",
+          "createPerm": "0",
+          "readPerm": "1",
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 4,
+          "roleName": "Infirmier",
+          "createPerm": "0",
+          "readPerm": 1,
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 5,
+          "roleName": "Laborantin",
+          "createPerm": "0",
+          "readPerm": 1,
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 6,
+          "roleName": "Pharmacien",
+          "createPerm": "0",
+          "readPerm": 1,
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 9,
+          "roleName": "Secretaire",
+          "createPerm": 0,
+          "readPerm": 0,
+          "updatePerm": 0,
+          "deletePerm": 0,
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 10,
+          "roleName": "Comptable",
+          "createPerm": 0,
+          "readPerm": 0,
+          "updatePerm": 0,
+          "deletePerm": 0,
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": "registered001",
+          "roleName": "Registered",
+          "createPerm": 0,
+          "readPerm": 0,
+          "updatePerm": 0,
+          "deletePerm": 0,
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        }
+      ],
+      "fields": [
+        {
+          "id": 0,
+          "name": "id",
+          "type": "Autoincremented ID",
+          "editable": false,
+          "showInTable": false,
+          "required": true
+        },
+        {
+          "id": 1,
+          "name": "designation",
+          "type": "String",
+          "editable": true,
+          "showInTable": true,
+          "stringLength": 50,
+          "required": false
+        },
+        {
+          "id": 2,
+          "name": "description",
+          "type": "String",
+          "editable": true,
+          "showInTable": true,
+          "stringLength": 50,
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "Fournisseur",
+      "id": 6,
+      "lookupField": "1",
+      "imageUploadEnabled": true,
+      "lazyLoading": true,
+      "aclEnabled": true,
+      "authorization": [
+        {
+          "roleId": 1,
+          "roleName": "Administrator",
+          "createPerm": 1,
+          "readPerm": 1,
+          "updatePerm": 1,
+          "deletePerm": 1,
+          "changeOwnerPerm": 1,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 2,
+          "roleName": "Public",
+          "createPerm": "0",
+          "readPerm": "0",
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 3,
+          "roleName": "Medecin",
+          "createPerm": "0",
+          "readPerm": "0",
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 4,
+          "roleName": "Infirmier",
+          "createPerm": "0",
+          "readPerm": "0",
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 5,
+          "roleName": "Laborantin",
+          "createPerm": "0",
+          "readPerm": "0",
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 6,
+          "roleName": "Pharmacien",
+          "createPerm": "0",
+          "readPerm": "0",
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 9,
+          "roleName": "Secretaire",
+          "createPerm": 0,
+          "readPerm": 0,
+          "updatePerm": 0,
+          "deletePerm": 0,
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 10,
+          "roleName": "Comptable",
+          "createPerm": 0,
+          "readPerm": 0,
+          "updatePerm": 0,
+          "deletePerm": 0,
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": "registered001",
+          "roleName": "Registered",
+          "createPerm": 0,
+          "readPerm": 0,
+          "updatePerm": 0,
+          "deletePerm": 0,
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        }
+      ],
+      "fields": [
+        {
+          "id": 0,
+          "name": "id",
+          "type": "Autoincremented ID",
+          "editable": false,
+          "showInTable": false,
+          "required": true
+        },
+        {
+          "id": 1,
+          "name": "nom",
+          "type": "String",
+          "editable": true,
+          "showInTable": true,
+          "stringLength": 50,
+          "required": false
+        },
+        {
+          "id": 2,
+          "name": "adresse",
+          "type": "String",
+          "editable": true,
+          "showInTable": true,
+          "stringLength": 50,
+          "required": false
+        },
+        {
+          "id": 3,
+          "name": "telephone",
+          "type": "String",
+          "editable": true,
+          "showInTable": true,
+          "stringLength": 50,
+          "required": false
+        },
+        {
+          "id": 4,
+          "name": "mail",
+          "type": "String",
+          "editable": true,
+          "showInTable": true,
+          "stringLength": 50,
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "Vente",
+      "id": 7,
+      "lookupField": 0,
+      "lazyLoading": true,
+      "auditEnabled": true,
+      "aclEnabled": true,
+      "authorization": [
+        {
+          "roleId": 1,
+          "roleName": "Administrator",
+          "createPerm": 1,
+          "readPerm": 1,
+          "updatePerm": 1,
+          "deletePerm": 1,
+          "changeOwnerPerm": 1,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 2,
+          "roleName": "Public",
+          "createPerm": "0",
+          "readPerm": "0",
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 3,
+          "roleName": "Medecin",
+          "createPerm": "0",
+          "readPerm": "0",
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 4,
+          "roleName": "Infirmier",
+          "createPerm": "0",
+          "readPerm": "0",
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 5,
+          "roleName": "Laborantin",
+          "createPerm": "0",
+          "readPerm": "0",
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 6,
+          "roleName": "Pharmacien",
+          "createPerm": 1,
+          "readPerm": 1,
+          "updatePerm": 1,
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 9,
+          "roleName": "Secretaire",
+          "createPerm": 0,
+          "readPerm": 0,
+          "updatePerm": 0,
+          "deletePerm": 0,
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 10,
+          "roleName": "Comptable",
+          "createPerm": "1",
+          "readPerm": "1",
+          "updatePerm": "1",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": "registered001",
+          "roleName": "Registered",
+          "createPerm": 0,
+          "readPerm": 0,
+          "updatePerm": 0,
+          "deletePerm": 0,
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        }
+      ],
+      "fields": [
+        {
+          "id": 0,
+          "name": "id",
+          "type": "Autoincremented ID",
+          "editable": false,
+          "showInTable": false,
+          "required": true
+        },
+        {
+          "id": 1,
+          "name": "pharmacien",
+          "type": "Relation",
+          "editable": true,
+          "showInTable": true,
+          "referenceType": "n:1",
+          "referenceEntity": "User",
+          "useReverseRelation": true,
+          "reverseName": ""
+        },
+        {
+          "id": 2,
+          "name": "medicament",
+          "type": "Relation",
+          "editable": true,
+          "showInTable": true,
+          "referenceType": "n:1",
+          "referenceEntity": "Medicament",
+          "useReverseRelation": true,
+          "reverseName": ""
+        },
+        {
+          "id": 3,
+          "name": "date",
+          "type": "Date",
+          "editable": true,
+          "showInTable": true,
+          "required": false
+        },
+        {
+          "id": 4,
+          "name": "quantite",
+          "type": "Decimal",
+          "editable": true,
+          "showInTable": true,
+          "integerLength": 5,
+          "fractionLength": 2,
+          "required": false
+        },
+        {
+          "id": 5,
+          "name": "client",
+          "type": "String",
+          "editable": true,
+          "showInTable": true,
+          "stringLength": 50,
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "Patient",
+      "id": 8,
+      "lookupField": "1",
+      "attachmentsEnabled": true,
+      "imageUploadEnabled": true,
+      "aclEnabled": true,
+      "authorization": [
+        {
+          "roleId": 1,
+          "roleName": "Administrator",
+          "createPerm": 1,
+          "readPerm": 1,
+          "updatePerm": 1,
+          "deletePerm": 1,
+          "changeOwnerPerm": 1,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 2,
+          "roleName": "Public",
+          "createPerm": "0",
+          "readPerm": "0",
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 3,
+          "roleName": "Medecin",
+          "createPerm": "0",
+          "readPerm": 1,
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 4,
+          "roleName": "Infirmier",
+          "createPerm": "0",
+          "readPerm": 1,
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 5,
+          "roleName": "Laborantin",
+          "createPerm": "0",
+          "readPerm": 1,
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 6,
+          "roleName": "Pharmacien",
+          "createPerm": "0",
+          "readPerm": 1,
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 9,
+          "roleName": "Secretaire",
+          "createPerm": 0,
+          "readPerm": 0,
+          "updatePerm": 0,
+          "deletePerm": 0,
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 10,
+          "roleName": "Comptable",
+          "createPerm": 0,
+          "readPerm": 0,
+          "updatePerm": 0,
+          "deletePerm": 0,
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": "registered001",
+          "roleName": "Registered",
+          "createPerm": 0,
+          "readPerm": 0,
+          "updatePerm": 0,
+          "deletePerm": 0,
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        }
+      ],
+      "fields": [
+        {
+          "id": 0,
+          "name": "id",
+          "type": "Autoincremented ID",
+          "editable": false,
+          "showInTable": false,
+          "required": true
+        },
+        {
+          "id": 1,
+          "name": "nom",
+          "type": "String",
+          "editable": true,
+          "showInTable": true,
+          "stringLength": 50,
+          "required": false
+        },
+        {
+          "id": 2,
+          "name": "postnom",
+          "type": "String",
+          "editable": true,
+          "showInTable": true,
+          "stringLength": 50,
+          "required": false
+        },
+        {
+          "id": 3,
+          "name": "prenom",
+          "type": "String",
+          "editable": true,
+          "showInTable": true,
+          "stringLength": 50,
+          "required": false
+        },
+        {
+          "id": 4,
+          "name": "dateNaissance",
+          "type": "Date",
+          "editable": true,
+          "showInTable": true,
+          "required": false
+        },
+        {
+          "id": 5,
+          "name": "genre",
+          "type": "Enumeration (Multiple)",
+          "editable": true,
+          "showInTable": true,
+          "required": false,
+          "enumerationValues": "M,F"
+        },
+        {
+          "id": 6,
+          "name": "statutMarital",
+          "type": "Enumeration (Multiple)",
+          "editable": true,
+          "showInTable": true,
+          "required": false,
+          "enumerationValues": "Célibataire,Marié(e),Divorcé(e),Veuf(ve)"
+        },
+        {
+          "id": 7,
+          "name": "telephone",
+          "type": "String",
+          "editable": true,
+          "showInTable": true,
+          "stringLength": 50,
+          "required": false
+        },
+        {
+          "id": 8,
+          "name": "adresse",
+          "type": "String",
+          "editable": true,
+          "showInTable": true,
+          "stringLength": 50,
+          "required": false
+        },
+        {
+          "id": 9,
+          "name": "email",
+          "type": "String",
+          "editable": true,
+          "showInTable": true,
+          "stringLength": 50,
+          "required": false
+        },
+        {
+          "id": 10,
+          "name": "groupeSanguin",
+          "type": "Enumeration (Multiple)",
+          "editable": true,
+          "showInTable": true,
+          "required": false,
+          "enumerationValues": "A+, A-, B+, B-, AB+, AB-, O+, O-"
+        },
+        {
+          "id": 12,
+          "name": "hopital",
+          "type": "Relation",
+          "editable": true,
+          "showInTable": true,
+          "referenceType": "n:1",
+          "referenceEntity": "Hopital",
+          "useReverseRelation": true,
+          "reverseName": ""
+        }
+      ]
+    },
+    {
+      "name": "Creneau",
+      "id": 9,
+      "lookupField": 0,
+      "lazyLoading": true,
+      "aclEnabled": true,
+      "authorization": [
+        {
+          "roleId": 1,
+          "roleName": "Administrator",
+          "createPerm": 1,
+          "readPerm": 1,
+          "updatePerm": 1,
+          "deletePerm": 1,
+          "changeOwnerPerm": 1,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 2,
+          "roleName": "Public",
+          "createPerm": "0",
+          "readPerm": "0",
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 3,
+          "roleName": "Medecin",
+          "createPerm": 1,
+          "readPerm": 1,
+          "updatePerm": 1,
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 4,
+          "roleName": "Infirmier",
+          "createPerm": "0",
+          "readPerm": "0",
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 5,
+          "roleName": "Laborantin",
+          "createPerm": "0",
+          "readPerm": "0",
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 6,
+          "roleName": "Pharmacien",
+          "createPerm": "0",
+          "readPerm": "0",
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 9,
+          "roleName": "Secretaire",
+          "createPerm": 0,
+          "readPerm": 0,
+          "updatePerm": 0,
+          "deletePerm": 0,
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 10,
+          "roleName": "Comptable",
+          "createPerm": 0,
+          "readPerm": 0,
+          "updatePerm": 0,
+          "deletePerm": 0,
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": "registered001",
+          "roleName": "Registered",
+          "createPerm": 0,
+          "readPerm": 0,
+          "updatePerm": 0,
+          "deletePerm": 0,
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        }
+      ],
+      "fields": [
+        {
+          "id": 0,
+          "name": "id",
+          "type": "Autoincremented ID",
+          "editable": false,
+          "showInTable": false,
+          "required": true
+        },
+        {
+          "id": 1,
+          "name": "debut",
+          "type": "Date",
+          "editable": true,
+          "showInTable": true,
+          "required": false
+        },
+        {
+          "id": 2,
+          "name": "fin",
+          "type": "Date",
+          "editable": true,
+          "showInTable": true,
+          "required": false
+        },
+        {
+          "id": 3,
+          "name": "medecin",
+          "type": "Relation",
+          "editable": true,
+          "showInTable": true,
+          "referenceType": "n:1",
+          "referenceEntity": "User",
+          "useReverseRelation": true,
+          "reverseName": ""
+        }
+      ]
+    },
+    {
+      "name": "Rendezvous",
+      "id": 10,
+      "lookupField": 0,
+      "lazyLoading": true,
+      "aclEnabled": true,
+      "authorization": [
+        {
+          "roleId": 1,
+          "roleName": "Administrator",
+          "createPerm": 1,
+          "readPerm": 1,
+          "updatePerm": 1,
+          "deletePerm": 1,
+          "changeOwnerPerm": 1,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 2,
+          "roleName": "Public",
+          "createPerm": "0",
+          "readPerm": "0",
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 3,
+          "roleName": "Medecin",
+          "createPerm": 1,
+          "readPerm": 1,
+          "updatePerm": 1,
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 4,
+          "roleName": "Infirmier",
+          "createPerm": "0",
+          "readPerm": "0",
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 5,
+          "roleName": "Laborantin",
+          "createPerm": "0",
+          "readPerm": "0",
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 6,
+          "roleName": "Pharmacien",
+          "createPerm": "0",
+          "readPerm": "0",
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 9,
+          "roleName": "Secretaire",
+          "createPerm": "1",
+          "readPerm": "1",
+          "updatePerm": "1",
+          "deletePerm": 0,
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 10,
+          "roleName": "Comptable",
+          "createPerm": 0,
+          "readPerm": 0,
+          "updatePerm": 0,
+          "deletePerm": 0,
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": "registered001",
+          "roleName": "Registered",
+          "createPerm": 0,
+          "readPerm": 0,
+          "updatePerm": 0,
+          "deletePerm": 0,
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        }
+      ],
+      "fields": [
+        {
+          "id": 0,
+          "name": "id",
+          "type": "Autoincremented ID",
+          "editable": false,
+          "showInTable": false,
+          "required": true
+        },
+        {
+          "id": 2,
+          "name": "patient",
+          "type": "Relation",
+          "editable": true,
+          "showInTable": true,
+          "referenceType": "n:1",
+          "referenceEntity": "Patient",
+          "useReverseRelation": true,
+          "reverseName": ""
+        },
+        {
+          "id": 3,
+          "name": "creneau",
+          "type": "Relation",
+          "editable": true,
+          "showInTable": true,
+          "referenceType": "n:1",
+          "referenceEntity": "Creneau",
+          "useReverseRelation": true,
+          "reverseName": ""
+        }
+      ]
+    },
+    {
+      "name": "Consultation",
+      "id": 11,
+      "lookupField": 0,
+      "lazyLoading": true,
+      "aclEnabled": true,
+      "authorization": [
+        {
+          "roleId": 1,
+          "roleName": "Administrator",
+          "createPerm": 1,
+          "readPerm": 1,
+          "updatePerm": 1,
+          "deletePerm": 1,
+          "changeOwnerPerm": 1,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 2,
+          "roleName": "Public",
+          "createPerm": "0",
+          "readPerm": "0",
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 3,
+          "roleName": "Medecin",
+          "createPerm": 1,
+          "readPerm": 1,
+          "updatePerm": 1,
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 4,
+          "roleName": "Infirmier",
+          "createPerm": 1,
+          "readPerm": 1,
+          "updatePerm": 1,
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 5,
+          "roleName": "Laborantin",
+          "createPerm": 1,
+          "readPerm": 1,
+          "updatePerm": 1,
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 6,
+          "roleName": "Pharmacien",
+          "createPerm": "0",
+          "readPerm": "0",
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 9,
+          "roleName": "Secretaire",
+          "createPerm": 0,
+          "readPerm": 0,
+          "updatePerm": 0,
+          "deletePerm": 0,
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 10,
+          "roleName": "Comptable",
+          "createPerm": "1",
+          "readPerm": "1",
+          "updatePerm": "1",
+          "deletePerm": 0,
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": "registered001",
+          "roleName": "Registered",
+          "createPerm": 0,
+          "readPerm": 0,
+          "updatePerm": 0,
+          "deletePerm": 0,
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        }
+      ],
+      "fields": [
+        {
+          "id": 0,
+          "name": "id",
+          "type": "Autoincremented ID",
+          "editable": false,
+          "showInTable": false,
+          "required": true
+        },
+        {
+          "id": 1,
+          "name": "patient",
+          "type": "Relation",
+          "editable": true,
+          "showInTable": true,
+          "referenceType": "n:1",
+          "referenceEntity": "Patient",
+          "useReverseRelation": true,
+          "reverseName": ""
+        },
+        {
+          "id": 3,
+          "name": "diagnostique",
+          "type": "String",
+          "editable": true,
+          "showInTable": true,
+          "stringLength": "500",
+          "required": false
+        },
+        {
+          "id": 4,
+          "name": "date",
+          "type": "Date",
+          "editable": true,
+          "showInTable": true,
+          "required": false
+        },
+        {
+          "id": 5,
+          "name": "tensionArterielle",
+          "type": "String",
+          "editable": true,
+          "showInTable": true,
+          "stringLength": 50,
+          "required": false
+        },
+        {
+          "id": 6,
+          "name": "temperature",
+          "type": "Decimal",
+          "editable": true,
+          "showInTable": true,
+          "integerLength": 5,
+          "fractionLength": 2,
+          "required": false
+        },
+        {
+          "id": 7,
+          "name": "poids",
+          "type": "Decimal",
+          "editable": true,
+          "showInTable": true,
+          "integerLength": 5,
+          "fractionLength": 2,
+          "required": false
+        },
+        {
+          "id": 8,
+          "name": "plainte",
+          "type": "String",
+          "editable": true,
+          "showInTable": true,
+          "stringLength": "500",
+          "required": false
+        },
+        {
+          "id": 9,
+          "name": "examens",
+          "type": "Relation",
+          "editable": true,
+          "showInTable": true,
+          "referenceType": "n:1",
+          "referenceEntity": "Examen",
+          "useReverseRelation": true,
+          "reverseName": ""
+        },
+        {
+          "id": 10,
+          "name": "prescription",
+          "type": "String",
+          "editable": true,
+          "showInTable": true,
+          "stringLength": "500",
+          "required": false
+        },
+        {
+          "id": 11,
+          "name": "resultatsExamen",
+          "type": "String",
+          "editable": true,
+          "showInTable": true,
+          "stringLength": "500",
+          "required": false
+        },
+        {
+          "id": 12,
+          "name": "pouls",
+          "type": "Number",
+          "editable": true,
+          "showInTable": true,
+          "integerLength": 5,
+          "required": false
+        },
+        {
+          "id": 13,
+          "name": "frequenceRespiratoire",
+          "type": "Number",
+          "editable": true,
+          "showInTable": true,
+          "integerLength": 5,
+          "required": false
+        },
+        {
+          "id": 15,
+          "name": "ordonnance",
+          "type": "Relation",
+          "editable": true,
+          "showInTable": true,
+          "referenceType": "1:1",
+          "referenceEntity": "Ordonnance"
+        },
+        {
+          "id": 16,
+          "name": "medecin",
+          "type": "Relation",
+          "editable": true,
+          "showInTable": true,
+          "referenceType": "n:1",
+          "referenceEntity": "User",
+          "useReverseRelation": true,
+          "reverseName": ""
+        },
+        {
+          "id": 17,
+          "name": "infirmier",
+          "type": "Relation",
+          "editable": true,
+          "showInTable": true,
+          "referenceType": "n:1",
+          "referenceEntity": "User",
+          "useReverseRelation": true,
+          "reverseName": ""
+        },
+        {
+          "id": 18,
+          "name": "laborantin",
+          "type": "Relation",
+          "editable": true,
+          "showInTable": true,
+          "referenceType": "n:1",
+          "referenceEntity": "User",
+          "useReverseRelation": true,
+          "reverseName": ""
+        }
+      ]
+    },
+    {
+      "name": "Examen",
+      "id": 12,
+      "lookupField": "1",
+      "lazyLoading": true,
+      "aclEnabled": true,
+      "authorization": [
+        {
+          "roleId": 1,
+          "roleName": "Administrator",
+          "createPerm": 1,
+          "readPerm": 1,
+          "updatePerm": 1,
+          "deletePerm": 1,
+          "changeOwnerPerm": 1,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 2,
+          "roleName": "Public",
+          "createPerm": "0",
+          "readPerm": "0",
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 3,
+          "roleName": "Medecin",
+          "createPerm": "0",
+          "readPerm": 1,
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 4,
+          "roleName": "Infirmier",
+          "createPerm": "0",
+          "readPerm": 1,
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 5,
+          "roleName": "Laborantin",
+          "createPerm": "0",
+          "readPerm": 1,
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 6,
+          "roleName": "Pharmacien",
+          "createPerm": "0",
+          "readPerm": "0",
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 9,
+          "roleName": "Secretaire",
+          "createPerm": 0,
+          "readPerm": 0,
+          "updatePerm": 0,
+          "deletePerm": 0,
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 10,
+          "roleName": "Comptable",
+          "createPerm": 0,
+          "readPerm": 0,
+          "updatePerm": 0,
+          "deletePerm": 0,
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": "registered001",
+          "roleName": "Registered",
+          "createPerm": 0,
+          "readPerm": 0,
+          "updatePerm": 0,
+          "deletePerm": 0,
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        }
+      ],
+      "fields": [
+        {
+          "id": 0,
+          "name": "id",
+          "type": "Autoincremented ID",
+          "editable": false,
+          "showInTable": false,
+          "required": true
+        },
+        {
+          "id": 1,
+          "name": "designation",
+          "type": "String",
+          "editable": true,
+          "showInTable": true,
+          "stringLength": 50,
+          "required": false
+        },
+        {
+          "id": 2,
+          "name": "prix",
+          "type": "Decimal",
+          "editable": true,
+          "showInTable": true,
+          "integerLength": 5,
+          "fractionLength": 2,
+          "required": false
+        },
+        {
+          "id": 3,
+          "name": "type",
+          "type": "String",
+          "editable": true,
+          "showInTable": true,
+          "stringLength": 50,
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "Labo",
+      "id": 13,
+      "lookupField": 0,
+      "lazyLoading": true,
+      "aclEnabled": true,
+      "authorization": [
+        {
+          "roleId": 1,
+          "roleName": "Administrator",
+          "createPerm": 1,
+          "readPerm": 1,
+          "updatePerm": 1,
+          "deletePerm": 1,
+          "changeOwnerPerm": 1,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 2,
+          "roleName": "Public",
+          "createPerm": "0",
+          "readPerm": "0",
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 3,
+          "roleName": "Medecin",
+          "createPerm": "0",
+          "readPerm": "0",
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 4,
+          "roleName": "Infirmier",
+          "createPerm": "0",
+          "readPerm": "0",
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 5,
+          "roleName": "Laborantin",
+          "createPerm": 1,
+          "readPerm": 1,
+          "updatePerm": 1,
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 6,
+          "roleName": "Pharmacien",
+          "createPerm": "0",
+          "readPerm": "0",
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 9,
+          "roleName": "Secretaire",
+          "createPerm": 0,
+          "readPerm": 0,
+          "updatePerm": 0,
+          "deletePerm": 0,
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 10,
+          "roleName": "Comptable",
+          "createPerm": "1",
+          "readPerm": "1",
+          "updatePerm": "1",
+          "deletePerm": 0,
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": "registered001",
+          "roleName": "Registered",
+          "createPerm": 0,
+          "readPerm": 0,
+          "updatePerm": 0,
+          "deletePerm": 0,
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        }
+      ],
+      "fields": [
+        {
+          "id": 0,
+          "name": "id",
+          "type": "Autoincremented ID",
+          "editable": false,
+          "showInTable": false,
+          "required": true
+        },
+        {
+          "id": 1,
+          "name": "examen",
+          "type": "Relation",
+          "editable": true,
+          "showInTable": true,
+          "referenceType": "n:1",
+          "referenceEntity": "Examen",
+          "useReverseRelation": true,
+          "reverseName": ""
+        },
+        {
+          "id": 2,
+          "name": "patient",
+          "type": "Relation",
+          "editable": true,
+          "showInTable": true,
+          "referenceType": "n:1",
+          "referenceEntity": "Patient",
+          "useReverseRelation": true,
+          "reverseName": ""
+        },
+        {
+          "id": 3,
+          "name": "resultat",
+          "type": "String",
+          "editable": true,
+          "showInTable": true,
+          "stringLength": 50,
+          "required": false
+        },
+        {
+          "id": 4,
+          "name": "laborantin",
+          "type": "Relation",
+          "editable": true,
+          "showInTable": true,
+          "referenceType": "n:1",
+          "referenceEntity": "User",
+          "useReverseRelation": true,
+          "reverseName": ""
+        },
+        {
+          "id": 6,
+          "name": "date",
+          "type": "Date",
+          "editable": true,
+          "showInTable": true,
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "SocieteAbonnement",
+      "id": 14,
+      "lookupField": "1",
+      "lazyLoading": true,
+      "aclEnabled": true,
+      "authorization": [
+        {
+          "roleId": 1,
+          "roleName": "Administrator",
+          "createPerm": 1,
+          "readPerm": 1,
+          "updatePerm": 1,
+          "deletePerm": 1,
+          "changeOwnerPerm": 1,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 2,
+          "roleName": "Public",
+          "createPerm": "0",
+          "readPerm": "0",
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 3,
+          "roleName": "Medecin",
+          "createPerm": "0",
+          "readPerm": "0",
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 4,
+          "roleName": "Infirmier",
+          "createPerm": "0",
+          "readPerm": "0",
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 5,
+          "roleName": "Laborantin",
+          "createPerm": "0",
+          "readPerm": "0",
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 6,
+          "roleName": "Pharmacien",
+          "createPerm": "0",
+          "readPerm": "0",
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 9,
+          "roleName": "Secretaire",
+          "createPerm": 0,
+          "readPerm": 0,
+          "updatePerm": 0,
+          "deletePerm": 0,
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 10,
+          "roleName": "Comptable",
+          "createPerm": 0,
+          "readPerm": 0,
+          "updatePerm": 0,
+          "deletePerm": 0,
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": "registered001",
+          "roleName": "Registered",
+          "createPerm": 0,
+          "readPerm": 0,
+          "updatePerm": 0,
+          "deletePerm": 0,
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        }
+      ],
+      "fields": [
+        {
+          "id": 0,
+          "name": "id",
+          "type": "Autoincremented ID",
+          "editable": false,
+          "showInTable": false,
+          "required": true
+        },
+        {
+          "id": 1,
+          "name": "designation",
+          "type": "String",
+          "editable": true,
+          "showInTable": true,
+          "stringLength": 50,
+          "required": false
+        },
+        {
+          "id": 2,
+          "name": "telephone",
+          "type": "String",
+          "editable": true,
+          "showInTable": true,
+          "stringLength": 50,
+          "required": false
+        },
+        {
+          "id": 3,
+          "name": "email",
+          "type": "String",
+          "editable": true,
+          "showInTable": true,
+          "stringLength": 50,
+          "required": false
+        },
+        {
+          "id": 4,
+          "name": "adresse",
+          "type": "String",
+          "editable": true,
+          "showInTable": true,
+          "stringLength": 50,
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "Abonnement",
+      "id": 15,
+      "lookupField": 0,
+      "lazyLoading": true,
+      "aclEnabled": true,
+      "authorization": [
+        {
+          "roleId": 1,
+          "roleName": "Administrator",
+          "createPerm": 1,
+          "readPerm": 1,
+          "updatePerm": 1,
+          "deletePerm": 1,
+          "changeOwnerPerm": 1,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 2,
+          "roleName": "Public",
+          "createPerm": "0",
+          "readPerm": "0",
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 3,
+          "roleName": "Medecin",
+          "createPerm": "0",
+          "readPerm": "0",
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 4,
+          "roleName": "Infirmier",
+          "createPerm": "0",
+          "readPerm": "0",
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 5,
+          "roleName": "Laborantin",
+          "createPerm": "0",
+          "readPerm": 1,
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 6,
+          "roleName": "Pharmacien",
+          "createPerm": "0",
+          "readPerm": "0",
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 9,
+          "roleName": "Secretaire",
+          "createPerm": 0,
+          "readPerm": 0,
+          "updatePerm": 0,
+          "deletePerm": 0,
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 10,
+          "roleName": "Comptable",
+          "createPerm": 0,
+          "readPerm": 0,
+          "updatePerm": 0,
+          "deletePerm": 0,
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": "registered001",
+          "roleName": "Registered",
+          "createPerm": 0,
+          "readPerm": 0,
+          "updatePerm": 0,
+          "deletePerm": 0,
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        }
+      ],
+      "fields": [
+        {
+          "id": 0,
+          "name": "id",
+          "type": "Autoincremented ID",
+          "editable": false,
+          "showInTable": false,
+          "required": true
+        },
+        {
+          "id": 1,
+          "name": "debut",
+          "type": "Date",
+          "editable": true,
+          "showInTable": true,
+          "required": false
+        },
+        {
+          "id": 2,
+          "name": "fin",
+          "type": "Date",
+          "editable": true,
+          "showInTable": true,
+          "required": false
+        },
+        {
+          "id": 3,
+          "name": "patient",
+          "type": "Relation",
+          "editable": true,
+          "showInTable": true,
+          "referenceType": "n:1",
+          "referenceEntity": "Patient",
+          "useReverseRelation": true,
+          "reverseName": ""
+        },
+        {
+          "id": 4,
+          "name": "societe",
+          "type": "Relation",
+          "editable": true,
+          "showInTable": true,
+          "referenceType": "n:1",
+          "referenceEntity": "SocieteAbonnement",
+          "useReverseRelation": true,
+          "reverseName": ""
+        }
+      ]
+    },
+    {
+      "name": "Salle",
+      "id": 16,
+      "lookupField": "5",
+      "imageUploadEnabled": true,
+      "lazyLoading": true,
+      "aclEnabled": true,
+      "authorization": [
+        {
+          "roleId": 1,
+          "roleName": "Administrator",
+          "createPerm": 1,
+          "readPerm": 1,
+          "updatePerm": 1,
+          "deletePerm": 1,
+          "changeOwnerPerm": 1,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 2,
+          "roleName": "Public",
+          "createPerm": "0",
+          "readPerm": "0",
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 3,
+          "roleName": "Medecin",
+          "createPerm": "0",
+          "readPerm": "1",
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 4,
+          "roleName": "Infirmier",
+          "createPerm": "0",
+          "readPerm": "1",
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 5,
+          "roleName": "Laborantin",
+          "createPerm": "0",
+          "readPerm": "1",
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 6,
+          "roleName": "Pharmacien",
+          "createPerm": "0",
+          "readPerm": "1",
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 9,
+          "roleName": "Secretaire",
+          "createPerm": 0,
+          "readPerm": 0,
+          "updatePerm": 0,
+          "deletePerm": 0,
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 10,
+          "roleName": "Comptable",
+          "createPerm": 0,
+          "readPerm": 0,
+          "updatePerm": 0,
+          "deletePerm": 0,
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": "registered001",
+          "roleName": "Registered",
+          "createPerm": 0,
+          "readPerm": 0,
+          "updatePerm": 0,
+          "deletePerm": 0,
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        }
+      ],
+      "fields": [
+        {
+          "id": 0,
+          "name": "id",
+          "type": "Autoincremented ID",
+          "editable": false,
+          "showInTable": false,
+          "required": true
+        },
+        {
+          "id": 2,
+          "name": "pavillon",
+          "type": "Relation",
+          "editable": true,
+          "showInTable": true,
+          "referenceType": "n:1",
+          "referenceEntity": "Pavillon",
+          "useReverseRelation": true,
+          "reverseName": ""
+        },
+        {
+          "id": 3,
+          "name": "categorie",
+          "type": "Enumeration (Multiple)",
+          "editable": true,
+          "showInTable": true,
+          "required": false,
+          "enumerationValues": "Commune, Privé, Semi-privé"
+        },
+        {
+          "id": 4,
+          "name": "prix",
+          "type": "Decimal",
+          "editable": true,
+          "showInTable": true,
+          "integerLength": 5,
+          "fractionLength": 2,
+          "required": false
+        },
+        {
+          "id": 5,
+          "name": "designation",
+          "type": "String",
+          "editable": true,
+          "showInTable": true,
+          "stringLength": 50,
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "Hospitalisation",
+      "id": 17,
+      "lookupField": 0,
+      "lazyLoading": true,
+      "aclEnabled": true,
+      "authorization": [
+        {
+          "roleId": 1,
+          "roleName": "Administrator",
+          "createPerm": 1,
+          "readPerm": 1,
+          "updatePerm": 1,
+          "deletePerm": 1,
+          "changeOwnerPerm": 1,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 2,
+          "roleName": "Public",
+          "createPerm": "0",
+          "readPerm": "0",
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 3,
+          "roleName": "Medecin",
+          "createPerm": "0",
+          "readPerm": 1,
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 4,
+          "roleName": "Infirmier",
+          "createPerm": "0",
+          "readPerm": 1,
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 5,
+          "roleName": "Laborantin",
+          "createPerm": "0",
+          "readPerm": "0",
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 6,
+          "roleName": "Pharmacien",
+          "createPerm": "0",
+          "readPerm": "0",
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 9,
+          "roleName": "Secretaire",
+          "createPerm": 0,
+          "readPerm": 0,
+          "updatePerm": 0,
+          "deletePerm": 0,
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 10,
+          "roleName": "Comptable",
+          "createPerm": "1",
+          "readPerm": "1",
+          "updatePerm": "1",
+          "deletePerm": 0,
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": "registered001",
+          "roleName": "Registered",
+          "createPerm": 0,
+          "readPerm": 0,
+          "updatePerm": 0,
+          "deletePerm": 0,
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        }
+      ],
+      "fields": [
+        {
+          "id": 0,
+          "name": "id",
+          "type": "Autoincremented ID",
+          "editable": false,
+          "showInTable": false,
+          "required": true
+        },
+        {
+          "id": 1,
+          "name": "salle",
+          "type": "Relation",
+          "editable": true,
+          "showInTable": true,
+          "referenceType": "n:1",
+          "referenceEntity": "Salle",
+          "useReverseRelation": true,
+          "reverseName": ""
+        },
+        {
+          "id": 2,
+          "name": "patient",
+          "type": "Relation",
+          "editable": true,
+          "showInTable": true,
+          "referenceType": "n:1",
+          "referenceEntity": "Patient",
+          "useReverseRelation": true,
+          "reverseName": ""
+        },
+        {
+          "id": 3,
+          "name": "dateEntree",
+          "type": "Date",
+          "editable": true,
+          "showInTable": true,
+          "required": false
+        },
+        {
+          "id": 4,
+          "name": "dateSortie",
+          "type": "Date",
+          "editable": true,
+          "showInTable": true,
+          "required": false
+        },
+        {
+          "id": 5,
+          "name": "observation",
+          "type": "String",
+          "editable": true,
+          "showInTable": true,
+          "stringLength": "500",
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "Pavillon",
+      "id": 18,
+      "lookupField": "1",
+      "lazyLoading": true,
+      "aclEnabled": true,
+      "authorization": [
+        {
+          "roleId": 1,
+          "roleName": "Administrator",
+          "createPerm": 1,
+          "readPerm": 1,
+          "updatePerm": 1,
+          "deletePerm": 1,
+          "changeOwnerPerm": 1,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 2,
+          "roleName": "Public",
+          "createPerm": "0",
+          "readPerm": "0",
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 3,
+          "roleName": "Medecin",
+          "createPerm": "0",
+          "readPerm": 1,
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 4,
+          "roleName": "Infirmier",
+          "createPerm": "0",
+          "readPerm": 1,
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 5,
+          "roleName": "Laborantin",
+          "createPerm": "0",
+          "readPerm": 1,
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 6,
+          "roleName": "Pharmacien",
+          "createPerm": "0",
+          "readPerm": 1,
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 9,
+          "roleName": "Secretaire",
+          "createPerm": 0,
+          "readPerm": 0,
+          "updatePerm": 0,
+          "deletePerm": 0,
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 10,
+          "roleName": "Comptable",
+          "createPerm": 0,
+          "readPerm": 0,
+          "updatePerm": 0,
+          "deletePerm": 0,
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": "registered001",
+          "roleName": "Registered",
+          "createPerm": 0,
+          "readPerm": 0,
+          "updatePerm": 0,
+          "deletePerm": 0,
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        }
+      ],
+      "fields": [
+        {
+          "id": 0,
+          "name": "id",
+          "type": "Autoincremented ID",
+          "editable": false,
+          "showInTable": false,
+          "required": true
+        },
+        {
+          "id": 1,
+          "name": "designation",
+          "type": "String",
+          "editable": true,
+          "showInTable": true,
+          "stringLength": 50,
+          "required": false
+        },
+        {
+          "id": 3,
+          "name": "description",
+          "type": "String",
+          "editable": true,
+          "showInTable": true,
+          "stringLength": 50,
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "Ordonnance",
+      "id": 20,
+      "lookupField": 0,
+      "lazyLoading": true,
+      "aclEnabled": true,
+      "authorization": [
+        {
+          "roleId": 1,
+          "roleName": "Administrator",
+          "createPerm": 1,
+          "readPerm": 1,
+          "updatePerm": 1,
+          "deletePerm": 1,
+          "changeOwnerPerm": 1,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 2,
+          "roleName": "Public",
+          "createPerm": "0",
+          "readPerm": "0",
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 3,
+          "roleName": "Medecin",
+          "createPerm": 1,
+          "readPerm": 1,
+          "updatePerm": 1,
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 4,
+          "roleName": "Infirmier",
+          "createPerm": "0",
+          "readPerm": "0",
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 5,
+          "roleName": "Laborantin",
+          "createPerm": "0",
+          "readPerm": "0",
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 6,
+          "roleName": "Pharmacien",
+          "createPerm": "0",
+          "readPerm": 1,
+          "updatePerm": "0",
+          "deletePerm": "0",
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 9,
+          "roleName": "Secretaire",
+          "createPerm": 0,
+          "readPerm": 0,
+          "updatePerm": 0,
+          "deletePerm": 0,
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": 10,
+          "roleName": "Comptable",
+          "createPerm": 0,
+          "readPerm": 0,
+          "updatePerm": 0,
+          "deletePerm": 0,
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        },
+        {
+          "roleId": "registered001",
+          "roleName": "Registered",
+          "createPerm": 0,
+          "readPerm": 0,
+          "updatePerm": 0,
+          "deletePerm": 0,
+          "changeOwnerPerm": 0,
+          "ownerRoleEnabled": false
+        }
+      ],
+      "fields": [
+        {
+          "id": 0,
+          "name": "id",
+          "type": "Autoincremented ID",
+          "editable": false,
+          "showInTable": false,
+          "required": true
+        },
+        {
+          "id": 1,
+          "name": "date",
+          "type": "Date",
+          "editable": true,
+          "showInTable": true,
+          "required": false
+        },
+        {
+          "id": 2,
+          "name": "details",
+          "type": "String",
+          "editable": true,
+          "showInTable": true,
+          "stringLength": "2000",
+          "required": false
+        }
+      ]
+    }
+  ],
+  "appSettings": {
+    "generjeeversion": "1.0",
+    "appName": "afianjema",
+    "package": "org.shekinah",
+    "masterDetailsStyle": "1",
+    "dataListStyle": "1",
+    "pfTheme": "omega",
+    "runtarget": "as",
+    "layer": {
+      "rest": true
+    },
+    "manageRolesAndUsers": true,
+    "createRegistrationForm": true,
+    "roles": [
+      {
+        "id": 1,
+        "name": "Administrator",
+        "canBeDeleted": false
+      },
+      {
+        "id": 2,
+        "name": "Public",
+        "canBeDeleted": false
+      },
+      {
+        "id": 3,
+        "name": "Medecin",
+        "canBeDeleted": true
+      },
+      {
+        "id": 4,
+        "name": "Infirmier",
+        "canBeDeleted": true
+      },
+      {
+        "id": 5,
+        "name": "Laborantin",
+        "canBeDeleted": true
+      },
+      {
+        "id": 6,
+        "name": "Pharmacien",
+        "canBeDeleted": true
+      },
+      {
+        "id": 9,
+        "name": "Secretaire",
+        "canBeDeleted": true
+      },
+      {
+        "id": 10,
+        "name": "Comptable",
+        "canBeDeleted": true
+      },
+      {
+        "id": "registered001",
+        "name": "Registered",
+        "canBeDeleted": false
+      }
+    ]
+  },
+  "guid": "495fa629-1054-4419-dcc8-6152d7acfe2b"
+}

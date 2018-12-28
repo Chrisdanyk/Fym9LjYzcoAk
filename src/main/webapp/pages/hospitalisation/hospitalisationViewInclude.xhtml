@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:o="http://omnifaces.org/ui">
+
+    <p:outputPanel styleClass="ui-fluid" rendered="#{not hospitalisationBean.isPermitted(hospitalisationBean.hospitalisation, 'hospitalisation:read')}">
+        <h:outputText value="#{messages.access_denied}" />
+    </p:outputPanel>
+    
+    <h:panelGrid columns="2" styleClass="dialog" columnClasses="col1,col2" rendered="#{hospitalisationBean.isPermitted(hospitalisationBean.hospitalisation, 'hospitalisation:read')}">
+        
+        <h:outputText value="#{messages.field_label_hospitalisation_salle}:" />
+        <h:outputText value="#{hospitalisationBean.hospitalisation.salle.designation}" />
+
+        <h:outputText value="#{messages.field_label_hospitalisation_patient}:" />
+        <h:outputText value="#{hospitalisationBean.hospitalisation.patient.nom}" />
+
+        <h:outputText value="#{messages.field_label_hospitalisation_dateEntree}:" />
+        <h:outputText value="#{hospitalisationBean.hospitalisation.dateEntree}" ><f:convertDateTime /></h:outputText>
+
+        <h:outputText value="#{messages.field_label_hospitalisation_dateSortie}:" />
+        <h:outputText value="#{hospitalisationBean.hospitalisation.dateSortie}" ><f:convertDateTime /></h:outputText>
+
+        <h:outputText value="#{messages.field_label_hospitalisation_observation}:" />
+        <h:outputText value="#{hospitalisationBean.hospitalisation.observation}" />
+
+    </h:panelGrid>
+</html>

@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:o="http://omnifaces.org/ui">
+<ui:composition template="/templates/layout.xhtml">
+  <ui:define name="content">
+
+    <h:form prependId="false" id="rendezvousDataForm" onkeypress="if (event.keyCode == 13) {return false; }">
+
+        <p:dataTable id="rendezvousTable" value="#{rendezvousBean.lazyModel}" var="rendezvous" resizableColumns="true" paginator="true"
+                paginatorTemplate=" {CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                rowsPerPageTemplate="5,10,25,50" rows="10" draggableColumns="true" lazy="true"
+                paginatorPosition="bottom" widgetVar="rendezvousTable" emptyMessage="#{messages.label_no_records_found}"
+                reflow="true">
+        
+          <f:facet name="header" >
+
+              <p:commandButton value="#{messages.create_new_rendezvous}" icon="ui-icon-plusthick" action="#{rendezvousBean.prepareNewRendezvous()}"
+                      resetValues="true" update=":editRendezvousDialog" oncomplete="PF('editRendezvousDialogWidget').show()"
+                      rendered="#{rendezvousBean.isPermitted('rendezvous:create')}" style="float:left" />
+              
+              <p:commandButton id="toggler" type="button" value="#{messages.table_select_columns}" icon="ui-icon-calculator" />
+              <p:columnToggler datasource="rendezvousTable" trigger="toggler" />
+          </f:facet>
+          
+          <p:column headerText="#{messages.field_label_rendezvous_patient}" sortBy="#{rendezvous.patient}" filterBy="#{rendezvous.patient}">
+            <f:facet name="filter">
+            <p:selectOneMenu  id="patientFilter"
+                            style="width:145px;"
+                            onchange="PF('rendezvousTable').filter(); return false;">
+                <f:selectItem noSelectionOption="true" itemLabel="" />
+                <f:selectItems itemLabel="#{patient.nom}"
+                            value="#{rendezvousBean.patients}" 
+                            var="patient" 
+                            itemValue="#{patient}" />
+                <o:converter converterId="omnifaces.SelectItemsConverter" list="#{rendezvousBean.patients}" />
+            </p:selectOneMenu>
+            </f:facet>
+            <h:outputText value="#{rendezvous.patient.nom}" />
+          </p:column>
+
+          <p:column headerText="#{messages.field_label_rendezvous_creneau}" sortBy="#{rendezvous.creneau}" filterBy="#{rendezvous.creneau}">
+            <f:facet name="filter">
+            <p:selectOneMenu  id="creneauFilter"
+                            style="width:145px;"
+                            onchange="PF('rendezvousTable').filter(); return false;">
+                <f:selectItem noSelectionOption="true" itemLabel="" />
+                <f:selectItems itemLabel="#{creneau.id}"
+                            value="#{rendezvousBean.creneaus}" 
+                            var="creneau" 
+                            itemValue="#{creneau}" />
+                <o:converter converterId="omnifaces.SelectItemsConverter" list="#{rendezvousBean.creneaus}" />
+            </p:selectOneMenu>
+            </f:facet>
+            <h:outputText value="#{rendezvous.creneau.id}" />
+          </p:column>
+
+          <p:column styleClass="action-column" headerText="#{messages.table_actions_column}" width="115" exportable="false">
+            
+            <p:commandButton icon="ui-icon-zoomin" update=":viewRendezvousDialog" oncomplete="PF('viewRendezvousDialogWidget').show()" title="#{messages.label_view}">
+              <f:setPropertyActionListener value="#{rendezvous}" target="#{rendezvousBean.rendezvous}" />
+            </p:commandButton>
+
+            <p:commandButton icon="ui-icon-pencil" update=":editRendezvousDialog"
+                resetValues="true" rendered="#{rendezvousBean.isPermitted(rendezvous, 'rendezvous:update')}"
+                action="#{rendezvousBean.onDialogOpen(rendezvous)}"
+                oncomplete="PF('editRendezvousDialogWidget').show()"
+                title="#{messages.label_edit}" >
+            </p:commandButton>
+
+            <p:commandButton icon="ui-icon-close" rendered="#{rendezvousBean.isPermitted(rendezvous, 'rendezvous:delete')}"
+                oncomplete="PF('deleteRendezvousDialogWidget').show()"
+                title="#{messages.label_delete}" >
+                <f:setPropertyActionListener value="#{rendezvous}"
+                    target="#{rendezvousBean.rendezvous}" />
+            </p:commandButton>
+    
+          </p:column>
+          
+        </p:dataTable>
+        
+    </h:form>
+
+    <p:confirmDialog id="deleteRendezvousDialog" widgetVar="deleteRendezvousDialogWidget"
+        rendered="#{rendezvousBean.isPermitted(rendezvousBean.rendezvous, 'rendezvous:delete')}" header="#{messages.label_confirm_deletion}"
+        severity="alarm">
+        <f:facet name="message"><h:outputText value="#{messages.label_delete_record}" escape="false"/></f:facet>
+        <p:outputPanel>
+          <h:form>
+            <div style="text-align: center; margin:10px">
+              <p:commandButton value="#{messages.label_yes}" action="#{rendezvousBean.delete}" update=":rendezvousDataForm :growlForm:growl" oncomplete="PF('deleteRendezvousDialogWidget').hide()" />
+              <p:commandButton value="#{messages.label_no}" onclick="PF('deleteRendezvousDialogWidget').hide()" type="button" />
+            </div>
+          </h:form>
+        </p:outputPanel>
+    </p:confirmDialog>
+    
+    <p:dialog dynamic="true" id="editRendezvousDialog" header="#{messages.label_rendezvous_caption}"
+            modal="true" widgetVar="editRendezvousDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{rendezvousBean.reset}"/>
+        <h:form id="editRendezvousForm" >
+            <p:outputPanel id="rendezvousEditPanel">
+                <ui:include src="/pages/rendezvous/rendezvousEditInclude.xhtml"/>
+                <div style="text-align: center; margin:10px">
+                    <p:commandButton value="#{messages.label_save}"
+                            icon="ui-icon-disk" action="#{rendezvousBean.persist}"
+                            update=":editRendezvousForm:rendezvousEditPanel :rendezvousDataForm :growlForm:growl"
+                            oncomplete="if(!args.validationFailed) PF('editRendezvousDialogWidget').hide()" />
+                    <p:commandButton value="#{messages.label_close}" icon="ui-icon-close" onclick="PF('editRendezvousDialogWidget').hide()" type="button" />
+                </div>
+            </p:outputPanel>
+        </h:form>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="viewRendezvousDialog" header="#{messages.label_rendezvous_caption}" modal="true" widgetVar="viewRendezvousDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{rendezvousBean.reset}" />
+        <h:form id="viewRendezvousForm">
+          <ui:include src="/pages/rendezvous/rendezvousViewInclude.xhtml"/>
+          <div style="text-align: center; margin:10px">
+              <p:commandButton value="#{messages.label_close}" icon="ui-icon-close" onclick="PF('viewRendezvousDialogWidget').hide()" type="button" />
+          </div>
+        </h:form>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="createPatientFromEditDialog"
+        rendered="#{rendezvousBean.isPermitted('patient:create')}"
+        header="#{messages.dialog_rendezvous_create_patient}" modal="true"
+        widgetVar="createPatientFromEditDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{patientBean.reset}" />
+        <p:outputPanel id="createPatientPanel">
+                <h:form id="createPatientForm">
+                    <ui:include src="/pages/patient/patientEditInclude.xhtml">
+                        <ui:param name="hideRendezvousSelectInput" value="true" />
+                    </ui:include>
+                    <div style="text-align: center; margin: 10px">
+                        <p:commandButton
+                            action="#{rendezvousBean.updatePatient(patientBean.patient)}"
+                            value="#{messages.label_save}" icon="ui-icon-disk"
+                            actionListener="#{patientBean.persist}"
+                            update=":editRendezvousForm:patientSelectInput :createPatientPanel :growlForm:growl"
+                            oncomplete="if(!args.validationFailed) PF('createPatientFromEditDialogWidget').hide()" />
+                        <p:commandButton value="#{messages.label_close}"
+                            icon="ui-icon-close"
+                            onclick="PF('createPatientFromEditDialogWidget').hide()"
+                            type="button" />
+                    </div>
+                </h:form>
+            </p:outputPanel>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="createCreneauFromEditDialog"
+        rendered="#{rendezvousBean.isPermitted('creneau:create')}"
+        header="#{messages.dialog_rendezvous_create_creneau}" modal="true"
+        widgetVar="createCreneauFromEditDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{creneauBean.reset}" />
+        <p:outputPanel id="createCreneauPanel">
+                <h:form id="createCreneauForm">
+                    <ui:include src="/pages/creneau/creneauEditInclude.xhtml">
+                        <ui:param name="hideRendezvousSelectInput" value="true" />
+                    </ui:include>
+                    <div style="text-align: center; margin: 10px">
+                        <p:commandButton
+                            action="#{rendezvousBean.updateCreneau(creneauBean.creneau)}"
+                            value="#{messages.label_save}" icon="ui-icon-disk"
+                            actionListener="#{creneauBean.persist}"
+                            update=":editRendezvousForm:creneauSelectInput :createCreneauPanel :growlForm:growl"
+                            oncomplete="if(!args.validationFailed) PF('createCreneauFromEditDialogWidget').hide()" />
+                        <p:commandButton value="#{messages.label_close}"
+                            icon="ui-icon-close"
+                            onclick="PF('createCreneauFromEditDialogWidget').hide()"
+                            type="button" />
+                    </div>
+                </h:form>
+            </p:outputPanel>
+    </p:dialog>
+    
+  </ui:define>
+</ui:composition>
+</html>

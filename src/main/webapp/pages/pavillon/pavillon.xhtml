@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:o="http://omnifaces.org/ui">
+<ui:composition template="/templates/layout.xhtml">
+  <ui:define name="content">
+
+    <h:form prependId="false" id="pavillonDataForm" onkeypress="if (event.keyCode == 13) {return false; }">
+
+        <p:dataTable id="pavillonTable" value="#{pavillonBean.lazyModel}" var="pavillon" resizableColumns="true" paginator="true"
+                paginatorTemplate=" {CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                rowsPerPageTemplate="5,10,25,50" rows="10" draggableColumns="true" lazy="true"
+                paginatorPosition="bottom" widgetVar="pavillonTable" emptyMessage="#{messages.label_no_records_found}"
+                reflow="true">
+        
+          <f:facet name="header" >
+
+              <p:commandButton value="#{messages.create_new_pavillon}" icon="ui-icon-plusthick" action="#{pavillonBean.prepareNewPavillon()}"
+                      resetValues="true" update=":editPavillonDialog" oncomplete="PF('editPavillonDialogWidget').show()"
+                      rendered="#{pavillonBean.isPermitted('pavillon:create')}" style="float:left" />
+              
+              <p:commandButton id="toggler" type="button" value="#{messages.table_select_columns}" icon="ui-icon-calculator" />
+              <p:columnToggler datasource="pavillonTable" trigger="toggler" />
+          </f:facet>
+          
+          <p:column  headerText="#{messages.field_label_pavillon_designation}" sortBy="#{pavillon.designation}" filterBy="#{pavillon.designation}">
+            <f:facet name="filter">
+                <p:inputText id="designationFilter"
+                        onkeypress="if (event.keyCode == 13) {PF('pavillonTable').filter(); updateDesignationFilter(); return false; }" >
+                    <p:remoteCommand name="updateDesignationFilter" update="pavillonTable:designationFilter" />
+                </p:inputText>
+            </f:facet>
+            <h:outputText value="#{pavillon.designation}" />
+          </p:column>
+
+          <p:column  headerText="#{messages.field_label_pavillon_description}" sortBy="#{pavillon.description}" filterBy="#{pavillon.description}">
+            <f:facet name="filter">
+                <p:inputText id="descriptionFilter"
+                        onkeypress="if (event.keyCode == 13) {PF('pavillonTable').filter(); updateDescriptionFilter(); return false; }" >
+                    <p:remoteCommand name="updateDescriptionFilter" update="pavillonTable:descriptionFilter" />
+                </p:inputText>
+            </f:facet>
+            <h:outputText value="#{pavillon.description}" />
+          </p:column>
+
+          <p:column headerText="#{messages.field_label_pavillon_salle_plural}" styleClass="action-column" exportable="false">
+            
+            <p:commandButton icon="ui-icon-transfer-e-w"  title="#{messages.field_label_pavillon_salle_plural}" action="#{pavillonBean.onSallesDialog(pavillon)}" oncomplete="PF('pavillonSallesDialogWidget').show()" update=":pavillonSallesDialog"/>
+            
+          </p:column>
+          
+          <p:column styleClass="action-column" headerText="#{messages.table_actions_column}" width="115" exportable="false">
+            
+            <p:commandButton icon="ui-icon-zoomin" update=":viewPavillonDialog" oncomplete="PF('viewPavillonDialogWidget').show()" title="#{messages.label_view}">
+              <f:setPropertyActionListener value="#{pavillon}" target="#{pavillonBean.pavillon}" />
+            </p:commandButton>
+
+            <p:commandButton icon="ui-icon-pencil" update=":editPavillonDialog"
+                resetValues="true" rendered="#{pavillonBean.isPermitted(pavillon, 'pavillon:update')}"
+                action="#{pavillonBean.onDialogOpen(pavillon)}"
+                oncomplete="PF('editPavillonDialogWidget').show()"
+                title="#{messages.label_edit}" >
+            </p:commandButton>
+
+            <p:commandButton icon="ui-icon-close" rendered="#{pavillonBean.isPermitted(pavillon, 'pavillon:delete')}"
+                oncomplete="PF('deletePavillonDialogWidget').show()"
+                title="#{messages.label_delete}" >
+                <f:setPropertyActionListener value="#{pavillon}"
+                    target="#{pavillonBean.pavillon}" />
+            </p:commandButton>
+    
+          </p:column>
+          
+        </p:dataTable>
+        
+    </h:form>
+
+    <p:confirmDialog id="deletePavillonDialog" widgetVar="deletePavillonDialogWidget"
+        rendered="#{pavillonBean.isPermitted(pavillonBean.pavillon, 'pavillon:delete')}" header="#{messages.label_confirm_deletion}"
+        severity="alarm">
+        <f:facet name="message"><h:outputText value="#{messages.label_delete_record}" escape="false"/></f:facet>
+        <p:outputPanel>
+          <h:form>
+            <div style="text-align: center; margin:10px">
+              <p:commandButton value="#{messages.label_yes}" action="#{pavillonBean.delete}" update=":pavillonDataForm :growlForm:growl" oncomplete="PF('deletePavillonDialogWidget').hide()" />
+              <p:commandButton value="#{messages.label_no}" onclick="PF('deletePavillonDialogWidget').hide()" type="button" />
+            </div>
+          </h:form>
+        </p:outputPanel>
+    </p:confirmDialog>
+    
+    <p:dialog dynamic="true" id="editPavillonDialog" header="#{messages.label_pavillon_caption}"
+            modal="true" widgetVar="editPavillonDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{pavillonBean.reset}"/>
+        <h:form id="editPavillonForm" >
+            <p:outputPanel id="pavillonEditPanel">
+                <ui:include src="/pages/pavillon/pavillonEditInclude.xhtml"/>
+                <div style="text-align: center; margin:10px">
+                    <p:commandButton value="#{messages.label_save}"
+                            icon="ui-icon-disk" action="#{pavillonBean.persist}"
+                            update=":editPavillonForm:pavillonEditPanel :pavillonDataForm :growlForm:growl"
+                            oncomplete="if(!args.validationFailed) PF('editPavillonDialogWidget').hide()" />
+                    <p:commandButton value="#{messages.label_close}" icon="ui-icon-close" onclick="PF('editPavillonDialogWidget').hide()" type="button" />
+                </div>
+            </p:outputPanel>
+        </h:form>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="viewPavillonDialog" header="#{messages.label_pavillon_caption}" modal="true" widgetVar="viewPavillonDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{pavillonBean.reset}" />
+        <h:form id="viewPavillonForm">
+          <ui:include src="/pages/pavillon/pavillonViewInclude.xhtml"/>
+          <div style="text-align: center; margin:10px">
+              <p:commandButton value="#{messages.label_close}" icon="ui-icon-close" onclick="PF('viewPavillonDialogWidget').hide()" type="button" />
+          </div>
+        </h:form>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="pavillonSallesDialog" header="#{messages.dialog_header_pavillon_salle_plural}" modal="true" widgetVar="pavillonSallesDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{pavillonBean.reset}" />
+        <p:outputPanel id="pavillonSallesPanel">
+            <h:form id="pavillonSallesForm">
+                <ui:include src="/pages/pavillon/pavillonSalleInclude.xhtml" />
+                <div style="text-align: center; margin:10px">
+                    <p:commandButton value="#{messages.label_save}"
+                        icon="ui-icon-disk"
+                        action="#{pavillonBean.onSallesSubmit}"
+                        update=":growlForm:growl"
+                        oncomplete="if(!args.validationFailed) PF('pavillonSallesDialogWidget').hide()"
+                        rendered="#{pavillonBean.isPermitted(pavillonBean.pavillon, 'pavillon:update')}"
+                        partialSubmit="true" process="@this" />
+                    <p:commandButton value="#{messages.label_close}" icon="ui-icon-close" onclick="PF('pavillonSallesDialogWidget').hide()" type="button" />
+                </div>
+            </h:form>
+        </p:outputPanel>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="createSalleDialog"
+        rendered="#{pavillonBean.isPermitted('salle:create')}"
+        header="#{messages.dialog_pavillon_create_salle}" modal="true"
+        widgetVar="createSalleDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{salleBean.reset}" />
+        <p:outputPanel id="createSallePanel">
+                <h:form id="createSalleForm">
+                    <ui:include src="/pages/salle/salleEditInclude.xhtml">
+                        <ui:param name="hidePavillonSelectInput" value="true" />
+                    </ui:include>
+                    <div style="text-align: center; margin: 10px">
+                        <p:commandButton
+                            action="#{pavillonBean.updateSalle(salleBean.salle)}"
+                            value="#{messages.label_save}" icon="ui-icon-disk"
+                            actionListener="#{salleBean.persist}"
+                            update=":pavillonSallesPanel :createSallePanel :growlForm:growl"
+                            oncomplete="if(!args.validationFailed) PF('createSalleDialogWidget').hide()" />
+                        <p:commandButton value="#{messages.label_close}"
+                            icon="ui-icon-close"
+                            onclick="PF('createSalleDialogWidget').hide()"
+                            type="button" />
+                    </div>
+                </h:form>
+            </p:outputPanel>
+    </p:dialog>
+    
+  </ui:define>
+</ui:composition>
+</html>

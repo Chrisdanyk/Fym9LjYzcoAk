@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:o="http://omnifaces.org/ui">
+<ui:composition template="/templates/layout.xhtml">
+  <ui:define name="content">
+
+    <h:form prependId="false" id="creneauDataForm" onkeypress="if (event.keyCode == 13) {return false; }">
+
+        <p:dataTable id="creneauTable" value="#{creneauBean.lazyModel}" var="creneau" resizableColumns="true" paginator="true"
+                paginatorTemplate=" {CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                rowsPerPageTemplate="5,10,25,50" rows="10" draggableColumns="true" lazy="true"
+                paginatorPosition="bottom" widgetVar="creneauTable" emptyMessage="#{messages.label_no_records_found}"
+                reflow="true">
+        
+          <f:facet name="header" >
+
+              <p:commandButton value="#{messages.create_new_creneau}" icon="ui-icon-plusthick" action="#{creneauBean.prepareNewCreneau()}"
+                      resetValues="true" update=":editCreneauDialog" oncomplete="PF('editCreneauDialogWidget').show()"
+                      rendered="#{creneauBean.isPermitted('creneau:create')}" style="float:left" />
+              
+              <p:commandButton id="toggler" type="button" value="#{messages.table_select_columns}" icon="ui-icon-calculator" />
+              <p:columnToggler datasource="creneauTable" trigger="toggler" />
+          </f:facet>
+          
+          <p:column headerText="#{messages.field_label_creneau_debut}" sortBy="#{creneau.debut}" filterBy="#{creneau.debut}">
+            <f:facet name="filter">
+                <p:inputText id="debutFilter"
+                        onkeyup="if (event.keyCode == 13) {PF('creneauTable').filter(); updateDebutFilter(); return false;}" >
+                    <p:remoteCommand name="updateDebutFilter" update="creneauTable:debutFilter" />
+                    <f:convertDateTime />
+                </p:inputText>
+            </f:facet>
+            <h:outputText value="#{creneau.debut}"><f:convertDateTime /></h:outputText>
+          </p:column>
+
+          <p:column headerText="#{messages.field_label_creneau_fin}" sortBy="#{creneau.fin}" filterBy="#{creneau.fin}">
+            <f:facet name="filter">
+                <p:inputText id="finFilter"
+                        onkeyup="if (event.keyCode == 13) {PF('creneauTable').filter(); updateFinFilter(); return false;}" >
+                    <p:remoteCommand name="updateFinFilter" update="creneauTable:finFilter" />
+                    <f:convertDateTime />
+                </p:inputText>
+            </f:facet>
+            <h:outputText value="#{creneau.fin}"><f:convertDateTime /></h:outputText>
+          </p:column>
+
+          <p:column headerText="#{messages.field_label_creneau_medecin}" sortBy="#{creneau.medecin}" filterBy="#{creneau.medecin}">
+            <f:facet name="filter">
+            <p:selectOneMenu  id="medecinFilter"
+                            style="width:145px;"
+                            onchange="PF('creneauTable').filter(); return false;">
+                <f:selectItem noSelectionOption="true" itemLabel="" />
+                <f:selectItems itemLabel="#{user.username}"
+                            value="#{creneauBean.medecins}" 
+                            var="user" 
+                            itemValue="#{user}" />
+                <o:converter converterId="omnifaces.SelectItemsConverter" list="#{creneauBean.medecins}" />
+            </p:selectOneMenu>
+            </f:facet>
+            <h:outputText value="#{creneau.medecin.username}" />
+          </p:column>
+
+          <p:column headerText="#{messages.field_label_creneau_rendezvous_plural}" styleClass="action-column" exportable="false">
+            
+            <p:commandButton icon="ui-icon-transfer-e-w"  title="#{messages.field_label_creneau_rendezvous_plural}" action="#{creneauBean.onRendezvoussDialog(creneau)}" oncomplete="PF('creneauRendezvoussDialogWidget').show()" update=":creneauRendezvoussDialog"/>
+            
+          </p:column>
+          
+          <p:column styleClass="action-column" headerText="#{messages.table_actions_column}" width="115" exportable="false">
+            
+            <p:commandButton icon="ui-icon-zoomin" update=":viewCreneauDialog" oncomplete="PF('viewCreneauDialogWidget').show()" title="#{messages.label_view}">
+              <f:setPropertyActionListener value="#{creneau}" target="#{creneauBean.creneau}" />
+            </p:commandButton>
+
+            <p:commandButton icon="ui-icon-pencil" update=":editCreneauDialog"
+                resetValues="true" rendered="#{creneauBean.isPermitted(creneau, 'creneau:update')}"
+                action="#{creneauBean.onDialogOpen(creneau)}"
+                oncomplete="PF('editCreneauDialogWidget').show()"
+                title="#{messages.label_edit}" >
+            </p:commandButton>
+
+            <p:commandButton icon="ui-icon-close" rendered="#{creneauBean.isPermitted(creneau, 'creneau:delete')}"
+                oncomplete="PF('deleteCreneauDialogWidget').show()"
+                title="#{messages.label_delete}" >
+                <f:setPropertyActionListener value="#{creneau}"
+                    target="#{creneauBean.creneau}" />
+            </p:commandButton>
+    
+          </p:column>
+          
+        </p:dataTable>
+        
+    </h:form>
+
+    <p:confirmDialog id="deleteCreneauDialog" widgetVar="deleteCreneauDialogWidget"
+        rendered="#{creneauBean.isPermitted(creneauBean.creneau, 'creneau:delete')}" header="#{messages.label_confirm_deletion}"
+        severity="alarm">
+        <f:facet name="message"><h:outputText value="#{messages.label_delete_record}" escape="false"/></f:facet>
+        <p:outputPanel>
+          <h:form>
+            <div style="text-align: center; margin:10px">
+              <p:commandButton value="#{messages.label_yes}" action="#{creneauBean.delete}" update=":creneauDataForm :growlForm:growl" oncomplete="PF('deleteCreneauDialogWidget').hide()" />
+              <p:commandButton value="#{messages.label_no}" onclick="PF('deleteCreneauDialogWidget').hide()" type="button" />
+            </div>
+          </h:form>
+        </p:outputPanel>
+    </p:confirmDialog>
+    
+    <p:dialog dynamic="true" id="editCreneauDialog" header="#{messages.label_creneau_caption}"
+            modal="true" widgetVar="editCreneauDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{creneauBean.reset}"/>
+        <h:form id="editCreneauForm" >
+            <p:outputPanel id="creneauEditPanel">
+                <ui:include src="/pages/creneau/creneauEditInclude.xhtml"/>
+                <div style="text-align: center; margin:10px">
+                    <p:commandButton value="#{messages.label_save}"
+                            icon="ui-icon-disk" action="#{creneauBean.persist}"
+                            update=":editCreneauForm:creneauEditPanel :creneauDataForm :growlForm:growl"
+                            oncomplete="if(!args.validationFailed) PF('editCreneauDialogWidget').hide()" />
+                    <p:commandButton value="#{messages.label_close}" icon="ui-icon-close" onclick="PF('editCreneauDialogWidget').hide()" type="button" />
+                </div>
+            </p:outputPanel>
+        </h:form>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="viewCreneauDialog" header="#{messages.label_creneau_caption}" modal="true" widgetVar="viewCreneauDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{creneauBean.reset}" />
+        <h:form id="viewCreneauForm">
+          <ui:include src="/pages/creneau/creneauViewInclude.xhtml"/>
+          <div style="text-align: center; margin:10px">
+              <p:commandButton value="#{messages.label_close}" icon="ui-icon-close" onclick="PF('viewCreneauDialogWidget').hide()" type="button" />
+          </div>
+        </h:form>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="creneauRendezvoussDialog" header="#{messages.dialog_header_creneau_rendezvous_plural}" modal="true" widgetVar="creneauRendezvoussDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{creneauBean.reset}" />
+        <p:outputPanel id="creneauRendezvoussPanel">
+            <h:form id="creneauRendezvoussForm">
+                <ui:include src="/pages/creneau/creneauRendezvousInclude.xhtml" />
+                <div style="text-align: center; margin:10px">
+                    <p:commandButton value="#{messages.label_save}"
+                        icon="ui-icon-disk"
+                        action="#{creneauBean.onRendezvoussSubmit}"
+                        update=":growlForm:growl"
+                        oncomplete="if(!args.validationFailed) PF('creneauRendezvoussDialogWidget').hide()"
+                        rendered="#{creneauBean.isPermitted(creneauBean.creneau, 'creneau:update')}"
+                        partialSubmit="true" process="@this" />
+                    <p:commandButton value="#{messages.label_close}" icon="ui-icon-close" onclick="PF('creneauRendezvoussDialogWidget').hide()" type="button" />
+                </div>
+            </h:form>
+        </p:outputPanel>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="createRendezvousDialog"
+        rendered="#{creneauBean.isPermitted('rendezvous:create')}"
+        header="#{messages.dialog_creneau_create_rendezvous}" modal="true"
+        widgetVar="createRendezvousDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{rendezvousBean.reset}" />
+        <p:outputPanel id="createRendezvousPanel">
+                <h:form id="createRendezvousForm">
+                    <ui:include src="/pages/rendezvous/rendezvousEditInclude.xhtml">
+                        <ui:param name="hideCreneauSelectInput" value="true" />
+                    </ui:include>
+                    <div style="text-align: center; margin: 10px">
+                        <p:commandButton
+                            action="#{creneauBean.updateRendezvous(rendezvousBean.rendezvous)}"
+                            value="#{messages.label_save}" icon="ui-icon-disk"
+                            actionListener="#{rendezvousBean.persist}"
+                            update=":creneauRendezvoussPanel :createRendezvousPanel :growlForm:growl"
+                            oncomplete="if(!args.validationFailed) PF('createRendezvousDialogWidget').hide()" />
+                        <p:commandButton value="#{messages.label_close}"
+                            icon="ui-icon-close"
+                            onclick="PF('createRendezvousDialogWidget').hide()"
+                            type="button" />
+                    </div>
+                </h:form>
+            </p:outputPanel>
+    </p:dialog>
+    
+  </ui:define>
+</ui:composition>
+</html>

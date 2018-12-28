@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:o="http://omnifaces.org/ui">
+<ui:composition template="/templates/layout.xhtml">
+  <ui:define name="content">
+
+    <h:form prependId="false" id="examenDataForm" onkeypress="if (event.keyCode == 13) {return false; }">
+
+        <p:dataTable id="examenTable" value="#{examenBean.lazyModel}" var="examen" resizableColumns="true" paginator="true"
+                paginatorTemplate=" {CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                rowsPerPageTemplate="5,10,25,50" rows="10" draggableColumns="true" lazy="true"
+                paginatorPosition="bottom" widgetVar="examenTable" emptyMessage="#{messages.label_no_records_found}"
+                reflow="true">
+        
+          <f:facet name="header" >
+
+              <p:commandButton value="#{messages.create_new_examen}" icon="ui-icon-plusthick" action="#{examenBean.prepareNewExamen()}"
+                      resetValues="true" update=":editExamenDialog" oncomplete="PF('editExamenDialogWidget').show()"
+                      rendered="#{examenBean.isPermitted('examen:create')}" style="float:left" />
+              
+              <p:commandButton id="toggler" type="button" value="#{messages.table_select_columns}" icon="ui-icon-calculator" />
+              <p:columnToggler datasource="examenTable" trigger="toggler" />
+          </f:facet>
+          
+          <p:column  headerText="#{messages.field_label_examen_designation}" sortBy="#{examen.designation}" filterBy="#{examen.designation}">
+            <f:facet name="filter">
+                <p:inputText id="designationFilter"
+                        onkeypress="if (event.keyCode == 13) {PF('examenTable').filter(); updateDesignationFilter(); return false; }" >
+                    <p:remoteCommand name="updateDesignationFilter" update="examenTable:designationFilter" />
+                </p:inputText>
+            </f:facet>
+            <h:outputText value="#{examen.designation}" />
+          </p:column>
+
+          <p:column headerText="#{messages.field_label_examen_prix}" sortBy="#{examen.prix}" filterBy="#{examen.prix}">
+            <f:facet name="filter">
+                <p:inputText id="prixFilter"
+                        onkeypress="if (event.keyCode == 13) {PF('examenTable').filter(); updatePrixFilter(); return false; }" >
+                    <f:convertNumber />
+                    <p:remoteCommand name="updatePrixFilter" update="examenTable:prixFilter" />
+                </p:inputText>
+            </f:facet>
+            <h:outputText value="#{examen.prix}"><f:convertNumber /></h:outputText>
+          </p:column>
+
+          <p:column  headerText="#{messages.field_label_examen_type}" sortBy="#{examen.type}" filterBy="#{examen.type}">
+            <f:facet name="filter">
+                <p:inputText id="typeFilter"
+                        onkeypress="if (event.keyCode == 13) {PF('examenTable').filter(); updateTypeFilter(); return false; }" >
+                    <p:remoteCommand name="updateTypeFilter" update="examenTable:typeFilter" />
+                </p:inputText>
+            </f:facet>
+            <h:outputText value="#{examen.type}" />
+          </p:column>
+
+          <p:column headerText="#{messages.field_label_examen_consultation_plural}" styleClass="action-column" exportable="false">
+            
+            <p:commandButton icon="ui-icon-transfer-e-w"  title="#{messages.field_label_examen_consultation_plural}" action="#{examenBean.onConsultationsDialog(examen)}" oncomplete="PF('examenConsultationsDialogWidget').show()" update=":examenConsultationsDialog"/>
+            
+          </p:column>
+          
+          <p:column headerText="#{messages.field_label_examen_labo_plural}" styleClass="action-column" exportable="false">
+            
+            <p:commandButton icon="ui-icon-transfer-e-w"  title="#{messages.field_label_examen_labo_plural}" action="#{examenBean.onLabosDialog(examen)}" oncomplete="PF('examenLabosDialogWidget').show()" update=":examenLabosDialog"/>
+            
+          </p:column>
+          
+          <p:column styleClass="action-column" headerText="#{messages.table_actions_column}" width="115" exportable="false">
+            
+            <p:commandButton icon="ui-icon-zoomin" update=":viewExamenDialog" oncomplete="PF('viewExamenDialogWidget').show()" title="#{messages.label_view}">
+              <f:setPropertyActionListener value="#{examen}" target="#{examenBean.examen}" />
+            </p:commandButton>
+
+            <p:commandButton icon="ui-icon-pencil" update=":editExamenDialog"
+                resetValues="true" rendered="#{examenBean.isPermitted(examen, 'examen:update')}"
+                action="#{examenBean.onDialogOpen(examen)}"
+                oncomplete="PF('editExamenDialogWidget').show()"
+                title="#{messages.label_edit}" >
+            </p:commandButton>
+
+            <p:commandButton icon="ui-icon-close" rendered="#{examenBean.isPermitted(examen, 'examen:delete')}"
+                oncomplete="PF('deleteExamenDialogWidget').show()"
+                title="#{messages.label_delete}" >
+                <f:setPropertyActionListener value="#{examen}"
+                    target="#{examenBean.examen}" />
+            </p:commandButton>
+    
+          </p:column>
+          
+        </p:dataTable>
+        
+    </h:form>
+
+    <p:confirmDialog id="deleteExamenDialog" widgetVar="deleteExamenDialogWidget"
+        rendered="#{examenBean.isPermitted(examenBean.examen, 'examen:delete')}" header="#{messages.label_confirm_deletion}"
+        severity="alarm">
+        <f:facet name="message"><h:outputText value="#{messages.label_delete_record}" escape="false"/></f:facet>
+        <p:outputPanel>
+          <h:form>
+            <div style="text-align: center; margin:10px">
+              <p:commandButton value="#{messages.label_yes}" action="#{examenBean.delete}" update=":examenDataForm :growlForm:growl" oncomplete="PF('deleteExamenDialogWidget').hide()" />
+              <p:commandButton value="#{messages.label_no}" onclick="PF('deleteExamenDialogWidget').hide()" type="button" />
+            </div>
+          </h:form>
+        </p:outputPanel>
+    </p:confirmDialog>
+    
+    <p:dialog dynamic="true" id="editExamenDialog" header="#{messages.label_examen_caption}"
+            modal="true" widgetVar="editExamenDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{examenBean.reset}"/>
+        <h:form id="editExamenForm" >
+            <p:outputPanel id="examenEditPanel">
+                <ui:include src="/pages/examen/examenEditInclude.xhtml"/>
+                <div style="text-align: center; margin:10px">
+                    <p:commandButton value="#{messages.label_save}"
+                            icon="ui-icon-disk" action="#{examenBean.persist}"
+                            update=":editExamenForm:examenEditPanel :examenDataForm :growlForm:growl"
+                            oncomplete="if(!args.validationFailed) PF('editExamenDialogWidget').hide()" />
+                    <p:commandButton value="#{messages.label_close}" icon="ui-icon-close" onclick="PF('editExamenDialogWidget').hide()" type="button" />
+                </div>
+            </p:outputPanel>
+        </h:form>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="viewExamenDialog" header="#{messages.label_examen_caption}" modal="true" widgetVar="viewExamenDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{examenBean.reset}" />
+        <h:form id="viewExamenForm">
+          <ui:include src="/pages/examen/examenViewInclude.xhtml"/>
+          <div style="text-align: center; margin:10px">
+              <p:commandButton value="#{messages.label_close}" icon="ui-icon-close" onclick="PF('viewExamenDialogWidget').hide()" type="button" />
+          </div>
+        </h:form>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="examenConsultationsDialog" header="#{messages.dialog_header_examen_consultation_plural}" modal="true" widgetVar="examenConsultationsDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{examenBean.reset}" />
+        <p:outputPanel id="examenConsultationsPanel">
+            <h:form id="examenConsultationsForm">
+                <ui:include src="/pages/examen/examenConsultationInclude.xhtml" />
+                <div style="text-align: center; margin:10px">
+                    <p:commandButton value="#{messages.label_save}"
+                        icon="ui-icon-disk"
+                        action="#{examenBean.onConsultationsSubmit}"
+                        update=":growlForm:growl"
+                        oncomplete="if(!args.validationFailed) PF('examenConsultationsDialogWidget').hide()"
+                        rendered="#{examenBean.isPermitted(examenBean.examen, 'examen:update')}"
+                        partialSubmit="true" process="@this" />
+                    <p:commandButton value="#{messages.label_close}" icon="ui-icon-close" onclick="PF('examenConsultationsDialogWidget').hide()" type="button" />
+                </div>
+            </h:form>
+        </p:outputPanel>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="examenLabosDialog" header="#{messages.dialog_header_examen_labo_plural}" modal="true" widgetVar="examenLabosDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{examenBean.reset}" />
+        <p:outputPanel id="examenLabosPanel">
+            <h:form id="examenLabosForm">
+                <ui:include src="/pages/examen/examenLaboInclude.xhtml" />
+                <div style="text-align: center; margin:10px">
+                    <p:commandButton value="#{messages.label_save}"
+                        icon="ui-icon-disk"
+                        action="#{examenBean.onLabosSubmit}"
+                        update=":growlForm:growl"
+                        oncomplete="if(!args.validationFailed) PF('examenLabosDialogWidget').hide()"
+                        rendered="#{examenBean.isPermitted(examenBean.examen, 'examen:update')}"
+                        partialSubmit="true" process="@this" />
+                    <p:commandButton value="#{messages.label_close}" icon="ui-icon-close" onclick="PF('examenLabosDialogWidget').hide()" type="button" />
+                </div>
+            </h:form>
+        </p:outputPanel>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="createConsultationDialog"
+        rendered="#{examenBean.isPermitted('consultation:create')}"
+        header="#{messages.dialog_examen_create_consultation}" modal="true"
+        widgetVar="createConsultationDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{consultationBean.reset}" />
+        <p:outputPanel id="createConsultationPanel">
+                <h:form id="createConsultationForm">
+                    <ui:include src="/pages/consultation/consultationEditInclude.xhtml">
+                        <ui:param name="hideExamensSelectInput" value="true" />
+                    </ui:include>
+                    <div style="text-align: center; margin: 10px">
+                        <p:commandButton
+                            action="#{examenBean.updateConsultation(consultationBean.consultation)}"
+                            value="#{messages.label_save}" icon="ui-icon-disk"
+                            actionListener="#{consultationBean.persist}"
+                            update=":examenConsultationsPanel :createConsultationPanel :growlForm:growl"
+                            oncomplete="if(!args.validationFailed) PF('createConsultationDialogWidget').hide()" />
+                        <p:commandButton value="#{messages.label_close}"
+                            icon="ui-icon-close"
+                            onclick="PF('createConsultationDialogWidget').hide()"
+                            type="button" />
+                    </div>
+                </h:form>
+            </p:outputPanel>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="createLaboDialog"
+        rendered="#{examenBean.isPermitted('labo:create')}"
+        header="#{messages.dialog_examen_create_labo}" modal="true"
+        widgetVar="createLaboDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{laboBean.reset}" />
+        <p:outputPanel id="createLaboPanel">
+                <h:form id="createLaboForm">
+                    <ui:include src="/pages/labo/laboEditInclude.xhtml">
+                        <ui:param name="hideExamenSelectInput" value="true" />
+                    </ui:include>
+                    <div style="text-align: center; margin: 10px">
+                        <p:commandButton
+                            action="#{examenBean.updateLabo(laboBean.labo)}"
+                            value="#{messages.label_save}" icon="ui-icon-disk"
+                            actionListener="#{laboBean.persist}"
+                            update=":examenLabosPanel :createLaboPanel :growlForm:growl"
+                            oncomplete="if(!args.validationFailed) PF('createLaboDialogWidget').hide()" />
+                        <p:commandButton value="#{messages.label_close}"
+                            icon="ui-icon-close"
+                            onclick="PF('createLaboDialogWidget').hide()"
+                            type="button" />
+                    </div>
+                </h:form>
+            </p:outputPanel>
+    </p:dialog>
+    
+  </ui:define>
+</ui:composition>
+</html>

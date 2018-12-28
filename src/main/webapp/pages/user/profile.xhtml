@@ -1,0 +1,176 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:o="http://omnifaces.org/ui">
+<ui:composition template="/templates/layout.xhtml">
+
+<ui:define name="content">
+
+  <f:view>
+        <f:event type="preRenderView" listener="#{userBean.loadCurrentUser()}"/>
+  </f:view>
+
+  <h:form id="form1">
+    <p:messages id="messages" showDetail="false" autoUpdate="true" closable="false" />
+  </h:form>
+  
+    <p:panel>
+      <h3><h:outputText value="#{messages.profile_page}" /></h3>
+      
+      <h4><h:outputText value="#{messages.profile_my_data}" /></h4>
+        
+      <h:form prependId="false">
+      <p:panel id="userEditPanel">
+          
+            <h:panelGrid columns="3" styleClass="dialog" columnClasses="col1,col2,col3">
+              <h:outputText value="#{messages.field_label_user_username}:" />
+              <h:outputText value="#{userBean.user.username}" />
+              <h:outputText value="" />
+
+              <h:outputText value="#{messages.field_label_user_email}:" />
+              <h:outputText value="#{userBean.user.email}" />
+              <h:outputText value="" />
+    
+              <h:outputText value="#{messages.field_label_user_roles}:" />
+              <p:outputPanel>
+                <ui:repeat value="#{userBean.user.roles}" var="role">
+                    <h:outputText value="#{role}" /><br/>
+                </ui:repeat>
+              </p:outputPanel>
+              <h:outputText value="" />
+              
+                <h:outputLabel value="#{messages.field_label_user_infos}:" for="infosSelectInput" rendered="#{not hideInfosSelectInput}"/>
+                <h:panelGroup rendered="#{not hideInfosSelectInput}">
+                    <p:selectOneMenu value="#{userBean.user.infos}"
+                                    id="infosSelectInput">
+                        <f:selectItem noSelectionOption="true" itemLabel="" />
+                        <f:selectItems value="#{userBean.availableInfos}" 
+                                    var="infos" 
+                                    itemLabel="#{infos.id}"
+                                    itemValue="#{infos}" />
+                        <o:converter converterId="omnifaces.SelectItemsConverter" list="#{userBean.availableInfos}" />
+                    </p:selectOneMenu>
+                </h:panelGroup>
+                <h:panelGroup rendered="#{not hideInfosSelectInput}">
+                
+                    <p:commandButton icon="ui-icon-plusthick" title="#{messages.label_create}"
+                              action="#{infosBean.prepareNewInfos()}"
+                              update=":createInfosFromEditDialog"
+                              resetValues="true"
+                              oncomplete="PF('createInfosFromEditDialogWidget').show()"
+                              rendered="#{applicationBean.componentExists('createInfosFromEditDialog') and userBean.isPermitted('infos:create')}"
+                              style="vertical-align:top;" partialSubmit="true" process="@this">
+                    </p:commandButton>
+                    
+                    <p:message for="infosSelectInput" display="icon" rendered="#{not hideInfosSelectInput}"/>
+                </h:panelGroup>
+                
+                <h:outputLabel value="#{messages.field_label_user_hopital}:" for="hopitalSelectInput" rendered="#{not hideHopitalSelectInput}"/>
+                <h:panelGroup rendered="#{not hideHopitalSelectInput}">
+                    <p:selectOneMenu value="#{userBean.user.hopital}"
+                                    id="hopitalSelectInput">
+                        <f:selectItem noSelectionOption="true" itemLabel="" />
+                        <f:selectItems value="#{userBean.hopitals}" 
+                                    var="hopital" 
+                                    itemLabel="#{hopital.designation}"
+                                    itemValue="#{hopital}" />
+                        <o:converter converterId="omnifaces.SelectItemsConverter" list="#{userBean.hopitals}" />
+                    </p:selectOneMenu>
+                </h:panelGroup>
+                <h:panelGroup rendered="#{not hideHopitalSelectInput}">
+                
+                    <p:commandButton icon="ui-icon-plusthick" title="#{messages.label_create}"
+                              action="#{hopitalBean.prepareNewHopital()}"
+                              update=":createHopitalFromEditDialog"
+                              resetValues="true"
+                              oncomplete="PF('createHopitalFromEditDialogWidget').show()"
+                              rendered="#{applicationBean.componentExists('createHopitalFromEditDialog') and userBean.isPermitted('hopital:create')}"
+                              style="vertical-align:top;" partialSubmit="true" process="@this">
+                    </p:commandButton>
+                    
+                    <p:message for="hopitalSelectInput" display="icon" rendered="#{not hideHopitalSelectInput}"/>
+                </h:panelGroup>
+                
+                <h:outputLabel value="#{messages.field_label_user_service}:" for="serviceSelectInput" rendered="#{not hideServiceSelectInput}"/>
+                <h:panelGroup rendered="#{not hideServiceSelectInput}">
+                    <p:selectOneMenu value="#{userBean.user.service}"
+                                    id="serviceSelectInput">
+                        <f:selectItem noSelectionOption="true" itemLabel="" />
+                        <f:selectItems value="#{userBean.services}" 
+                                    var="service" 
+                                    itemLabel="#{service.designation}"
+                                    itemValue="#{service}" />
+                        <o:converter converterId="omnifaces.SelectItemsConverter" list="#{userBean.services}" />
+                    </p:selectOneMenu>
+                </h:panelGroup>
+                <h:panelGroup rendered="#{not hideServiceSelectInput}">
+                
+                    <p:commandButton icon="ui-icon-plusthick" title="#{messages.label_create}"
+                              action="#{serviceBean.prepareNewService()}"
+                              update=":createServiceFromEditDialog"
+                              resetValues="true"
+                              oncomplete="PF('createServiceFromEditDialogWidget').show()"
+                              rendered="#{applicationBean.componentExists('createServiceFromEditDialog') and userBean.isPermitted('service:create')}"
+                              style="vertical-align:top;" partialSubmit="true" process="@this">
+                    </p:commandButton>
+                    
+                    <p:message for="serviceSelectInput" display="icon" rendered="#{not hideServiceSelectInput}"/>
+                </h:panelGroup>
+                
+                <h:outputLabel value="#{messages.field_label_user_matricule}:" for="matriculeEditInput" />
+                <p:inputText value="#{userBean.user.matricule}" id="matriculeEditInput" 
+                    label="#{messages.field_label_user_matricule}" />
+                <p:message for="matriculeEditInput" display="icon" />
+
+              </h:panelGrid>
+              
+              <div>
+                <p:commandButton value="#{messages.user_profile_submit}"
+                    icon="ui-icon-disk" action="#{userBean.persist}"
+                    update=":userEditPanel :growlForm:growl" />
+                <p:commandButton action="#{userProfileBean.cancel}" value="#{messages.label_cancel}" immediate="true" />
+              </div>
+
+      </p:panel>
+      </h:form>
+
+      <h4><h:outputText value="#{messages.profile_page_password_change}" /></h4>
+        
+      <h:form prependId="false">
+      <p:panel>
+      <h:panelGrid columns="3" styleClass="dialog" columnClasses="col1,col2,col3">
+
+        <h:outputText value="#{messages.user_profile_old_password}:" />
+        <p:password value="#{userProfileBean.old_password}" id="passwordOldInput" required="true"
+                      label="#{messages.user_profile_old_password}" />
+        <p:message for="passwordOldInput" display="icon" />
+
+        <h:outputText value="#{messages.user_profile_new_password}:" />
+        <p:password value="#{userProfileBean.new_password}" id="passwordEditInput" required="true" match="passwordRepeatEditInput"
+              label="#{messages.user_profile_new_password}" />
+        <p:message for="passwordEditInput" display="icon" />
+     
+        <h:outputText value="#{messages.user_profile_new_password_repeat}:" />
+        <p:password value="#{userProfileBean.new_password_repeat}" id="passwordRepeatEditInput" required="true"
+              label="#{messages.user_profile_new_password_repeat}" />
+        <p:message for="passwordRepeatEditInput" display="icon" />
+
+      </h:panelGrid>
+      
+      <div>
+        <p:commandButton action="#{userProfileBean.update}" value="#{messages.user_profile_submit}" icon="ui-icon-disk" />
+        <p:commandButton action="#{userProfileBean.cancel}" value="#{messages.label_cancel}" immediate="true" />
+      </div>
+      
+      </p:panel>
+      </h:form>
+      
+    </p:panel>
+
+</ui:define>
+</ui:composition>
+</html>

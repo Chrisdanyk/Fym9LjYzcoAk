@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:o="http://omnifaces.org/ui">
+<ui:composition template="/templates/layout.xhtml">
+  <ui:define name="content">
+
+    <h:form prependId="false" id="familleDataForm" onkeypress="if (event.keyCode == 13) {return false; }">
+
+        <p:dataTable id="familleTable" value="#{familleBean.lazyModel}" var="famille" resizableColumns="true" paginator="true"
+                paginatorTemplate=" {CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                rowsPerPageTemplate="5,10,25,50" rows="10" draggableColumns="true" lazy="true"
+                paginatorPosition="bottom" widgetVar="familleTable" emptyMessage="#{messages.label_no_records_found}"
+                reflow="true">
+        
+          <f:facet name="header" >
+
+              <p:commandButton value="#{messages.create_new_famille}" icon="ui-icon-plusthick" action="#{familleBean.prepareNewFamille()}"
+                      resetValues="true" update=":editFamilleDialog" oncomplete="PF('editFamilleDialogWidget').show()"
+                      rendered="#{familleBean.isPermitted('famille:create')}" style="float:left" />
+              
+              <p:commandButton id="toggler" type="button" value="#{messages.table_select_columns}" icon="ui-icon-calculator" />
+              <p:columnToggler datasource="familleTable" trigger="toggler" />
+          </f:facet>
+          
+          <p:column  headerText="#{messages.field_label_famille_designation}" sortBy="#{famille.designation}" filterBy="#{famille.designation}">
+            <f:facet name="filter">
+                <p:inputText id="designationFilter"
+                        onkeypress="if (event.keyCode == 13) {PF('familleTable').filter(); updateDesignationFilter(); return false; }" >
+                    <p:remoteCommand name="updateDesignationFilter" update="familleTable:designationFilter" />
+                </p:inputText>
+            </f:facet>
+            <h:outputText value="#{famille.designation}" />
+          </p:column>
+
+          <p:column  headerText="#{messages.field_label_famille_description}" sortBy="#{famille.description}" filterBy="#{famille.description}">
+            <f:facet name="filter">
+                <p:inputText id="descriptionFilter"
+                        onkeypress="if (event.keyCode == 13) {PF('familleTable').filter(); updateDescriptionFilter(); return false; }" >
+                    <p:remoteCommand name="updateDescriptionFilter" update="familleTable:descriptionFilter" />
+                </p:inputText>
+            </f:facet>
+            <h:outputText value="#{famille.description}" />
+          </p:column>
+
+          <p:column headerText="#{messages.field_label_famille_medicament_plural}" styleClass="action-column" exportable="false">
+            
+            <p:commandButton icon="ui-icon-transfer-e-w"  title="#{messages.field_label_famille_medicament_plural}" action="#{familleBean.onMedicamentsDialog(famille)}" oncomplete="PF('familleMedicamentsDialogWidget').show()" update=":familleMedicamentsDialog"/>
+            
+          </p:column>
+          
+          <p:column styleClass="action-column" headerText="#{messages.table_actions_column}" width="115" exportable="false">
+            
+            <p:commandButton icon="ui-icon-zoomin" update=":viewFamilleDialog" oncomplete="PF('viewFamilleDialogWidget').show()" title="#{messages.label_view}">
+              <f:setPropertyActionListener value="#{famille}" target="#{familleBean.famille}" />
+            </p:commandButton>
+
+            <p:commandButton icon="ui-icon-pencil" update=":editFamilleDialog"
+                resetValues="true" rendered="#{familleBean.isPermitted(famille, 'famille:update')}"
+                action="#{familleBean.onDialogOpen(famille)}"
+                oncomplete="PF('editFamilleDialogWidget').show()"
+                title="#{messages.label_edit}" >
+            </p:commandButton>
+
+            <p:commandButton icon="ui-icon-close" rendered="#{familleBean.isPermitted(famille, 'famille:delete')}"
+                oncomplete="PF('deleteFamilleDialogWidget').show()"
+                title="#{messages.label_delete}" >
+                <f:setPropertyActionListener value="#{famille}"
+                    target="#{familleBean.famille}" />
+            </p:commandButton>
+    
+          </p:column>
+          
+        </p:dataTable>
+        
+    </h:form>
+
+    <p:confirmDialog id="deleteFamilleDialog" widgetVar="deleteFamilleDialogWidget"
+        rendered="#{familleBean.isPermitted(familleBean.famille, 'famille:delete')}" header="#{messages.label_confirm_deletion}"
+        severity="alarm">
+        <f:facet name="message"><h:outputText value="#{messages.label_delete_record}" escape="false"/></f:facet>
+        <p:outputPanel>
+          <h:form>
+            <div style="text-align: center; margin:10px">
+              <p:commandButton value="#{messages.label_yes}" action="#{familleBean.delete}" update=":familleDataForm :growlForm:growl" oncomplete="PF('deleteFamilleDialogWidget').hide()" />
+              <p:commandButton value="#{messages.label_no}" onclick="PF('deleteFamilleDialogWidget').hide()" type="button" />
+            </div>
+          </h:form>
+        </p:outputPanel>
+    </p:confirmDialog>
+    
+    <p:dialog dynamic="true" id="editFamilleDialog" header="#{messages.label_famille_caption}"
+            modal="true" widgetVar="editFamilleDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{familleBean.reset}"/>
+        <h:form id="editFamilleForm" >
+            <p:outputPanel id="familleEditPanel">
+                <ui:include src="/pages/famille/familleEditInclude.xhtml"/>
+                <div style="text-align: center; margin:10px">
+                    <p:commandButton value="#{messages.label_save}"
+                            icon="ui-icon-disk" action="#{familleBean.persist}"
+                            update=":editFamilleForm:familleEditPanel :familleDataForm :growlForm:growl"
+                            oncomplete="if(!args.validationFailed) PF('editFamilleDialogWidget').hide()" />
+                    <p:commandButton value="#{messages.label_close}" icon="ui-icon-close" onclick="PF('editFamilleDialogWidget').hide()" type="button" />
+                </div>
+            </p:outputPanel>
+        </h:form>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="viewFamilleDialog" header="#{messages.label_famille_caption}" modal="true" widgetVar="viewFamilleDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{familleBean.reset}" />
+        <h:form id="viewFamilleForm">
+          <ui:include src="/pages/famille/familleViewInclude.xhtml"/>
+          <div style="text-align: center; margin:10px">
+              <p:commandButton value="#{messages.label_close}" icon="ui-icon-close" onclick="PF('viewFamilleDialogWidget').hide()" type="button" />
+          </div>
+        </h:form>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="familleMedicamentsDialog" header="#{messages.dialog_header_famille_medicament_plural}" modal="true" widgetVar="familleMedicamentsDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{familleBean.reset}" />
+        <p:outputPanel id="familleMedicamentsPanel">
+            <h:form id="familleMedicamentsForm">
+                <ui:include src="/pages/famille/familleMedicamentInclude.xhtml" />
+                <div style="text-align: center; margin:10px">
+                    <p:commandButton value="#{messages.label_save}"
+                        icon="ui-icon-disk"
+                        action="#{familleBean.onMedicamentsSubmit}"
+                        update=":growlForm:growl"
+                        oncomplete="if(!args.validationFailed) PF('familleMedicamentsDialogWidget').hide()"
+                        rendered="#{familleBean.isPermitted(familleBean.famille, 'famille:update')}"
+                        partialSubmit="true" process="@this" />
+                    <p:commandButton value="#{messages.label_close}" icon="ui-icon-close" onclick="PF('familleMedicamentsDialogWidget').hide()" type="button" />
+                </div>
+            </h:form>
+        </p:outputPanel>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="createMedicamentDialog"
+        rendered="#{familleBean.isPermitted('medicament:create')}"
+        header="#{messages.dialog_famille_create_medicament}" modal="true"
+        widgetVar="createMedicamentDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{medicamentBean.reset}" />
+        <p:outputPanel id="createMedicamentPanel">
+                <h:form id="createMedicamentForm">
+                    <ui:include src="/pages/medicament/medicamentEditInclude.xhtml">
+                        <ui:param name="hideFamilleSelectInput" value="true" />
+                    </ui:include>
+                    <div style="text-align: center; margin: 10px">
+                        <p:commandButton
+                            action="#{familleBean.updateMedicament(medicamentBean.medicament)}"
+                            value="#{messages.label_save}" icon="ui-icon-disk"
+                            actionListener="#{medicamentBean.persist}"
+                            update=":familleMedicamentsPanel :createMedicamentPanel :growlForm:growl"
+                            oncomplete="if(!args.validationFailed) PF('createMedicamentDialogWidget').hide()" />
+                        <p:commandButton value="#{messages.label_close}"
+                            icon="ui-icon-close"
+                            onclick="PF('createMedicamentDialogWidget').hide()"
+                            type="button" />
+                    </div>
+                </h:form>
+            </p:outputPanel>
+    </p:dialog>
+    
+  </ui:define>
+</ui:composition>
+</html>

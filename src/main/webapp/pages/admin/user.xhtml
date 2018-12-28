@@ -1,0 +1,608 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui">
+<ui:composition template="/templates/layout.xhtml">
+    <ui:define name="content">
+
+        <h:form prependId="false" id="userDataForm"
+            onkeypress="if (event.keyCode == 13) {return false; }">
+
+            <p:dataTable id="userTable" value="#{userBean.lazyModel}" var="user"
+                resizableColumns="true" paginator="true"
+                paginatorTemplate=" {CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                rowsPerPageTemplate="5,10,25,50" rows="10" draggableColumns="true"
+                lazy="true" paginatorPosition="bottom" widgetVar="userTable"
+                emptyMessage="#{messages.label_no_records_found}" reflow="true">
+
+                <f:facet name="header">
+                    <p:commandButton value="#{messages.create_new_user}"
+                        icon="ui-icon-plusthick" title="#{messages.label_create}"
+                        action="#{userBean.prepareNewUser()}" update=":createUserDialog"
+                        resetValues="true"
+                        oncomplete="PF('createUserDialogWidget').show()"
+                        style="float:left"
+                        rendered="#{security.isPermitted('user:create')}" />
+                    <p:commandButton id="toggler" type="button"
+                        value="#{messages.table_select_columns}" icon="ui-icon-calculator" />
+                    <p:columnToggler datasource="userTable" trigger="toggler" />
+                </f:facet>
+
+                <p:column headerText="#{messages.field_label_user_username}"
+                          sortBy="#{user.username}" filterBy="#{user.username}">
+                    <f:facet name="filter">
+                        <p:inputText id="usernameFilter"
+                                onkeypress="if (event.keyCode == 13) {PF('userTable').filter(); updateUsernameFilter(); return false; }" >
+                            <p:remoteCommand name="updateUsernameFilter" update="userTable:usernameFilter" />
+                        </p:inputText>
+                    </f:facet>
+                    <h:outputText value="#{user.username}" />
+                </p:column>
+
+                <p:column headerText="#{messages.field_label_user_email}"
+                          sortBy="#{user.email}" filterBy="#{user.email}">
+                    <f:facet name="filter">
+                        <p:inputText id="emailFilter"
+                                onkeypress="if (event.keyCode == 13) {PF('userTable').filter(); updateEmailFilter(); return false; }" >
+                            <p:remoteCommand name="updateEmailFilter" update="userTable:emailFilter" />
+                        </p:inputText>
+                    </f:facet>
+                    <h:outputText value="#{user.email}" />
+                </p:column>
+                
+                <p:column headerText="#{messages.field_label_user_status}"
+                          sortBy="#{user.status}" filterBy="#{user.status}">
+                    <f:facet name="filter">
+                        <p:selectOneMenu  id="statusFilter"
+                                        style="width:145px;"
+                                        onchange="PF('userTable').filter(); return false;">
+                            <f:selectItem noSelectionOption="true" itemLabel="" />
+                            <f:selectItems value="#{userBean.statusSelectItems}" />
+                        </p:selectOneMenu>
+                    </f:facet>
+                    <h:outputText value="#{user.status.toString()}" />
+                </p:column>
+                
+                <p:column headerText="#{messages.field_label_user_createdAt}"
+                          sortBy="#{user.createdAt}">
+                    <h:outputText value="#{user.createdAt}"><f:convertDateTime /></h:outputText>
+                </p:column>
+
+          <p:column headerText="#{messages.field_label_user_hopital}" sortBy="#{user.hopital}" filterBy="#{user.hopital}">
+            <f:facet name="filter">
+            <p:selectOneMenu  id="hopitalFilter"
+                            style="width:145px;"
+                            onchange="PF('userTable').filter(); return false;">
+                <f:selectItem noSelectionOption="true" itemLabel="" />
+                <f:selectItems itemLabel="#{hopital.designation}"
+                            value="#{userBean.hopitals}" 
+                            var="hopital" 
+                            itemValue="#{hopital}" />
+                <o:converter converterId="omnifaces.SelectItemsConverter" list="#{userBean.hopitals}" />
+            </p:selectOneMenu>
+            </f:facet>
+            <h:outputText value="#{user.hopital.designation}" />
+          </p:column>
+
+          <p:column headerText="#{messages.field_label_user_service}" sortBy="#{user.service}" filterBy="#{user.service}">
+            <f:facet name="filter">
+            <p:selectOneMenu  id="serviceFilter"
+                            style="width:145px;"
+                            onchange="PF('userTable').filter(); return false;">
+                <f:selectItem noSelectionOption="true" itemLabel="" />
+                <f:selectItems itemLabel="#{service.designation}"
+                            value="#{userBean.services}" 
+                            var="service" 
+                            itemValue="#{service}" />
+                <o:converter converterId="omnifaces.SelectItemsConverter" list="#{userBean.services}" />
+            </p:selectOneMenu>
+            </f:facet>
+            <h:outputText value="#{user.service.designation}" />
+          </p:column>
+
+          <p:column  headerText="#{messages.field_label_user_matricule}" sortBy="#{user.matricule}" filterBy="#{user.matricule}">
+            <f:facet name="filter">
+                <p:inputText id="matriculeFilter"
+                        onkeypress="if (event.keyCode == 13) {PF('userTable').filter(); updateMatriculeFilter(); return false; }" >
+                    <p:remoteCommand name="updateMatriculeFilter" update="userTable:matriculeFilter" />
+                </p:inputText>
+            </f:facet>
+            <h:outputText value="#{user.matricule}" />
+          </p:column>
+
+          <p:column headerText="#{messages.field_label_user_vente_plural}" styleClass="action-column" exportable="false">
+            
+            <p:commandButton icon="ui-icon-transfer-e-w"  title="#{messages.field_label_user_vente_plural}" action="#{userBean.onVentesDialog(user)}" oncomplete="PF('userVentesDialogWidget').show()" update=":userVentesDialog"/>
+            
+          </p:column>
+          
+          <p:column headerText="#{messages.field_label_user_creneau_plural}" styleClass="action-column" exportable="false">
+            
+            <p:commandButton icon="ui-icon-transfer-e-w"  title="#{messages.field_label_user_creneau_plural}" action="#{userBean.onCreneausDialog(user)}" oncomplete="PF('userCreneausDialogWidget').show()" update=":userCreneausDialog"/>
+            
+          </p:column>
+          
+          <p:column headerText="#{messages.field_label_user_consultation_plural}" styleClass="action-column" exportable="false">
+            
+            <p:commandButton icon="ui-icon-transfer-e-w"  title="#{messages.field_label_user_consultation_plural}" action="#{userBean.onConsultationsDialog(user)}" oncomplete="PF('userConsultationsDialogWidget').show()" update=":userConsultationsDialog"/>
+            
+          </p:column>
+          
+          <p:column headerText="#{messages.field_label_user_consultation2_plural}" styleClass="action-column" exportable="false">
+            
+            <p:commandButton icon="ui-icon-transfer-e-w"  title="#{messages.field_label_user_consultation2_plural}" action="#{userBean.onConsultation2sDialog(user)}" oncomplete="PF('userConsultation2sDialogWidget').show()" update=":userConsultation2sDialog"/>
+            
+          </p:column>
+          
+          <p:column headerText="#{messages.field_label_user_consultation3_plural}" styleClass="action-column" exportable="false">
+            
+            <p:commandButton icon="ui-icon-transfer-e-w"  title="#{messages.field_label_user_consultation3_plural}" action="#{userBean.onConsultation3sDialog(user)}" oncomplete="PF('userConsultation3sDialogWidget').show()" update=":userConsultation3sDialog"/>
+            
+          </p:column>
+          
+          <p:column headerText="#{messages.field_label_user_labo_plural}" styleClass="action-column" exportable="false">
+            
+            <p:commandButton icon="ui-icon-transfer-e-w"  title="#{messages.field_label_user_labo_plural}" action="#{userBean.onLabosDialog(user)}" oncomplete="PF('userLabosDialogWidget').show()" update=":userLabosDialog"/>
+            
+          </p:column>
+          
+                <p:column styleClass="action-column"
+                    headerText="#{messages.table_actions_column}" width="115"
+                    exportable="false">
+
+                    <p:commandButton icon="ui-icon-zoomin" update=":viewUserDialog"
+                        oncomplete="PF('viewUserDialogWidget').show()"
+                        title="#{messages.label_view}">
+                        <f:setPropertyActionListener value="#{user}"
+                            target="#{userBean.user}" />
+                    </p:commandButton>
+
+                    <p:commandButton icon="ui-icon-pencil" update=":editUserDialog"
+                        resetValues="true" oncomplete="PF('editUserDialogWidget').show()"
+                        title="#{messages.label_edit}"
+                        rendered="#{security.isPermitted('user:update')}">
+                        <f:setPropertyActionListener value="#{user}"
+                            target="#{userBean.user}" />
+                    </p:commandButton>
+
+                    <p:commandButton icon="ui-icon-close"
+                        oncomplete="PF('deleteUserDialogWidget').show()"
+                        title="#{messages.label_delete}"
+                        rendered="#{security.isPermitted('user:delete')}">
+                        <f:setPropertyActionListener value="#{user}"
+                            target="#{userBean.user}" />
+                    </p:commandButton>
+
+                </p:column>
+
+            </p:dataTable>
+
+        </h:form>
+
+        <p:confirmDialog id="deleteUserDialog"
+            widgetVar="deleteUserDialogWidget"
+            header="#{messages.label_confirm_deletion}" severity="alarm"
+            rendered="#{security.isPermitted('user:delete')}">
+            <f:facet name="message">
+                <h:outputText value="#{messages.label_delete_record}" escape="false" />
+            </f:facet>
+            <p:outputPanel>
+                <h:form>
+                    <div style="text-align: center; margin: 10px">
+                        <p:commandButton value="#{messages.label_yes}"
+                            action="#{userBean.delete}"
+                            update=":userDataForm :growlForm:growl"
+                            oncomplete="PF('deleteUserDialogWidget').hide()" />
+                        <p:commandButton value="#{messages.label_no}"
+                            onclick="PF('deleteUserDialogWidget').hide()" type="button" />
+                    </div>
+                </h:form>
+            </p:outputPanel>
+        </p:confirmDialog>
+
+        <p:dialog dynamic="true" id="viewUserDialog"
+            header="#{messages.label_user_caption}" modal="true"
+            widgetVar="viewUserDialogWidget" maximizable="true">
+            <p:ajax event="close" listener="#{userBean.reset}" />
+            <h:form id="viewUserForm">
+                <ui:include src="/pages/admin/userViewInclude.xhtml" />
+                <div style="text-align: center; margin: 10px">
+                    <p:commandButton value="#{messages.label_close}"
+                        icon="ui-icon-close" onclick="PF('viewUserDialogWidget').hide()"
+                        type="button" />
+                </div>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog dynamic="true" id="createUserDialog"
+            header="#{messages.dialog_header_create_user}" modal="true"
+            widgetVar="createUserDialogWidget" maximizable="true"
+            rendered="#{security.isPermitted('user:create')}">
+            <p:ajax event="close" listener="#{userBean.reset}" />
+            <p:outputPanel id="userCreatePanel">
+                <h:form id="createUserForm">
+                    <ui:include src="/pages/admin/userCreateInclude.xhtml" />
+                    <div style="text-align: center; margin: 10px">
+                        <p:commandButton value="#{messages.label_save}"
+                            icon="ui-icon-disk" action="#{userBean.persist}"
+                            update=":userCreatePanel :userDataForm :growlForm:growl"
+                            oncomplete="if(!args.validationFailed) PF('createUserDialogWidget').hide()" />
+                        <p:commandButton value="#{messages.label_close}"
+                            icon="ui-icon-close"
+                            onclick="PF('createUserDialogWidget').hide()" type="button" />
+                    </div>
+                </h:form>
+            </p:outputPanel>
+        </p:dialog>
+
+        <p:dialog dynamic="true" id="editUserDialog"
+            header="#{messages.dialog_header_edit_user}" modal="true"
+            widgetVar="editUserDialogWidget" maximizable="true"
+            rendered="#{security.isPermitted('user:update')}">
+            <p:ajax event="close" listener="#{userBean.reset}" />
+            <p:outputPanel id="userEditPanel">
+                <h:form id="editUserForm">
+                    <ui:include src="/pages/admin/userEditInclude.xhtml" />
+                    <div style="text-align: center; margin: 10px">
+                        <p:commandButton value="#{messages.label_save}"
+                            icon="ui-icon-disk" action="#{userBean.persist}"
+                            update=":userEditPanel :userDataForm :growlForm:growl"
+                            oncomplete="if(!args.validationFailed) PF('editUserDialogWidget').hide()" />
+                        <p:commandButton value="#{messages.label_close}"
+                            icon="ui-icon-close" onclick="PF('editUserDialogWidget').hide()"
+                            type="button" />
+                    </div>
+                </h:form>
+            </p:outputPanel>
+        </p:dialog>
+
+    <p:dialog dynamic="true" id="createHopitalFromEditDialog"
+        rendered="#{userBean.isPermitted('hopital:create')}"
+        header="#{messages.dialog_user_create_hopital}" modal="true"
+        widgetVar="createHopitalFromEditDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{hopitalBean.reset}" />
+        <p:outputPanel id="createHopitalPanel">
+                <h:form id="createHopitalForm">
+                    <ui:include src="/pages/hopital/hopitalEditInclude.xhtml">
+                        <ui:param name="hideUserSelectInput" value="true" />
+                    </ui:include>
+                    <div style="text-align: center; margin: 10px">
+                        <p:commandButton
+                            action="#{userBean.updateHopital(hopitalBean.hopital)}"
+                            value="#{messages.label_save}" icon="ui-icon-disk"
+                            actionListener="#{hopitalBean.persist}"
+                            update=":editUserForm:hopitalSelectInput :createHopitalPanel :growlForm:growl"
+                            oncomplete="if(!args.validationFailed) PF('createHopitalFromEditDialogWidget').hide()" />
+                        <p:commandButton value="#{messages.label_close}"
+                            icon="ui-icon-close"
+                            onclick="PF('createHopitalFromEditDialogWidget').hide()"
+                            type="button" />
+                    </div>
+                </h:form>
+            </p:outputPanel>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="createServiceFromEditDialog"
+        rendered="#{userBean.isPermitted('service:create')}"
+        header="#{messages.dialog_user_create_service}" modal="true"
+        widgetVar="createServiceFromEditDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{serviceBean.reset}" />
+        <p:outputPanel id="createServicePanel">
+                <h:form id="createServiceForm">
+                    <ui:include src="/pages/service/serviceEditInclude.xhtml">
+                        <ui:param name="hideUserSelectInput" value="true" />
+                    </ui:include>
+                    <div style="text-align: center; margin: 10px">
+                        <p:commandButton
+                            action="#{userBean.updateService(serviceBean.service)}"
+                            value="#{messages.label_save}" icon="ui-icon-disk"
+                            actionListener="#{serviceBean.persist}"
+                            update=":editUserForm:serviceSelectInput :createServicePanel :growlForm:growl"
+                            oncomplete="if(!args.validationFailed) PF('createServiceFromEditDialogWidget').hide()" />
+                        <p:commandButton value="#{messages.label_close}"
+                            icon="ui-icon-close"
+                            onclick="PF('createServiceFromEditDialogWidget').hide()"
+                            type="button" />
+                    </div>
+                </h:form>
+            </p:outputPanel>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="createInfosFromEditDialog"
+        rendered="#{userBean.isPermitted('infos:create')}"
+        header="#{messages.dialog_user_create_infos}" modal="true"
+        widgetVar="createInfosFromEditDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{infosBean.reset}" />
+        <p:outputPanel id="createInfosFromEditPanel">
+                <h:form id="createInfosFromEditForm">
+                    <ui:include src="/pages/infos/infosEditInclude.xhtml">
+                        <ui:param name="hideUserSelectInput" value="true" />
+                    </ui:include>
+                    <div style="text-align: center; margin: 10px">
+                        <p:commandButton
+                            action="#{userBean.updateInfos(infosBean.infos)}"
+                            value="#{messages.label_save}" icon="ui-icon-disk"
+                            actionListener="#{infosBean.persist}"
+                            update=":editUserForm:infosSelectInput :createInfosFromEditPanel :growlForm:growl"
+                            oncomplete="if(!args.validationFailed) PF('createInfosFromEditDialogWidget').hide()" />
+                        <p:commandButton value="#{messages.label_close}"
+                            icon="ui-icon-close"
+                            onclick="PF('createInfosFromEditDialogWidget').hide()"
+                            type="button" />
+                    </div>
+                </h:form>
+            </p:outputPanel>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="userVentesDialog" header="#{messages.dialog_header_user_vente_plural}" modal="true" widgetVar="userVentesDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{userBean.reset}" />
+        <p:outputPanel id="userVentesPanel">
+            <h:form id="userVentesForm">
+                <ui:include src="/pages/admin/userVenteInclude.xhtml" />
+                <div style="text-align: center; margin:10px">
+                    <p:commandButton value="#{messages.label_save}"
+                        icon="ui-icon-disk"
+                        action="#{userBean.onVentesSubmit}"
+                        update=":growlForm:growl"
+                        oncomplete="if(!args.validationFailed) PF('userVentesDialogWidget').hide()"
+                        partialSubmit="true" process="@this" />
+                    <p:commandButton value="#{messages.label_close}" icon="ui-icon-close" onclick="PF('userVentesDialogWidget').hide()" type="button" />
+                </div>
+            </h:form>
+        </p:outputPanel>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="userCreneausDialog" header="#{messages.dialog_header_user_creneau_plural}" modal="true" widgetVar="userCreneausDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{userBean.reset}" />
+        <p:outputPanel id="userCreneausPanel">
+            <h:form id="userCreneausForm">
+                <ui:include src="/pages/admin/userCreneauInclude.xhtml" />
+                <div style="text-align: center; margin:10px">
+                    <p:commandButton value="#{messages.label_save}"
+                        icon="ui-icon-disk"
+                        action="#{userBean.onCreneausSubmit}"
+                        update=":growlForm:growl"
+                        oncomplete="if(!args.validationFailed) PF('userCreneausDialogWidget').hide()"
+                        partialSubmit="true" process="@this" />
+                    <p:commandButton value="#{messages.label_close}" icon="ui-icon-close" onclick="PF('userCreneausDialogWidget').hide()" type="button" />
+                </div>
+            </h:form>
+        </p:outputPanel>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="userConsultationsDialog" header="#{messages.dialog_header_user_consultation_plural}" modal="true" widgetVar="userConsultationsDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{userBean.reset}" />
+        <p:outputPanel id="userConsultationsPanel">
+            <h:form id="userConsultationsForm">
+                <ui:include src="/pages/admin/userConsultationInclude.xhtml" />
+                <div style="text-align: center; margin:10px">
+                    <p:commandButton value="#{messages.label_save}"
+                        icon="ui-icon-disk"
+                        action="#{userBean.onConsultationsSubmit}"
+                        update=":growlForm:growl"
+                        oncomplete="if(!args.validationFailed) PF('userConsultationsDialogWidget').hide()"
+                        partialSubmit="true" process="@this" />
+                    <p:commandButton value="#{messages.label_close}" icon="ui-icon-close" onclick="PF('userConsultationsDialogWidget').hide()" type="button" />
+                </div>
+            </h:form>
+        </p:outputPanel>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="userConsultation2sDialog" header="#{messages.dialog_header_user_consultation2_plural}" modal="true" widgetVar="userConsultation2sDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{userBean.reset}" />
+        <p:outputPanel id="userConsultation2sPanel">
+            <h:form id="userConsultation2sForm">
+                <ui:include src="/pages/admin/userConsultation2Include.xhtml" />
+                <div style="text-align: center; margin:10px">
+                    <p:commandButton value="#{messages.label_save}"
+                        icon="ui-icon-disk"
+                        action="#{userBean.onConsultation2sSubmit}"
+                        update=":growlForm:growl"
+                        oncomplete="if(!args.validationFailed) PF('userConsultation2sDialogWidget').hide()"
+                        partialSubmit="true" process="@this" />
+                    <p:commandButton value="#{messages.label_close}" icon="ui-icon-close" onclick="PF('userConsultation2sDialogWidget').hide()" type="button" />
+                </div>
+            </h:form>
+        </p:outputPanel>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="userConsultation3sDialog" header="#{messages.dialog_header_user_consultation3_plural}" modal="true" widgetVar="userConsultation3sDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{userBean.reset}" />
+        <p:outputPanel id="userConsultation3sPanel">
+            <h:form id="userConsultation3sForm">
+                <ui:include src="/pages/admin/userConsultation3Include.xhtml" />
+                <div style="text-align: center; margin:10px">
+                    <p:commandButton value="#{messages.label_save}"
+                        icon="ui-icon-disk"
+                        action="#{userBean.onConsultation3sSubmit}"
+                        update=":growlForm:growl"
+                        oncomplete="if(!args.validationFailed) PF('userConsultation3sDialogWidget').hide()"
+                        partialSubmit="true" process="@this" />
+                    <p:commandButton value="#{messages.label_close}" icon="ui-icon-close" onclick="PF('userConsultation3sDialogWidget').hide()" type="button" />
+                </div>
+            </h:form>
+        </p:outputPanel>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="userLabosDialog" header="#{messages.dialog_header_user_labo_plural}" modal="true" widgetVar="userLabosDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{userBean.reset}" />
+        <p:outputPanel id="userLabosPanel">
+            <h:form id="userLabosForm">
+                <ui:include src="/pages/admin/userLaboInclude.xhtml" />
+                <div style="text-align: center; margin:10px">
+                    <p:commandButton value="#{messages.label_save}"
+                        icon="ui-icon-disk"
+                        action="#{userBean.onLabosSubmit}"
+                        update=":growlForm:growl"
+                        oncomplete="if(!args.validationFailed) PF('userLabosDialogWidget').hide()"
+                        partialSubmit="true" process="@this" />
+                    <p:commandButton value="#{messages.label_close}" icon="ui-icon-close" onclick="PF('userLabosDialogWidget').hide()" type="button" />
+                </div>
+            </h:form>
+        </p:outputPanel>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="createVenteDialog"
+        rendered="#{userBean.isPermitted('vente:create')}"
+        header="#{messages.dialog_user_create_vente}" modal="true"
+        widgetVar="createVenteDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{venteBean.reset}" />
+        <p:outputPanel id="createVentePanel">
+                <h:form id="createVenteForm">
+                    <ui:include src="/pages/vente/venteEditInclude.xhtml">
+                        <ui:param name="hidePharmacienSelectInput" value="true" />
+                    </ui:include>
+                    <div style="text-align: center; margin: 10px">
+                        <p:commandButton
+                            action="#{userBean.updateVente(venteBean.vente)}"
+                            value="#{messages.label_save}" icon="ui-icon-disk"
+                            actionListener="#{venteBean.persist}"
+                            update=":userVentesPanel :createVentePanel :growlForm:growl"
+                            oncomplete="if(!args.validationFailed) PF('createVenteDialogWidget').hide()" />
+                        <p:commandButton value="#{messages.label_close}"
+                            icon="ui-icon-close"
+                            onclick="PF('createVenteDialogWidget').hide()"
+                            type="button" />
+                    </div>
+                </h:form>
+            </p:outputPanel>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="createCreneauDialog"
+        rendered="#{userBean.isPermitted('creneau:create')}"
+        header="#{messages.dialog_user_create_creneau}" modal="true"
+        widgetVar="createCreneauDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{creneauBean.reset}" />
+        <p:outputPanel id="createCreneauPanel">
+                <h:form id="createCreneauForm">
+                    <ui:include src="/pages/creneau/creneauEditInclude.xhtml">
+                        <ui:param name="hideMedecinSelectInput" value="true" />
+                    </ui:include>
+                    <div style="text-align: center; margin: 10px">
+                        <p:commandButton
+                            action="#{userBean.updateCreneau(creneauBean.creneau)}"
+                            value="#{messages.label_save}" icon="ui-icon-disk"
+                            actionListener="#{creneauBean.persist}"
+                            update=":userCreneausPanel :createCreneauPanel :growlForm:growl"
+                            oncomplete="if(!args.validationFailed) PF('createCreneauDialogWidget').hide()" />
+                        <p:commandButton value="#{messages.label_close}"
+                            icon="ui-icon-close"
+                            onclick="PF('createCreneauDialogWidget').hide()"
+                            type="button" />
+                    </div>
+                </h:form>
+            </p:outputPanel>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="createConsultationDialog"
+        rendered="#{userBean.isPermitted('consultation:create')}"
+        header="#{messages.dialog_user_create_consultation}" modal="true"
+        widgetVar="createConsultationDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{consultationBean.reset}" />
+        <p:outputPanel id="createConsultationPanel">
+                <h:form id="createConsultationForm">
+                    <ui:include src="/pages/consultation/consultationEditInclude.xhtml">
+                        <ui:param name="hideMedecinSelectInput" value="true" />
+                    </ui:include>
+                    <div style="text-align: center; margin: 10px">
+                        <p:commandButton
+                            action="#{userBean.updateConsultation(consultationBean.consultation)}"
+                            value="#{messages.label_save}" icon="ui-icon-disk"
+                            actionListener="#{consultationBean.persist}"
+                            update=":userConsultationsPanel :createConsultationPanel :growlForm:growl"
+                            oncomplete="if(!args.validationFailed) PF('createConsultationDialogWidget').hide()" />
+                        <p:commandButton value="#{messages.label_close}"
+                            icon="ui-icon-close"
+                            onclick="PF('createConsultationDialogWidget').hide()"
+                            type="button" />
+                    </div>
+                </h:form>
+            </p:outputPanel>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="createConsultation2Dialog"
+        rendered="#{userBean.isPermitted('consultation:create')}"
+        header="#{messages.dialog_user_create_consultation2}" modal="true"
+        widgetVar="createConsultation2DialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{consultationBean.reset}" />
+        <p:outputPanel id="createConsultation2Panel">
+                <h:form id="createConsultation2Form">
+                    <ui:include src="/pages/consultation/consultationEditInclude.xhtml">
+                        <ui:param name="hideInfirmierSelectInput" value="true" />
+                    </ui:include>
+                    <div style="text-align: center; margin: 10px">
+                        <p:commandButton
+                            action="#{userBean.updateConsultation2(consultationBean.consultation)}"
+                            value="#{messages.label_save}" icon="ui-icon-disk"
+                            actionListener="#{consultationBean.persist}"
+                            update=":userConsultation2sPanel :createConsultation2Panel :growlForm:growl"
+                            oncomplete="if(!args.validationFailed) PF('createConsultation2DialogWidget').hide()" />
+                        <p:commandButton value="#{messages.label_close}"
+                            icon="ui-icon-close"
+                            onclick="PF('createConsultation2DialogWidget').hide()"
+                            type="button" />
+                    </div>
+                </h:form>
+            </p:outputPanel>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="createConsultation3Dialog"
+        rendered="#{userBean.isPermitted('consultation:create')}"
+        header="#{messages.dialog_user_create_consultation3}" modal="true"
+        widgetVar="createConsultation3DialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{consultationBean.reset}" />
+        <p:outputPanel id="createConsultation3Panel">
+                <h:form id="createConsultation3Form">
+                    <ui:include src="/pages/consultation/consultationEditInclude.xhtml">
+                        <ui:param name="hideLaborantinSelectInput" value="true" />
+                    </ui:include>
+                    <div style="text-align: center; margin: 10px">
+                        <p:commandButton
+                            action="#{userBean.updateConsultation3(consultationBean.consultation)}"
+                            value="#{messages.label_save}" icon="ui-icon-disk"
+                            actionListener="#{consultationBean.persist}"
+                            update=":userConsultation3sPanel :createConsultation3Panel :growlForm:growl"
+                            oncomplete="if(!args.validationFailed) PF('createConsultation3DialogWidget').hide()" />
+                        <p:commandButton value="#{messages.label_close}"
+                            icon="ui-icon-close"
+                            onclick="PF('createConsultation3DialogWidget').hide()"
+                            type="button" />
+                    </div>
+                </h:form>
+            </p:outputPanel>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="createLaboDialog"
+        rendered="#{userBean.isPermitted('labo:create')}"
+        header="#{messages.dialog_user_create_labo}" modal="true"
+        widgetVar="createLaboDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{laboBean.reset}" />
+        <p:outputPanel id="createLaboPanel">
+                <h:form id="createLaboForm">
+                    <ui:include src="/pages/labo/laboEditInclude.xhtml">
+                        <ui:param name="hideLaborantinSelectInput" value="true" />
+                    </ui:include>
+                    <div style="text-align: center; margin: 10px">
+                        <p:commandButton
+                            action="#{userBean.updateLabo(laboBean.labo)}"
+                            value="#{messages.label_save}" icon="ui-icon-disk"
+                            actionListener="#{laboBean.persist}"
+                            update=":userLabosPanel :createLaboPanel :growlForm:growl"
+                            oncomplete="if(!args.validationFailed) PF('createLaboDialogWidget').hide()" />
+                        <p:commandButton value="#{messages.label_close}"
+                            icon="ui-icon-close"
+                            onclick="PF('createLaboDialogWidget').hide()"
+                            type="button" />
+                    </div>
+                </h:form>
+            </p:outputPanel>
+    </p:dialog>
+    
+    </ui:define>
+
+</ui:composition>
+</html>

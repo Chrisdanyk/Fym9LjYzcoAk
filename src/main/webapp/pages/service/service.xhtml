@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:o="http://omnifaces.org/ui">
+<ui:composition template="/templates/layout.xhtml">
+  <ui:define name="content">
+
+    <h:form prependId="false" id="serviceDataForm" onkeypress="if (event.keyCode == 13) {return false; }">
+
+        <p:dataTable id="serviceTable" value="#{serviceBean.lazyModel}" var="service" resizableColumns="true" paginator="true"
+                paginatorTemplate=" {CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                rowsPerPageTemplate="5,10,25,50" rows="10" draggableColumns="true" lazy="true"
+                paginatorPosition="bottom" widgetVar="serviceTable" emptyMessage="#{messages.label_no_records_found}"
+                reflow="true">
+        
+          <f:facet name="header" >
+
+              <p:commandButton value="#{messages.create_new_service}" icon="ui-icon-plusthick" action="#{serviceBean.prepareNewService()}"
+                      resetValues="true" update=":editServiceDialog" oncomplete="PF('editServiceDialogWidget').show()"
+                      rendered="#{serviceBean.isPermitted('service:create')}" style="float:left" />
+              
+              <p:commandButton id="toggler" type="button" value="#{messages.table_select_columns}" icon="ui-icon-calculator" />
+              <p:columnToggler datasource="serviceTable" trigger="toggler" />
+          </f:facet>
+          
+          <p:column  headerText="#{messages.field_label_service_designation}" sortBy="#{service.designation}" filterBy="#{service.designation}">
+            <f:facet name="filter">
+                <p:inputText id="designationFilter"
+                        onkeypress="if (event.keyCode == 13) {PF('serviceTable').filter(); updateDesignationFilter(); return false; }" >
+                    <p:remoteCommand name="updateDesignationFilter" update="serviceTable:designationFilter" />
+                </p:inputText>
+            </f:facet>
+            <h:outputText value="#{service.designation}" />
+          </p:column>
+
+          <p:column  headerText="#{messages.field_label_service_description}" sortBy="#{service.description}" filterBy="#{service.description}">
+            <f:facet name="filter">
+                <p:inputText id="descriptionFilter"
+                        onkeypress="if (event.keyCode == 13) {PF('serviceTable').filter(); updateDescriptionFilter(); return false; }" >
+                    <p:remoteCommand name="updateDescriptionFilter" update="serviceTable:descriptionFilter" />
+                </p:inputText>
+            </f:facet>
+            <h:outputText value="#{service.description}" />
+          </p:column>
+
+          <p:column headerText="#{messages.field_label_service_user_plural}" styleClass="action-column" exportable="false">
+            
+            <p:commandButton icon="ui-icon-transfer-e-w"  title="#{messages.field_label_service_user_plural}" action="#{serviceBean.onUsersDialog(service)}" oncomplete="PF('serviceUsersDialogWidget').show()" update=":serviceUsersDialog"/>
+            
+          </p:column>
+          
+          <p:column styleClass="action-column" headerText="#{messages.table_actions_column}" width="115" exportable="false">
+            
+            <p:commandButton icon="ui-icon-zoomin" update=":viewServiceDialog" oncomplete="PF('viewServiceDialogWidget').show()" title="#{messages.label_view}">
+              <f:setPropertyActionListener value="#{service}" target="#{serviceBean.service}" />
+            </p:commandButton>
+
+            <p:commandButton icon="ui-icon-pencil" update=":editServiceDialog"
+                resetValues="true" rendered="#{serviceBean.isPermitted(service, 'service:update')}"
+                action="#{serviceBean.onDialogOpen(service)}"
+                oncomplete="PF('editServiceDialogWidget').show()"
+                title="#{messages.label_edit}" >
+            </p:commandButton>
+
+            <p:commandButton icon="ui-icon-close" rendered="#{serviceBean.isPermitted(service, 'service:delete')}"
+                oncomplete="PF('deleteServiceDialogWidget').show()"
+                title="#{messages.label_delete}" >
+                <f:setPropertyActionListener value="#{service}"
+                    target="#{serviceBean.service}" />
+            </p:commandButton>
+    
+          </p:column>
+          
+        </p:dataTable>
+        
+    </h:form>
+
+    <p:confirmDialog id="deleteServiceDialog" widgetVar="deleteServiceDialogWidget"
+        rendered="#{serviceBean.isPermitted(serviceBean.service, 'service:delete')}" header="#{messages.label_confirm_deletion}"
+        severity="alarm">
+        <f:facet name="message"><h:outputText value="#{messages.label_delete_record}" escape="false"/></f:facet>
+        <p:outputPanel>
+          <h:form>
+            <div style="text-align: center; margin:10px">
+              <p:commandButton value="#{messages.label_yes}" action="#{serviceBean.delete}" update=":serviceDataForm :growlForm:growl" oncomplete="PF('deleteServiceDialogWidget').hide()" />
+              <p:commandButton value="#{messages.label_no}" onclick="PF('deleteServiceDialogWidget').hide()" type="button" />
+            </div>
+          </h:form>
+        </p:outputPanel>
+    </p:confirmDialog>
+    
+    <p:dialog dynamic="true" id="editServiceDialog" header="#{messages.label_service_caption}"
+            modal="true" widgetVar="editServiceDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{serviceBean.reset}"/>
+        <h:form id="editServiceForm" >
+            <p:outputPanel id="serviceEditPanel">
+                <ui:include src="/pages/service/serviceEditInclude.xhtml"/>
+                <div style="text-align: center; margin:10px">
+                    <p:commandButton value="#{messages.label_save}"
+                            icon="ui-icon-disk" action="#{serviceBean.persist}"
+                            update=":editServiceForm:serviceEditPanel :serviceDataForm :growlForm:growl"
+                            oncomplete="if(!args.validationFailed) PF('editServiceDialogWidget').hide()" />
+                    <p:commandButton value="#{messages.label_close}" icon="ui-icon-close" onclick="PF('editServiceDialogWidget').hide()" type="button" />
+                </div>
+            </p:outputPanel>
+        </h:form>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="viewServiceDialog" header="#{messages.label_service_caption}" modal="true" widgetVar="viewServiceDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{serviceBean.reset}" />
+        <h:form id="viewServiceForm">
+          <ui:include src="/pages/service/serviceViewInclude.xhtml"/>
+          <div style="text-align: center; margin:10px">
+              <p:commandButton value="#{messages.label_close}" icon="ui-icon-close" onclick="PF('viewServiceDialogWidget').hide()" type="button" />
+          </div>
+        </h:form>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="serviceUsersDialog" header="#{messages.dialog_header_service_user_plural}" modal="true" widgetVar="serviceUsersDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{serviceBean.reset}" />
+        <p:outputPanel id="serviceUsersPanel">
+            <h:form id="serviceUsersForm">
+                <ui:include src="/pages/service/serviceUserInclude.xhtml" />
+                <div style="text-align: center; margin:10px">
+                    <p:commandButton value="#{messages.label_save}"
+                        icon="ui-icon-disk"
+                        action="#{serviceBean.onUsersSubmit}"
+                        update=":growlForm:growl"
+                        oncomplete="if(!args.validationFailed) PF('serviceUsersDialogWidget').hide()"
+                        rendered="#{serviceBean.isPermitted(serviceBean.service, 'service:update')}"
+                        partialSubmit="true" process="@this" />
+                    <p:commandButton value="#{messages.label_close}" icon="ui-icon-close" onclick="PF('serviceUsersDialogWidget').hide()" type="button" />
+                </div>
+            </h:form>
+        </p:outputPanel>
+    </p:dialog>
+    
+  </ui:define>
+</ui:composition>
+</html>

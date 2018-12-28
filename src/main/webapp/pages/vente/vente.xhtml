@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:o="http://omnifaces.org/ui">
+<ui:composition template="/templates/layout.xhtml">
+  <ui:define name="content">
+
+    <h:form prependId="false" id="venteDataForm" onkeypress="if (event.keyCode == 13) {return false; }">
+
+        <p:dataTable id="venteTable" value="#{venteBean.lazyModel}" var="vente" resizableColumns="true" paginator="true"
+                paginatorTemplate=" {CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                rowsPerPageTemplate="5,10,25,50" rows="10" draggableColumns="true" lazy="true"
+                paginatorPosition="bottom" widgetVar="venteTable" emptyMessage="#{messages.label_no_records_found}"
+                reflow="true">
+        
+          <f:facet name="header" >
+
+              <p:commandButton value="#{messages.create_new_vente}" icon="ui-icon-plusthick" action="#{venteBean.prepareNewVente()}"
+                      resetValues="true" update=":editVenteDialog" oncomplete="PF('editVenteDialogWidget').show()"
+                      rendered="#{venteBean.isPermitted('vente:create')}" style="float:left" />
+              
+              <p:commandButton id="toggler" type="button" value="#{messages.table_select_columns}" icon="ui-icon-calculator" />
+              <p:columnToggler datasource="venteTable" trigger="toggler" />
+          </f:facet>
+          
+          <p:column headerText="#{messages.field_label_vente_pharmacien}" sortBy="#{vente.pharmacien}" filterBy="#{vente.pharmacien}">
+            <f:facet name="filter">
+            <p:selectOneMenu  id="pharmacienFilter"
+                            style="width:145px;"
+                            onchange="PF('venteTable').filter(); return false;">
+                <f:selectItem noSelectionOption="true" itemLabel="" />
+                <f:selectItems itemLabel="#{user.username}"
+                            value="#{venteBean.pharmaciens}" 
+                            var="user" 
+                            itemValue="#{user}" />
+                <o:converter converterId="omnifaces.SelectItemsConverter" list="#{venteBean.pharmaciens}" />
+            </p:selectOneMenu>
+            </f:facet>
+            <h:outputText value="#{vente.pharmacien.username}" />
+          </p:column>
+
+          <p:column headerText="#{messages.field_label_vente_medicament}" sortBy="#{vente.medicament}" filterBy="#{vente.medicament}">
+            <f:facet name="filter">
+            <p:selectOneMenu  id="medicamentFilter"
+                            style="width:145px;"
+                            onchange="PF('venteTable').filter(); return false;">
+                <f:selectItem noSelectionOption="true" itemLabel="" />
+                <f:selectItems itemLabel="#{medicament.designation}"
+                            value="#{venteBean.medicaments}" 
+                            var="medicament" 
+                            itemValue="#{medicament}" />
+                <o:converter converterId="omnifaces.SelectItemsConverter" list="#{venteBean.medicaments}" />
+            </p:selectOneMenu>
+            </f:facet>
+            <h:outputText value="#{vente.medicament.designation}" />
+          </p:column>
+
+          <p:column headerText="#{messages.field_label_vente_date}" sortBy="#{vente.date}" filterBy="#{vente.date}">
+            <f:facet name="filter">
+                <p:inputText id="dateFilter"
+                        onkeyup="if (event.keyCode == 13) {PF('venteTable').filter(); updateDateFilter(); return false;}" >
+                    <p:remoteCommand name="updateDateFilter" update="venteTable:dateFilter" />
+                    <f:convertDateTime />
+                </p:inputText>
+            </f:facet>
+            <h:outputText value="#{vente.date}"><f:convertDateTime /></h:outputText>
+          </p:column>
+
+          <p:column headerText="#{messages.field_label_vente_quantite}" sortBy="#{vente.quantite}" filterBy="#{vente.quantite}">
+            <f:facet name="filter">
+                <p:inputText id="quantiteFilter"
+                        onkeypress="if (event.keyCode == 13) {PF('venteTable').filter(); updateQuantiteFilter(); return false; }" >
+                    <f:convertNumber />
+                    <p:remoteCommand name="updateQuantiteFilter" update="venteTable:quantiteFilter" />
+                </p:inputText>
+            </f:facet>
+            <h:outputText value="#{vente.quantite}"><f:convertNumber /></h:outputText>
+          </p:column>
+
+          <p:column  headerText="#{messages.field_label_vente_client}" sortBy="#{vente.client}" filterBy="#{vente.client}">
+            <f:facet name="filter">
+                <p:inputText id="clientFilter"
+                        onkeypress="if (event.keyCode == 13) {PF('venteTable').filter(); updateClientFilter(); return false; }" >
+                    <p:remoteCommand name="updateClientFilter" update="venteTable:clientFilter" />
+                </p:inputText>
+            </f:facet>
+            <h:outputText value="#{vente.client}" />
+          </p:column>
+
+          <p:column styleClass="action-column" headerText="#{messages.table_actions_column}" width="115" exportable="false">
+            
+            <p:commandButton icon="ui-icon-zoomin" update=":viewVenteDialog" oncomplete="PF('viewVenteDialogWidget').show()" title="#{messages.label_view}">
+              <f:setPropertyActionListener value="#{vente}" target="#{venteBean.vente}" />
+            </p:commandButton>
+
+            <p:commandButton icon="ui-icon-pencil" update=":editVenteDialog"
+                resetValues="true" rendered="#{venteBean.isPermitted(vente, 'vente:update')}"
+                action="#{venteBean.onDialogOpen(vente)}"
+                oncomplete="PF('editVenteDialogWidget').show()"
+                title="#{messages.label_edit}" >
+            </p:commandButton>
+
+            <p:commandButton icon="ui-icon-close" rendered="#{venteBean.isPermitted(vente, 'vente:delete')}"
+                oncomplete="PF('deleteVenteDialogWidget').show()"
+                title="#{messages.label_delete}" >
+                <f:setPropertyActionListener value="#{vente}"
+                    target="#{venteBean.vente}" />
+            </p:commandButton>
+    
+          </p:column>
+          
+        </p:dataTable>
+        
+    </h:form>
+
+    <p:confirmDialog id="deleteVenteDialog" widgetVar="deleteVenteDialogWidget"
+        rendered="#{venteBean.isPermitted(venteBean.vente, 'vente:delete')}" header="#{messages.label_confirm_deletion}"
+        severity="alarm">
+        <f:facet name="message"><h:outputText value="#{messages.label_delete_record}" escape="false"/></f:facet>
+        <p:outputPanel>
+          <h:form>
+            <div style="text-align: center; margin:10px">
+              <p:commandButton value="#{messages.label_yes}" action="#{venteBean.delete}" update=":venteDataForm :growlForm:growl" oncomplete="PF('deleteVenteDialogWidget').hide()" />
+              <p:commandButton value="#{messages.label_no}" onclick="PF('deleteVenteDialogWidget').hide()" type="button" />
+            </div>
+          </h:form>
+        </p:outputPanel>
+    </p:confirmDialog>
+    
+    <p:dialog dynamic="true" id="editVenteDialog" header="#{messages.label_vente_caption}"
+            modal="true" widgetVar="editVenteDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{venteBean.reset}"/>
+        <h:form id="editVenteForm" >
+            <p:outputPanel id="venteEditPanel">
+                <ui:include src="/pages/vente/venteEditInclude.xhtml"/>
+                <div style="text-align: center; margin:10px">
+                    <p:commandButton value="#{messages.label_save}"
+                            icon="ui-icon-disk" action="#{venteBean.persist}"
+                            update=":editVenteForm:venteEditPanel :venteDataForm :growlForm:growl"
+                            oncomplete="if(!args.validationFailed) PF('editVenteDialogWidget').hide()" />
+                    <p:commandButton value="#{messages.label_close}" icon="ui-icon-close" onclick="PF('editVenteDialogWidget').hide()" type="button" />
+                </div>
+            </p:outputPanel>
+        </h:form>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="viewVenteDialog" header="#{messages.label_vente_caption}" modal="true" widgetVar="viewVenteDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{venteBean.reset}" />
+        <h:form id="viewVenteForm">
+          <ui:include src="/pages/vente/venteViewInclude.xhtml"/>
+          <div style="text-align: center; margin:10px">
+              <p:commandButton value="#{messages.label_close}" icon="ui-icon-close" onclick="PF('viewVenteDialogWidget').hide()" type="button" />
+          </div>
+        </h:form>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="createMedicamentFromEditDialog"
+        rendered="#{venteBean.isPermitted('medicament:create')}"
+        header="#{messages.dialog_vente_create_medicament}" modal="true"
+        widgetVar="createMedicamentFromEditDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{medicamentBean.reset}" />
+        <p:outputPanel id="createMedicamentPanel">
+                <h:form id="createMedicamentForm">
+                    <ui:include src="/pages/medicament/medicamentEditInclude.xhtml">
+                        <ui:param name="hideVenteSelectInput" value="true" />
+                    </ui:include>
+                    <div style="text-align: center; margin: 10px">
+                        <p:commandButton
+                            action="#{venteBean.updateMedicament(medicamentBean.medicament)}"
+                            value="#{messages.label_save}" icon="ui-icon-disk"
+                            actionListener="#{medicamentBean.persist}"
+                            update=":editVenteForm:medicamentSelectInput :createMedicamentPanel :growlForm:growl"
+                            oncomplete="if(!args.validationFailed) PF('createMedicamentFromEditDialogWidget').hide()" />
+                        <p:commandButton value="#{messages.label_close}"
+                            icon="ui-icon-close"
+                            onclick="PF('createMedicamentFromEditDialogWidget').hide()"
+                            type="button" />
+                    </div>
+                </h:form>
+            </p:outputPanel>
+    </p:dialog>
+    
+  </ui:define>
+</ui:composition>
+</html>

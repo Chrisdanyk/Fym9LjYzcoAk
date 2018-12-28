@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:o="http://omnifaces.org/ui">
+<ui:composition template="/templates/layout.xhtml">
+  <ui:define name="content">
+
+    <h:form prependId="false" id="societeAbonnementDataForm" onkeypress="if (event.keyCode == 13) {return false; }">
+
+        <p:dataTable id="societeAbonnementTable" value="#{societeAbonnementBean.lazyModel}" var="societeAbonnement" resizableColumns="true" paginator="true"
+                paginatorTemplate=" {CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                rowsPerPageTemplate="5,10,25,50" rows="10" draggableColumns="true" lazy="true"
+                paginatorPosition="bottom" widgetVar="societeAbonnementTable" emptyMessage="#{messages.label_no_records_found}"
+                reflow="true">
+        
+          <f:facet name="header" >
+
+              <p:commandButton value="#{messages.create_new_societeAbonnement}" icon="ui-icon-plusthick" action="#{societeAbonnementBean.prepareNewSocieteAbonnement()}"
+                      resetValues="true" update=":editSocieteAbonnementDialog" oncomplete="PF('editSocieteAbonnementDialogWidget').show()"
+                      rendered="#{societeAbonnementBean.isPermitted('societeAbonnement:create')}" style="float:left" />
+              
+              <p:commandButton id="toggler" type="button" value="#{messages.table_select_columns}" icon="ui-icon-calculator" />
+              <p:columnToggler datasource="societeAbonnementTable" trigger="toggler" />
+          </f:facet>
+          
+          <p:column  headerText="#{messages.field_label_societeAbonnement_designation}" sortBy="#{societeAbonnement.designation}" filterBy="#{societeAbonnement.designation}">
+            <f:facet name="filter">
+                <p:inputText id="designationFilter"
+                        onkeypress="if (event.keyCode == 13) {PF('societeAbonnementTable').filter(); updateDesignationFilter(); return false; }" >
+                    <p:remoteCommand name="updateDesignationFilter" update="societeAbonnementTable:designationFilter" />
+                </p:inputText>
+            </f:facet>
+            <h:outputText value="#{societeAbonnement.designation}" />
+          </p:column>
+
+          <p:column  headerText="#{messages.field_label_societeAbonnement_telephone}" sortBy="#{societeAbonnement.telephone}" filterBy="#{societeAbonnement.telephone}">
+            <f:facet name="filter">
+                <p:inputText id="telephoneFilter"
+                        onkeypress="if (event.keyCode == 13) {PF('societeAbonnementTable').filter(); updateTelephoneFilter(); return false; }" >
+                    <p:remoteCommand name="updateTelephoneFilter" update="societeAbonnementTable:telephoneFilter" />
+                </p:inputText>
+            </f:facet>
+            <h:outputText value="#{societeAbonnement.telephone}" />
+          </p:column>
+
+          <p:column  headerText="#{messages.field_label_societeAbonnement_email}" sortBy="#{societeAbonnement.email}" filterBy="#{societeAbonnement.email}">
+            <f:facet name="filter">
+                <p:inputText id="emailFilter"
+                        onkeypress="if (event.keyCode == 13) {PF('societeAbonnementTable').filter(); updateEmailFilter(); return false; }" >
+                    <p:remoteCommand name="updateEmailFilter" update="societeAbonnementTable:emailFilter" />
+                </p:inputText>
+            </f:facet>
+            <h:outputText value="#{societeAbonnement.email}" />
+          </p:column>
+
+          <p:column  headerText="#{messages.field_label_societeAbonnement_adresse}" sortBy="#{societeAbonnement.adresse}" filterBy="#{societeAbonnement.adresse}">
+            <f:facet name="filter">
+                <p:inputText id="adresseFilter"
+                        onkeypress="if (event.keyCode == 13) {PF('societeAbonnementTable').filter(); updateAdresseFilter(); return false; }" >
+                    <p:remoteCommand name="updateAdresseFilter" update="societeAbonnementTable:adresseFilter" />
+                </p:inputText>
+            </f:facet>
+            <h:outputText value="#{societeAbonnement.adresse}" />
+          </p:column>
+
+          <p:column headerText="#{messages.field_label_societeAbonnement_abonnement_plural}" styleClass="action-column" exportable="false">
+            
+            <p:commandButton icon="ui-icon-transfer-e-w"  title="#{messages.field_label_societeAbonnement_abonnement_plural}" action="#{societeAbonnementBean.onAbonnementsDialog(societeAbonnement)}" oncomplete="PF('societeAbonnementAbonnementsDialogWidget').show()" update=":societeAbonnementAbonnementsDialog"/>
+            
+          </p:column>
+          
+          <p:column styleClass="action-column" headerText="#{messages.table_actions_column}" width="115" exportable="false">
+            
+            <p:commandButton icon="ui-icon-zoomin" update=":viewSocieteAbonnementDialog" oncomplete="PF('viewSocieteAbonnementDialogWidget').show()" title="#{messages.label_view}">
+              <f:setPropertyActionListener value="#{societeAbonnement}" target="#{societeAbonnementBean.societeAbonnement}" />
+            </p:commandButton>
+
+            <p:commandButton icon="ui-icon-pencil" update=":editSocieteAbonnementDialog"
+                resetValues="true" rendered="#{societeAbonnementBean.isPermitted(societeAbonnement, 'societeAbonnement:update')}"
+                action="#{societeAbonnementBean.onDialogOpen(societeAbonnement)}"
+                oncomplete="PF('editSocieteAbonnementDialogWidget').show()"
+                title="#{messages.label_edit}" >
+            </p:commandButton>
+
+            <p:commandButton icon="ui-icon-close" rendered="#{societeAbonnementBean.isPermitted(societeAbonnement, 'societeAbonnement:delete')}"
+                oncomplete="PF('deleteSocieteAbonnementDialogWidget').show()"
+                title="#{messages.label_delete}" >
+                <f:setPropertyActionListener value="#{societeAbonnement}"
+                    target="#{societeAbonnementBean.societeAbonnement}" />
+            </p:commandButton>
+    
+          </p:column>
+          
+        </p:dataTable>
+        
+    </h:form>
+
+    <p:confirmDialog id="deleteSocieteAbonnementDialog" widgetVar="deleteSocieteAbonnementDialogWidget"
+        rendered="#{societeAbonnementBean.isPermitted(societeAbonnementBean.societeAbonnement, 'societeAbonnement:delete')}" header="#{messages.label_confirm_deletion}"
+        severity="alarm">
+        <f:facet name="message"><h:outputText value="#{messages.label_delete_record}" escape="false"/></f:facet>
+        <p:outputPanel>
+          <h:form>
+            <div style="text-align: center; margin:10px">
+              <p:commandButton value="#{messages.label_yes}" action="#{societeAbonnementBean.delete}" update=":societeAbonnementDataForm :growlForm:growl" oncomplete="PF('deleteSocieteAbonnementDialogWidget').hide()" />
+              <p:commandButton value="#{messages.label_no}" onclick="PF('deleteSocieteAbonnementDialogWidget').hide()" type="button" />
+            </div>
+          </h:form>
+        </p:outputPanel>
+    </p:confirmDialog>
+    
+    <p:dialog dynamic="true" id="editSocieteAbonnementDialog" header="#{messages.label_societeAbonnement_caption}"
+            modal="true" widgetVar="editSocieteAbonnementDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{societeAbonnementBean.reset}"/>
+        <h:form id="editSocieteAbonnementForm" >
+            <p:outputPanel id="societeAbonnementEditPanel">
+                <ui:include src="/pages/societeAbonnement/societeAbonnementEditInclude.xhtml"/>
+                <div style="text-align: center; margin:10px">
+                    <p:commandButton value="#{messages.label_save}"
+                            icon="ui-icon-disk" action="#{societeAbonnementBean.persist}"
+                            update=":editSocieteAbonnementForm:societeAbonnementEditPanel :societeAbonnementDataForm :growlForm:growl"
+                            oncomplete="if(!args.validationFailed) PF('editSocieteAbonnementDialogWidget').hide()" />
+                    <p:commandButton value="#{messages.label_close}" icon="ui-icon-close" onclick="PF('editSocieteAbonnementDialogWidget').hide()" type="button" />
+                </div>
+            </p:outputPanel>
+        </h:form>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="viewSocieteAbonnementDialog" header="#{messages.label_societeAbonnement_caption}" modal="true" widgetVar="viewSocieteAbonnementDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{societeAbonnementBean.reset}" />
+        <h:form id="viewSocieteAbonnementForm">
+          <ui:include src="/pages/societeAbonnement/societeAbonnementViewInclude.xhtml"/>
+          <div style="text-align: center; margin:10px">
+              <p:commandButton value="#{messages.label_close}" icon="ui-icon-close" onclick="PF('viewSocieteAbonnementDialogWidget').hide()" type="button" />
+          </div>
+        </h:form>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="societeAbonnementAbonnementsDialog" header="#{messages.dialog_header_societeAbonnement_abonnement_plural}" modal="true" widgetVar="societeAbonnementAbonnementsDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{societeAbonnementBean.reset}" />
+        <p:outputPanel id="societeAbonnementAbonnementsPanel">
+            <h:form id="societeAbonnementAbonnementsForm">
+                <ui:include src="/pages/societeAbonnement/societeAbonnementAbonnementInclude.xhtml" />
+                <div style="text-align: center; margin:10px">
+                    <p:commandButton value="#{messages.label_save}"
+                        icon="ui-icon-disk"
+                        action="#{societeAbonnementBean.onAbonnementsSubmit}"
+                        update=":growlForm:growl"
+                        oncomplete="if(!args.validationFailed) PF('societeAbonnementAbonnementsDialogWidget').hide()"
+                        rendered="#{societeAbonnementBean.isPermitted(societeAbonnementBean.societeAbonnement, 'societeAbonnement:update')}"
+                        partialSubmit="true" process="@this" />
+                    <p:commandButton value="#{messages.label_close}" icon="ui-icon-close" onclick="PF('societeAbonnementAbonnementsDialogWidget').hide()" type="button" />
+                </div>
+            </h:form>
+        </p:outputPanel>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="createAbonnementDialog"
+        rendered="#{societeAbonnementBean.isPermitted('abonnement:create')}"
+        header="#{messages.dialog_societeAbonnement_create_abonnement}" modal="true"
+        widgetVar="createAbonnementDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{abonnementBean.reset}" />
+        <p:outputPanel id="createAbonnementPanel">
+                <h:form id="createAbonnementForm">
+                    <ui:include src="/pages/abonnement/abonnementEditInclude.xhtml">
+                        <ui:param name="hideSocieteSelectInput" value="true" />
+                    </ui:include>
+                    <div style="text-align: center; margin: 10px">
+                        <p:commandButton
+                            action="#{societeAbonnementBean.updateAbonnement(abonnementBean.abonnement)}"
+                            value="#{messages.label_save}" icon="ui-icon-disk"
+                            actionListener="#{abonnementBean.persist}"
+                            update=":societeAbonnementAbonnementsPanel :createAbonnementPanel :growlForm:growl"
+                            oncomplete="if(!args.validationFailed) PF('createAbonnementDialogWidget').hide()" />
+                        <p:commandButton value="#{messages.label_close}"
+                            icon="ui-icon-close"
+                            onclick="PF('createAbonnementDialogWidget').hide()"
+                            type="button" />
+                    </div>
+                </h:form>
+            </p:outputPanel>
+    </p:dialog>
+    
+  </ui:define>
+</ui:composition>
+</html>

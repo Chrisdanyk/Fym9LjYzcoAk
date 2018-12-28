@@ -1,0 +1,1 @@
+web: java -jar target/afianjema.jar --port $PORT --noCluster

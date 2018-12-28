@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:o="http://omnifaces.org/ui">
+<ui:composition template="/templates/layout.xhtml">
+  <ui:define name="content">
+
+    <h:form prependId="false" id="hopitalDataForm" onkeypress="if (event.keyCode == 13) {return false; }">
+
+        <p:dataTable id="hopitalTable" value="#{hopitalBean.lazyModel}" var="hopital" resizableColumns="true" paginator="true"
+                paginatorTemplate=" {CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                rowsPerPageTemplate="5,10,25,50" rows="10" draggableColumns="true" lazy="true"
+                paginatorPosition="bottom" widgetVar="hopitalTable" emptyMessage="#{messages.label_no_records_found}"
+                reflow="true">
+        
+          <f:facet name="header" >
+
+              <p:commandButton value="#{messages.create_new_hopital}" icon="ui-icon-plusthick" action="#{hopitalBean.prepareNewHopital()}"
+                      resetValues="true" update=":editHopitalDialog" oncomplete="PF('editHopitalDialogWidget').show()"
+                      rendered="#{hopitalBean.isPermitted('hopital:create')}" style="float:left" />
+              
+              <p:commandButton id="toggler" type="button" value="#{messages.table_select_columns}" icon="ui-icon-calculator" />
+              <p:columnToggler datasource="hopitalTable" trigger="toggler" />
+          </f:facet>
+          
+          <p:column headerText="#{messages.label_image}">
+              <o:graphicImage value="#{hopital.image.content}" dataURI="true"
+                  rendered="#{not empty hopital.image.content}" width="50px"/>
+          </p:column>
+          
+          <p:column  headerText="#{messages.field_label_hopital_designation}" sortBy="#{hopital.designation}" filterBy="#{hopital.designation}">
+            <f:facet name="filter">
+                <p:inputText id="designationFilter"
+                        onkeypress="if (event.keyCode == 13) {PF('hopitalTable').filter(); updateDesignationFilter(); return false; }" >
+                    <p:remoteCommand name="updateDesignationFilter" update="hopitalTable:designationFilter" />
+                </p:inputText>
+            </f:facet>
+            <h:outputText value="#{hopital.designation}" />
+          </p:column>
+
+          <p:column  headerText="#{messages.field_label_hopital_adresse}" sortBy="#{hopital.adresse}" filterBy="#{hopital.adresse}">
+            <f:facet name="filter">
+                <p:inputText id="adresseFilter"
+                        onkeypress="if (event.keyCode == 13) {PF('hopitalTable').filter(); updateAdresseFilter(); return false; }" >
+                    <p:remoteCommand name="updateAdresseFilter" update="hopitalTable:adresseFilter" />
+                </p:inputText>
+            </f:facet>
+            <h:outputText value="#{hopital.adresse}" />
+          </p:column>
+
+          <p:column  headerText="#{messages.field_label_hopital_telephone}" sortBy="#{hopital.telephone}" filterBy="#{hopital.telephone}">
+            <f:facet name="filter">
+                <p:inputText id="telephoneFilter"
+                        onkeypress="if (event.keyCode == 13) {PF('hopitalTable').filter(); updateTelephoneFilter(); return false; }" >
+                    <p:remoteCommand name="updateTelephoneFilter" update="hopitalTable:telephoneFilter" />
+                </p:inputText>
+            </f:facet>
+            <h:outputText value="#{hopital.telephone}" />
+          </p:column>
+
+          <p:column  headerText="#{messages.field_label_hopital_email}" sortBy="#{hopital.email}" filterBy="#{hopital.email}">
+            <f:facet name="filter">
+                <p:inputText id="emailFilter"
+                        onkeypress="if (event.keyCode == 13) {PF('hopitalTable').filter(); updateEmailFilter(); return false; }" >
+                    <p:remoteCommand name="updateEmailFilter" update="hopitalTable:emailFilter" />
+                </p:inputText>
+            </f:facet>
+            <h:outputText value="#{hopital.email}" />
+          </p:column>
+
+          <p:column headerText="#{messages.field_label_hopital_user_plural}" styleClass="action-column" exportable="false">
+            
+            <p:commandButton icon="ui-icon-transfer-e-w"  title="#{messages.field_label_hopital_user_plural}" action="#{hopitalBean.onUsersDialog(hopital)}" oncomplete="PF('hopitalUsersDialogWidget').show()" update=":hopitalUsersDialog"/>
+            
+          </p:column>
+          
+          <p:column headerText="#{messages.field_label_hopital_patient_plural}" styleClass="action-column" exportable="false">
+            
+            <p:commandButton icon="ui-icon-transfer-e-w"  title="#{messages.field_label_hopital_patient_plural}" action="#{hopitalBean.onPatientsDialog(hopital)}" oncomplete="PF('hopitalPatientsDialogWidget').show()" update=":hopitalPatientsDialog"/>
+            
+          </p:column>
+          
+          <p:column styleClass="action-column" headerText="#{messages.table_actions_column}" width="115" exportable="false">
+            
+            <p:commandButton icon="ui-icon-zoomin" update=":viewHopitalDialog" oncomplete="PF('viewHopitalDialogWidget').show()" title="#{messages.label_view}">
+              <f:setPropertyActionListener value="#{hopital}" target="#{hopitalBean.hopital}" />
+            </p:commandButton>
+
+            <p:commandButton icon="ui-icon-pencil" update=":editHopitalDialog"
+                resetValues="true" rendered="#{hopitalBean.isPermitted(hopital, 'hopital:update')}"
+                action="#{hopitalBean.onDialogOpen(hopital)}"
+                oncomplete="PF('editHopitalDialogWidget').show()"
+                title="#{messages.label_edit}" >
+            </p:commandButton>
+
+            <p:commandButton icon="ui-icon-close" rendered="#{hopitalBean.isPermitted(hopital, 'hopital:delete')}"
+                oncomplete="PF('deleteHopitalDialogWidget').show()"
+                title="#{messages.label_delete}" >
+                <f:setPropertyActionListener value="#{hopital}"
+                    target="#{hopitalBean.hopital}" />
+            </p:commandButton>
+    
+          </p:column>
+          
+        </p:dataTable>
+        
+    </h:form>
+
+    <p:confirmDialog id="deleteHopitalDialog" widgetVar="deleteHopitalDialogWidget"
+        rendered="#{hopitalBean.isPermitted(hopitalBean.hopital, 'hopital:delete')}" header="#{messages.label_confirm_deletion}"
+        severity="alarm">
+        <f:facet name="message"><h:outputText value="#{messages.label_delete_record}" escape="false"/></f:facet>
+        <p:outputPanel>
+          <h:form>
+            <div style="text-align: center; margin:10px">
+              <p:commandButton value="#{messages.label_yes}" action="#{hopitalBean.delete}" update=":hopitalDataForm :growlForm:growl" oncomplete="PF('deleteHopitalDialogWidget').hide()" />
+              <p:commandButton value="#{messages.label_no}" onclick="PF('deleteHopitalDialogWidget').hide()" type="button" />
+            </div>
+          </h:form>
+        </p:outputPanel>
+    </p:confirmDialog>
+    
+    <p:dialog dynamic="true" id="editHopitalDialog" header="#{messages.label_hopital_caption}"
+            modal="true" widgetVar="editHopitalDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{hopitalBean.reset}"/>
+        <h:form id="editHopitalForm" >
+            <p:outputPanel id="hopitalEditPanel">
+                <ui:include src="/pages/hopital/hopitalEditInclude.xhtml"/>
+                <div style="text-align: center; margin:10px">
+                    <p:commandButton value="#{messages.label_save}"
+                            icon="ui-icon-disk" action="#{hopitalBean.persist}"
+                            update=":editHopitalForm:hopitalEditPanel :hopitalDataForm :growlForm:growl"
+                            oncomplete="if(!args.validationFailed) PF('editHopitalDialogWidget').hide()" />
+                    <p:commandButton value="#{messages.label_close}" icon="ui-icon-close" onclick="PF('editHopitalDialogWidget').hide()" type="button" />
+                </div>
+            </p:outputPanel>
+        </h:form>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="viewHopitalDialog" header="#{messages.label_hopital_caption}" modal="true" widgetVar="viewHopitalDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{hopitalBean.reset}" />
+        <h:form id="viewHopitalForm">
+          <ui:include src="/pages/hopital/hopitalViewInclude.xhtml"/>
+          <div style="text-align: center; margin:10px">
+              <p:commandButton value="#{messages.label_close}" icon="ui-icon-close" onclick="PF('viewHopitalDialogWidget').hide()" type="button" />
+          </div>
+        </h:form>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="hopitalUsersDialog" header="#{messages.dialog_header_hopital_user_plural}" modal="true" widgetVar="hopitalUsersDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{hopitalBean.reset}" />
+        <p:outputPanel id="hopitalUsersPanel">
+            <h:form id="hopitalUsersForm">
+                <ui:include src="/pages/hopital/hopitalUserInclude.xhtml" />
+                <div style="text-align: center; margin:10px">
+                    <p:commandButton value="#{messages.label_save}"
+                        icon="ui-icon-disk"
+                        action="#{hopitalBean.onUsersSubmit}"
+                        update=":growlForm:growl"
+                        oncomplete="if(!args.validationFailed) PF('hopitalUsersDialogWidget').hide()"
+                        rendered="#{hopitalBean.isPermitted(hopitalBean.hopital, 'hopital:update')}"
+                        partialSubmit="true" process="@this" />
+                    <p:commandButton value="#{messages.label_close}" icon="ui-icon-close" onclick="PF('hopitalUsersDialogWidget').hide()" type="button" />
+                </div>
+            </h:form>
+        </p:outputPanel>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="hopitalPatientsDialog" header="#{messages.dialog_header_hopital_patient_plural}" modal="true" widgetVar="hopitalPatientsDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{hopitalBean.reset}" />
+        <p:outputPanel id="hopitalPatientsPanel">
+            <h:form id="hopitalPatientsForm">
+                <ui:include src="/pages/hopital/hopitalPatientInclude.xhtml" />
+                <div style="text-align: center; margin:10px">
+                    <p:commandButton value="#{messages.label_save}"
+                        icon="ui-icon-disk"
+                        action="#{hopitalBean.onPatientsSubmit}"
+                        update=":growlForm:growl"
+                        oncomplete="if(!args.validationFailed) PF('hopitalPatientsDialogWidget').hide()"
+                        rendered="#{hopitalBean.isPermitted(hopitalBean.hopital, 'hopital:update')}"
+                        partialSubmit="true" process="@this" />
+                    <p:commandButton value="#{messages.label_close}" icon="ui-icon-close" onclick="PF('hopitalPatientsDialogWidget').hide()" type="button" />
+                </div>
+            </h:form>
+        </p:outputPanel>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="createPatientDialog"
+        rendered="#{hopitalBean.isPermitted('patient:create')}"
+        header="#{messages.dialog_hopital_create_patient}" modal="true"
+        widgetVar="createPatientDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{patientBean.reset}" />
+        <p:outputPanel id="createPatientPanel">
+                <h:form id="createPatientForm">
+                    <ui:include src="/pages/patient/patientEditInclude.xhtml">
+                        <ui:param name="hideHopitalSelectInput" value="true" />
+                    </ui:include>
+                    <div style="text-align: center; margin: 10px">
+                        <p:commandButton
+                            action="#{hopitalBean.updatePatient(patientBean.patient)}"
+                            value="#{messages.label_save}" icon="ui-icon-disk"
+                            actionListener="#{patientBean.persist}"
+                            update=":hopitalPatientsPanel :createPatientPanel :growlForm:growl"
+                            oncomplete="if(!args.validationFailed) PF('createPatientDialogWidget').hide()" />
+                        <p:commandButton value="#{messages.label_close}"
+                            icon="ui-icon-close"
+                            onclick="PF('createPatientDialogWidget').hide()"
+                            type="button" />
+                    </div>
+                </h:form>
+            </p:outputPanel>
+    </p:dialog>
+    
+  </ui:define>
+</ui:composition>
+</html>

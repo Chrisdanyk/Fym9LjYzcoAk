@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:o="http://omnifaces.org/ui">
+<ui:composition template="/templates/layout.xhtml">
+  <ui:define name="content">
+
+    <h:form prependId="false" id="hospitalisationDataForm" onkeypress="if (event.keyCode == 13) {return false; }">
+
+        <p:dataTable id="hospitalisationTable" value="#{hospitalisationBean.lazyModel}" var="hospitalisation" resizableColumns="true" paginator="true"
+                paginatorTemplate=" {CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                rowsPerPageTemplate="5,10,25,50" rows="10" draggableColumns="true" lazy="true"
+                paginatorPosition="bottom" widgetVar="hospitalisationTable" emptyMessage="#{messages.label_no_records_found}"
+                reflow="true">
+        
+          <f:facet name="header" >
+
+              <p:commandButton value="#{messages.create_new_hospitalisation}" icon="ui-icon-plusthick" action="#{hospitalisationBean.prepareNewHospitalisation()}"
+                      resetValues="true" update=":editHospitalisationDialog" oncomplete="PF('editHospitalisationDialogWidget').show()"
+                      rendered="#{hospitalisationBean.isPermitted('hospitalisation:create')}" style="float:left" />
+              
+              <p:commandButton id="toggler" type="button" value="#{messages.table_select_columns}" icon="ui-icon-calculator" />
+              <p:columnToggler datasource="hospitalisationTable" trigger="toggler" />
+          </f:facet>
+          
+          <p:column headerText="#{messages.field_label_hospitalisation_salle}" sortBy="#{hospitalisation.salle}" filterBy="#{hospitalisation.salle}">
+            <f:facet name="filter">
+            <p:selectOneMenu  id="salleFilter"
+                            style="width:145px;"
+                            onchange="PF('hospitalisationTable').filter(); return false;">
+                <f:selectItem noSelectionOption="true" itemLabel="" />
+                <f:selectItems itemLabel="#{salle.designation}"
+                            value="#{hospitalisationBean.salles}" 
+                            var="salle" 
+                            itemValue="#{salle}" />
+                <o:converter converterId="omnifaces.SelectItemsConverter" list="#{hospitalisationBean.salles}" />
+            </p:selectOneMenu>
+            </f:facet>
+            <h:outputText value="#{hospitalisation.salle.designation}" />
+          </p:column>
+
+          <p:column headerText="#{messages.field_label_hospitalisation_patient}" sortBy="#{hospitalisation.patient}" filterBy="#{hospitalisation.patient}">
+            <f:facet name="filter">
+            <p:selectOneMenu  id="patientFilter"
+                            style="width:145px;"
+                            onchange="PF('hospitalisationTable').filter(); return false;">
+                <f:selectItem noSelectionOption="true" itemLabel="" />
+                <f:selectItems itemLabel="#{patient.nom}"
+                            value="#{hospitalisationBean.patients}" 
+                            var="patient" 
+                            itemValue="#{patient}" />
+                <o:converter converterId="omnifaces.SelectItemsConverter" list="#{hospitalisationBean.patients}" />
+            </p:selectOneMenu>
+            </f:facet>
+            <h:outputText value="#{hospitalisation.patient.nom}" />
+          </p:column>
+
+          <p:column headerText="#{messages.field_label_hospitalisation_dateEntree}" sortBy="#{hospitalisation.dateEntree}" filterBy="#{hospitalisation.dateEntree}">
+            <f:facet name="filter">
+                <p:inputText id="dateEntreeFilter"
+                        onkeyup="if (event.keyCode == 13) {PF('hospitalisationTable').filter(); updateDateEntreeFilter(); return false;}" >
+                    <p:remoteCommand name="updateDateEntreeFilter" update="hospitalisationTable:dateEntreeFilter" />
+                    <f:convertDateTime />
+                </p:inputText>
+            </f:facet>
+            <h:outputText value="#{hospitalisation.dateEntree}"><f:convertDateTime /></h:outputText>
+          </p:column>
+
+          <p:column headerText="#{messages.field_label_hospitalisation_dateSortie}" sortBy="#{hospitalisation.dateSortie}" filterBy="#{hospitalisation.dateSortie}">
+            <f:facet name="filter">
+                <p:inputText id="dateSortieFilter"
+                        onkeyup="if (event.keyCode == 13) {PF('hospitalisationTable').filter(); updateDateSortieFilter(); return false;}" >
+                    <p:remoteCommand name="updateDateSortieFilter" update="hospitalisationTable:dateSortieFilter" />
+                    <f:convertDateTime />
+                </p:inputText>
+            </f:facet>
+            <h:outputText value="#{hospitalisation.dateSortie}"><f:convertDateTime /></h:outputText>
+          </p:column>
+
+          <p:column  headerText="#{messages.field_label_hospitalisation_observation}" sortBy="#{hospitalisation.observation}" filterBy="#{hospitalisation.observation}">
+            <f:facet name="filter">
+                <p:inputText id="observationFilter"
+                        onkeypress="if (event.keyCode == 13) {PF('hospitalisationTable').filter(); updateObservationFilter(); return false; }" >
+                    <p:remoteCommand name="updateObservationFilter" update="hospitalisationTable:observationFilter" />
+                </p:inputText>
+            </f:facet>
+            <h:outputText value="#{hospitalisation.observation}" />
+          </p:column>
+
+          <p:column styleClass="action-column" headerText="#{messages.table_actions_column}" width="115" exportable="false">
+            
+            <p:commandButton icon="ui-icon-zoomin" update=":viewHospitalisationDialog" oncomplete="PF('viewHospitalisationDialogWidget').show()" title="#{messages.label_view}">
+              <f:setPropertyActionListener value="#{hospitalisation}" target="#{hospitalisationBean.hospitalisation}" />
+            </p:commandButton>
+
+            <p:commandButton icon="ui-icon-pencil" update=":editHospitalisationDialog"
+                resetValues="true" rendered="#{hospitalisationBean.isPermitted(hospitalisation, 'hospitalisation:update')}"
+                action="#{hospitalisationBean.onDialogOpen(hospitalisation)}"
+                oncomplete="PF('editHospitalisationDialogWidget').show()"
+                title="#{messages.label_edit}" >
+            </p:commandButton>
+
+            <p:commandButton icon="ui-icon-close" rendered="#{hospitalisationBean.isPermitted(hospitalisation, 'hospitalisation:delete')}"
+                oncomplete="PF('deleteHospitalisationDialogWidget').show()"
+                title="#{messages.label_delete}" >
+                <f:setPropertyActionListener value="#{hospitalisation}"
+                    target="#{hospitalisationBean.hospitalisation}" />
+            </p:commandButton>
+    
+          </p:column>
+          
+        </p:dataTable>
+        
+    </h:form>
+
+    <p:confirmDialog id="deleteHospitalisationDialog" widgetVar="deleteHospitalisationDialogWidget"
+        rendered="#{hospitalisationBean.isPermitted(hospitalisationBean.hospitalisation, 'hospitalisation:delete')}" header="#{messages.label_confirm_deletion}"
+        severity="alarm">
+        <f:facet name="message"><h:outputText value="#{messages.label_delete_record}" escape="false"/></f:facet>
+        <p:outputPanel>
+          <h:form>
+            <div style="text-align: center; margin:10px">
+              <p:commandButton value="#{messages.label_yes}" action="#{hospitalisationBean.delete}" update=":hospitalisationDataForm :growlForm:growl" oncomplete="PF('deleteHospitalisationDialogWidget').hide()" />
+              <p:commandButton value="#{messages.label_no}" onclick="PF('deleteHospitalisationDialogWidget').hide()" type="button" />
+            </div>
+          </h:form>
+        </p:outputPanel>
+    </p:confirmDialog>
+    
+    <p:dialog dynamic="true" id="editHospitalisationDialog" header="#{messages.label_hospitalisation_caption}"
+            modal="true" widgetVar="editHospitalisationDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{hospitalisationBean.reset}"/>
+        <h:form id="editHospitalisationForm" >
+            <p:outputPanel id="hospitalisationEditPanel">
+                <ui:include src="/pages/hospitalisation/hospitalisationEditInclude.xhtml"/>
+                <div style="text-align: center; margin:10px">
+                    <p:commandButton value="#{messages.label_save}"
+                            icon="ui-icon-disk" action="#{hospitalisationBean.persist}"
+                            update=":editHospitalisationForm:hospitalisationEditPanel :hospitalisationDataForm :growlForm:growl"
+                            oncomplete="if(!args.validationFailed) PF('editHospitalisationDialogWidget').hide()" />
+                    <p:commandButton value="#{messages.label_close}" icon="ui-icon-close" onclick="PF('editHospitalisationDialogWidget').hide()" type="button" />
+                </div>
+            </p:outputPanel>
+        </h:form>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="viewHospitalisationDialog" header="#{messages.label_hospitalisation_caption}" modal="true" widgetVar="viewHospitalisationDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{hospitalisationBean.reset}" />
+        <h:form id="viewHospitalisationForm">
+          <ui:include src="/pages/hospitalisation/hospitalisationViewInclude.xhtml"/>
+          <div style="text-align: center; margin:10px">
+              <p:commandButton value="#{messages.label_close}" icon="ui-icon-close" onclick="PF('viewHospitalisationDialogWidget').hide()" type="button" />
+          </div>
+        </h:form>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="createSalleFromEditDialog"
+        rendered="#{hospitalisationBean.isPermitted('salle:create')}"
+        header="#{messages.dialog_hospitalisation_create_salle}" modal="true"
+        widgetVar="createSalleFromEditDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{salleBean.reset}" />
+        <p:outputPanel id="createSallePanel">
+                <h:form id="createSalleForm">
+                    <ui:include src="/pages/salle/salleEditInclude.xhtml">
+                        <ui:param name="hideHospitalisationSelectInput" value="true" />
+                    </ui:include>
+                    <div style="text-align: center; margin: 10px">
+                        <p:commandButton
+                            action="#{hospitalisationBean.updateSalle(salleBean.salle)}"
+                            value="#{messages.label_save}" icon="ui-icon-disk"
+                            actionListener="#{salleBean.persist}"
+                            update=":editHospitalisationForm:salleSelectInput :createSallePanel :growlForm:growl"
+                            oncomplete="if(!args.validationFailed) PF('createSalleFromEditDialogWidget').hide()" />
+                        <p:commandButton value="#{messages.label_close}"
+                            icon="ui-icon-close"
+                            onclick="PF('createSalleFromEditDialogWidget').hide()"
+                            type="button" />
+                    </div>
+                </h:form>
+            </p:outputPanel>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="createPatientFromEditDialog"
+        rendered="#{hospitalisationBean.isPermitted('patient:create')}"
+        header="#{messages.dialog_hospitalisation_create_patient}" modal="true"
+        widgetVar="createPatientFromEditDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{patientBean.reset}" />
+        <p:outputPanel id="createPatientPanel">
+                <h:form id="createPatientForm">
+                    <ui:include src="/pages/patient/patientEditInclude.xhtml">
+                        <ui:param name="hideHospitalisationSelectInput" value="true" />
+                    </ui:include>
+                    <div style="text-align: center; margin: 10px">
+                        <p:commandButton
+                            action="#{hospitalisationBean.updatePatient(patientBean.patient)}"
+                            value="#{messages.label_save}" icon="ui-icon-disk"
+                            actionListener="#{patientBean.persist}"
+                            update=":editHospitalisationForm:patientSelectInput :createPatientPanel :growlForm:growl"
+                            oncomplete="if(!args.validationFailed) PF('createPatientFromEditDialogWidget').hide()" />
+                        <p:commandButton value="#{messages.label_close}"
+                            icon="ui-icon-close"
+                            onclick="PF('createPatientFromEditDialogWidget').hide()"
+                            type="button" />
+                    </div>
+                </h:form>
+            </p:outputPanel>
+    </p:dialog>
+    
+  </ui:define>
+</ui:composition>
+</html>

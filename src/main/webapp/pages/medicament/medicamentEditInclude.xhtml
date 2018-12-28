@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:o="http://omnifaces.org/ui">
+
+        <p:outputPanel styleClass="ui-fluid">
+
+            <p:panel id="medicamentImage" header="#{messages.label_image}" style="max-width:400px">
+                <o:graphicImage value="#{medicamentBean.uploadedImageContents}" dataURI="true"
+                    rendered="#{not empty medicamentBean.uploadedImageContents}" width="200px" />
+                <p:fileUpload mode="advanced" fileLimit="1"
+                    fileUploadListener="#{medicamentBean.handleImageUpload}" update="medicamentImage :growlForm:growl"
+                    cancelLabel="#{messages.upload_cancel}" uploadLabel="#{messages.upload_upload}" label="#{messages.upload_choose}"
+                    multiple="false" style="overflow:auto;width:380px"/>
+            </p:panel>
+            <p:panelGrid columns="3" columnClasses="ui-grid-col-4,ui-grid-col-6,ui-grid-col-2" layout="grid" style="max-width:400px">
+                <h:outputLabel value="#{messages.field_label_medicament_designation}:" for="designationEditInput" />
+                <p:inputText value="#{medicamentBean.medicament.designation}" id="designationEditInput" 
+                    label="#{messages.field_label_medicament_designation}" />
+                <p:message for="designationEditInput" display="icon" />
+                <h:outputLabel value="#{messages.field_label_medicament_type}:" for="typeSelect"/>
+                <p:selectManyCheckbox value="#{medicamentBean.medicament.type}" converter="omnifaces.GenericEnumConverter"
+                        id="typeSelect" layout="responsive" columns="1">
+                    <f:selectItems value="#{medicamentBean.typeSelectItems}" />
+                    <f:attribute name="collectionType" value="java.util.HashSet" />
+                </p:selectManyCheckbox>
+                <p:message for="typeSelect" display="icon" />
+                <h:outputLabel value="#{messages.field_label_medicament_dateFabrication}:" for="dateFabricationEditInput" />
+                <p:calendar id="dateFabricationEditInput" navigator="true" value="#{medicamentBean.medicament.dateFabrication}" label="#{messages.field_label_medicament_dateFabrication}" />
+                <p:message for="dateFabricationEditInput" display="icon" />
+                <h:outputLabel value="#{messages.field_label_medicament_dateExpiration}:" for="dateExpirationEditInput" />
+                <p:calendar id="dateExpirationEditInput" navigator="true" value="#{medicamentBean.medicament.dateExpiration}" label="#{messages.field_label_medicament_dateExpiration}" />
+                <p:message for="dateExpirationEditInput" display="icon" />
+                <h:outputLabel value="#{messages.field_label_medicament_prix}:" for="prixEditInput" />
+                <p:inputText value="#{medicamentBean.medicament.prix}" id="prixEditInput" label="#{messages.field_label_medicament_prix}" >
+                    <f:convertNumber />
+                </p:inputText>
+                <p:message for="prixEditInput" display="icon" />
+                <h:outputLabel value="#{messages.field_label_medicament_stock}:" for="stockEditInput" />
+                <p:inputText value="#{medicamentBean.medicament.stock}"  id="stockEditInput" 
+                    label="#{messages.field_label_medicament_stock}" />
+                <p:message for="stockEditInput" display="icon" />
+                <h:outputLabel value="#{messages.field_label_medicament_fournisseurs}:" for="fournisseursSelectInput" rendered="#{not hideFournisseursSelectInput}"/>
+                <h:panelGroup rendered="#{not hideFournisseursSelectInput}">
+                    <p:selectOneMenu value="#{medicamentBean.medicament.fournisseurs}"
+                                    id="fournisseursSelectInput">
+                        <f:selectItem noSelectionOption="true" itemLabel="" />
+                        <f:selectItems value="#{medicamentBean.fournisseurss}" 
+                                    var="fournisseur" 
+                                    itemLabel="#{fournisseur.nom}"
+                                    itemValue="#{fournisseur}" />
+                        <o:converter converterId="omnifaces.SelectItemsConverter" list="#{medicamentBean.fournisseurss}" />
+                    </p:selectOneMenu>
+                </h:panelGroup>
+                <h:panelGroup rendered="#{not hideFournisseursSelectInput}">
+                    <p:commandButton icon="ui-icon-plusthick" title="#{messages.label_create}"
+                              action="#{fournisseurBean.prepareNewFournisseur()}"
+                              update=":createFournisseursFromEditDialog"
+                              resetValues="true"
+                              oncomplete="PF('createFournisseursFromEditDialogWidget').show()"
+                              rendered="#{applicationBean.componentExists('createFournisseursFromEditDialog') and medicamentBean.isPermitted('fournisseur:create')}"
+                              style="vertical-align:top;" partialSubmit="true" process="@this">
+                    </p:commandButton>
+                    <p:message for="fournisseursSelectInput" display="icon" rendered="#{not hideFournisseursSelectInput}"/>
+                </h:panelGroup>
+                <h:outputLabel value="#{messages.field_label_medicament_famille}:" for="familleSelectInput" rendered="#{not hideFamilleSelectInput}"/>
+                <h:panelGroup rendered="#{not hideFamilleSelectInput}">
+                    <p:selectOneMenu value="#{medicamentBean.medicament.famille}"
+                                    id="familleSelectInput">
+                        <f:selectItem noSelectionOption="true" itemLabel="" />
+                        <f:selectItems value="#{medicamentBean.familles}" 
+                                    var="famille" 
+                                    itemLabel="#{famille.designation}"
+                                    itemValue="#{famille}" />
+                        <o:converter converterId="omnifaces.SelectItemsConverter" list="#{medicamentBean.familles}" />
+                    </p:selectOneMenu>
+                </h:panelGroup>
+                <h:panelGroup rendered="#{not hideFamilleSelectInput}">
+                    <p:commandButton icon="ui-icon-plusthick" title="#{messages.label_create}"
+                              action="#{familleBean.prepareNewFamille()}"
+                              update=":createFamilleFromEditDialog"
+                              resetValues="true"
+                              oncomplete="PF('createFamilleFromEditDialogWidget').show()"
+                              rendered="#{applicationBean.componentExists('createFamilleFromEditDialog') and medicamentBean.isPermitted('famille:create')}"
+                              style="vertical-align:top;" partialSubmit="true" process="@this">
+                    </p:commandButton>
+                    <p:message for="familleSelectInput" display="icon" rendered="#{not hideFamilleSelectInput}"/>
+                </h:panelGroup>
+            </p:panelGrid>
+        </p:outputPanel>
+</html>

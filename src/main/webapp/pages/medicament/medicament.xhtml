@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:o="http://omnifaces.org/ui">
+<ui:composition template="/templates/layout.xhtml">
+  <ui:define name="content">
+
+    <h:form prependId="false" id="medicamentDataForm" onkeypress="if (event.keyCode == 13) {return false; }">
+
+        <p:dataTable id="medicamentTable" value="#{medicamentBean.lazyModel}" var="medicament" resizableColumns="true" paginator="true"
+                paginatorTemplate=" {CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                rowsPerPageTemplate="5,10,25,50" rows="10" draggableColumns="true" lazy="true"
+                paginatorPosition="bottom" widgetVar="medicamentTable" emptyMessage="#{messages.label_no_records_found}"
+                reflow="true">
+        
+          <f:facet name="header" >
+
+              <p:commandButton value="#{messages.create_new_medicament}" icon="ui-icon-plusthick" action="#{medicamentBean.prepareNewMedicament()}"
+                      resetValues="true" update=":editMedicamentDialog" oncomplete="PF('editMedicamentDialogWidget').show()"
+                      rendered="#{medicamentBean.isPermitted('medicament:create')}" style="float:left" />
+              
+              <p:commandButton id="toggler" type="button" value="#{messages.table_select_columns}" icon="ui-icon-calculator" />
+              <p:columnToggler datasource="medicamentTable" trigger="toggler" />
+          </f:facet>
+          
+          <p:column headerText="#{messages.label_image}">
+              <o:graphicImage value="#{medicament.image.content}" dataURI="true"
+                  rendered="#{not empty medicament.image.content}" width="50px"/>
+          </p:column>
+          
+          <p:column  headerText="#{messages.field_label_medicament_designation}" sortBy="#{medicament.designation}" filterBy="#{medicament.designation}">
+            <f:facet name="filter">
+                <p:inputText id="designationFilter"
+                        onkeypress="if (event.keyCode == 13) {PF('medicamentTable').filter(); updateDesignationFilter(); return false; }" >
+                    <p:remoteCommand name="updateDesignationFilter" update="medicamentTable:designationFilter" />
+                </p:inputText>
+            </f:facet>
+            <h:outputText value="#{medicament.designation}" />
+          </p:column>
+
+          <p:column headerText="#{messages.field_label_medicament_dateFabrication}" sortBy="#{medicament.dateFabrication}" filterBy="#{medicament.dateFabrication}">
+            <f:facet name="filter">
+                <p:inputText id="dateFabricationFilter"
+                        onkeyup="if (event.keyCode == 13) {PF('medicamentTable').filter(); updateDateFabricationFilter(); return false;}" >
+                    <p:remoteCommand name="updateDateFabricationFilter" update="medicamentTable:dateFabricationFilter" />
+                    <f:convertDateTime />
+                </p:inputText>
+            </f:facet>
+            <h:outputText value="#{medicament.dateFabrication}"><f:convertDateTime /></h:outputText>
+          </p:column>
+
+          <p:column headerText="#{messages.field_label_medicament_dateExpiration}" sortBy="#{medicament.dateExpiration}" filterBy="#{medicament.dateExpiration}">
+            <f:facet name="filter">
+                <p:inputText id="dateExpirationFilter"
+                        onkeyup="if (event.keyCode == 13) {PF('medicamentTable').filter(); updateDateExpirationFilter(); return false;}" >
+                    <p:remoteCommand name="updateDateExpirationFilter" update="medicamentTable:dateExpirationFilter" />
+                    <f:convertDateTime />
+                </p:inputText>
+            </f:facet>
+            <h:outputText value="#{medicament.dateExpiration}"><f:convertDateTime /></h:outputText>
+          </p:column>
+
+          <p:column headerText="#{messages.field_label_medicament_prix}" sortBy="#{medicament.prix}" filterBy="#{medicament.prix}">
+            <f:facet name="filter">
+                <p:inputText id="prixFilter"
+                        onkeypress="if (event.keyCode == 13) {PF('medicamentTable').filter(); updatePrixFilter(); return false; }" >
+                    <f:convertNumber />
+                    <p:remoteCommand name="updatePrixFilter" update="medicamentTable:prixFilter" />
+                </p:inputText>
+            </f:facet>
+            <h:outputText value="#{medicament.prix}"><f:convertNumber /></h:outputText>
+          </p:column>
+
+          <p:column headerText="#{messages.field_label_medicament_stock}" sortBy="#{medicament.stock}" filterBy="#{medicament.stock}">
+            <f:facet name="filter">
+                <p:inputText id="stockFilter"
+                        onkeypress="if (event.keyCode == 13) {PF('medicamentTable').filter(); updateStockFilter(); return false; }" >
+                    <p:remoteCommand name="updateStockFilter" update="medicamentTable:stockFilter" />
+                    <f:convertNumber integerOnly="true" />
+                </p:inputText>
+            </f:facet>
+            <h:outputText value="#{medicament.stock}" ><f:convertNumber /></h:outputText>
+          </p:column>
+
+          <p:column headerText="#{messages.field_label_medicament_fournisseurs}" sortBy="#{medicament.fournisseurs}" filterBy="#{medicament.fournisseurs}">
+            <f:facet name="filter">
+            <p:selectOneMenu  id="fournisseursFilter"
+                            style="width:145px;"
+                            onchange="PF('medicamentTable').filter(); return false;">
+                <f:selectItem noSelectionOption="true" itemLabel="" />
+                <f:selectItems itemLabel="#{fournisseur.nom}"
+                            value="#{medicamentBean.fournisseurss}" 
+                            var="fournisseur" 
+                            itemValue="#{fournisseur}" />
+                <o:converter converterId="omnifaces.SelectItemsConverter" list="#{medicamentBean.fournisseurss}" />
+            </p:selectOneMenu>
+            </f:facet>
+            <h:outputText value="#{medicament.fournisseurs.nom}" />
+          </p:column>
+
+          <p:column headerText="#{messages.field_label_medicament_famille}" sortBy="#{medicament.famille}" filterBy="#{medicament.famille}">
+            <f:facet name="filter">
+            <p:selectOneMenu  id="familleFilter"
+                            style="width:145px;"
+                            onchange="PF('medicamentTable').filter(); return false;">
+                <f:selectItem noSelectionOption="true" itemLabel="" />
+                <f:selectItems itemLabel="#{famille.designation}"
+                            value="#{medicamentBean.familles}" 
+                            var="famille" 
+                            itemValue="#{famille}" />
+                <o:converter converterId="omnifaces.SelectItemsConverter" list="#{medicamentBean.familles}" />
+            </p:selectOneMenu>
+            </f:facet>
+            <h:outputText value="#{medicament.famille.designation}" />
+          </p:column>
+
+          <p:column headerText="#{messages.field_label_medicament_vente_plural}" styleClass="action-column" exportable="false">
+            
+            <p:commandButton icon="ui-icon-transfer-e-w"  title="#{messages.field_label_medicament_vente_plural}" action="#{medicamentBean.onVentesDialog(medicament)}" oncomplete="PF('medicamentVentesDialogWidget').show()" update=":medicamentVentesDialog"/>
+            
+          </p:column>
+          
+          <p:column styleClass="action-column" headerText="#{messages.table_actions_column}" width="115" exportable="false">
+            
+            <p:commandButton icon="ui-icon-zoomin" update=":viewMedicamentDialog" oncomplete="PF('viewMedicamentDialogWidget').show()" title="#{messages.label_view}">
+              <f:setPropertyActionListener value="#{medicament}" target="#{medicamentBean.medicament}" />
+            </p:commandButton>
+
+            <p:commandButton icon="ui-icon-pencil" update=":editMedicamentDialog"
+                resetValues="true" rendered="#{medicamentBean.isPermitted(medicament, 'medicament:update')}"
+                action="#{medicamentBean.onDialogOpen(medicament)}"
+                oncomplete="PF('editMedicamentDialogWidget').show()"
+                title="#{messages.label_edit}" >
+            </p:commandButton>
+
+            <p:commandButton icon="ui-icon-close" rendered="#{medicamentBean.isPermitted(medicament, 'medicament:delete')}"
+                oncomplete="PF('deleteMedicamentDialogWidget').show()"
+                title="#{messages.label_delete}" >
+                <f:setPropertyActionListener value="#{medicament}"
+                    target="#{medicamentBean.medicament}" />
+            </p:commandButton>
+    
+          </p:column>
+          
+        </p:dataTable>
+        
+    </h:form>
+
+    <p:confirmDialog id="deleteMedicamentDialog" widgetVar="deleteMedicamentDialogWidget"
+        rendered="#{medicamentBean.isPermitted(medicamentBean.medicament, 'medicament:delete')}" header="#{messages.label_confirm_deletion}"
+        severity="alarm">
+        <f:facet name="message"><h:outputText value="#{messages.label_delete_record}" escape="false"/></f:facet>
+        <p:outputPanel>
+          <h:form>
+            <div style="text-align: center; margin:10px">
+              <p:commandButton value="#{messages.label_yes}" action="#{medicamentBean.delete}" update=":medicamentDataForm :growlForm:growl" oncomplete="PF('deleteMedicamentDialogWidget').hide()" />
+              <p:commandButton value="#{messages.label_no}" onclick="PF('deleteMedicamentDialogWidget').hide()" type="button" />
+            </div>
+          </h:form>
+        </p:outputPanel>
+    </p:confirmDialog>
+    
+    <p:dialog dynamic="true" id="editMedicamentDialog" header="#{messages.label_medicament_caption}"
+            modal="true" widgetVar="editMedicamentDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{medicamentBean.reset}"/>
+        <h:form id="editMedicamentForm" >
+            <p:outputPanel id="medicamentEditPanel">
+                <ui:include src="/pages/medicament/medicamentEditInclude.xhtml"/>
+                <div style="text-align: center; margin:10px">
+                    <p:commandButton value="#{messages.label_save}"
+                            icon="ui-icon-disk" action="#{medicamentBean.persist}"
+                            update=":editMedicamentForm:medicamentEditPanel :medicamentDataForm :growlForm:growl"
+                            oncomplete="if(!args.validationFailed) PF('editMedicamentDialogWidget').hide()" />
+                    <p:commandButton value="#{messages.label_close}" icon="ui-icon-close" onclick="PF('editMedicamentDialogWidget').hide()" type="button" />
+                </div>
+            </p:outputPanel>
+        </h:form>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="viewMedicamentDialog" header="#{messages.label_medicament_caption}" modal="true" widgetVar="viewMedicamentDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{medicamentBean.reset}" />
+        <h:form id="viewMedicamentForm">
+          <ui:include src="/pages/medicament/medicamentViewInclude.xhtml"/>
+          <div style="text-align: center; margin:10px">
+              <p:commandButton value="#{messages.label_close}" icon="ui-icon-close" onclick="PF('viewMedicamentDialogWidget').hide()" type="button" />
+          </div>
+        </h:form>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="createFournisseursFromEditDialog"
+        rendered="#{medicamentBean.isPermitted('fournisseur:create')}"
+        header="#{messages.dialog_medicament_create_fournisseurs}" modal="true"
+        widgetVar="createFournisseursFromEditDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{fournisseurBean.reset}" />
+        <p:outputPanel id="createFournisseursPanel">
+                <h:form id="createFournisseursForm">
+                    <ui:include src="/pages/fournisseur/fournisseurEditInclude.xhtml">
+                        <ui:param name="hideMedicamentSelectInput" value="true" />
+                    </ui:include>
+                    <div style="text-align: center; margin: 10px">
+                        <p:commandButton
+                            action="#{medicamentBean.updateFournisseurs(fournisseurBean.fournisseur)}"
+                            value="#{messages.label_save}" icon="ui-icon-disk"
+                            actionListener="#{fournisseurBean.persist}"
+                            update=":editMedicamentForm:fournisseursSelectInput :createFournisseursPanel :growlForm:growl"
+                            oncomplete="if(!args.validationFailed) PF('createFournisseursFromEditDialogWidget').hide()" />
+                        <p:commandButton value="#{messages.label_close}"
+                            icon="ui-icon-close"
+                            onclick="PF('createFournisseursFromEditDialogWidget').hide()"
+                            type="button" />
+                    </div>
+                </h:form>
+            </p:outputPanel>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="createFamilleFromEditDialog"
+        rendered="#{medicamentBean.isPermitted('famille:create')}"
+        header="#{messages.dialog_medicament_create_famille}" modal="true"
+        widgetVar="createFamilleFromEditDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{familleBean.reset}" />
+        <p:outputPanel id="createFamillePanel">
+                <h:form id="createFamilleForm">
+                    <ui:include src="/pages/famille/familleEditInclude.xhtml">
+                        <ui:param name="hideMedicamentSelectInput" value="true" />
+                    </ui:include>
+                    <div style="text-align: center; margin: 10px">
+                        <p:commandButton
+                            action="#{medicamentBean.updateFamille(familleBean.famille)}"
+                            value="#{messages.label_save}" icon="ui-icon-disk"
+                            actionListener="#{familleBean.persist}"
+                            update=":editMedicamentForm:familleSelectInput :createFamillePanel :growlForm:growl"
+                            oncomplete="if(!args.validationFailed) PF('createFamilleFromEditDialogWidget').hide()" />
+                        <p:commandButton value="#{messages.label_close}"
+                            icon="ui-icon-close"
+                            onclick="PF('createFamilleFromEditDialogWidget').hide()"
+                            type="button" />
+                    </div>
+                </h:form>
+            </p:outputPanel>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="medicamentVentesDialog" header="#{messages.dialog_header_medicament_vente_plural}" modal="true" widgetVar="medicamentVentesDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{medicamentBean.reset}" />
+        <p:outputPanel id="medicamentVentesPanel">
+            <h:form id="medicamentVentesForm">
+                <ui:include src="/pages/medicament/medicamentVenteInclude.xhtml" />
+                <div style="text-align: center; margin:10px">
+                    <p:commandButton value="#{messages.label_save}"
+                        icon="ui-icon-disk"
+                        action="#{medicamentBean.onVentesSubmit}"
+                        update=":growlForm:growl"
+                        oncomplete="if(!args.validationFailed) PF('medicamentVentesDialogWidget').hide()"
+                        rendered="#{medicamentBean.isPermitted(medicamentBean.medicament, 'medicament:update')}"
+                        partialSubmit="true" process="@this" />
+                    <p:commandButton value="#{messages.label_close}" icon="ui-icon-close" onclick="PF('medicamentVentesDialogWidget').hide()" type="button" />
+                </div>
+            </h:form>
+        </p:outputPanel>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="createVenteDialog"
+        rendered="#{medicamentBean.isPermitted('vente:create')}"
+        header="#{messages.dialog_medicament_create_vente}" modal="true"
+        widgetVar="createVenteDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{venteBean.reset}" />
+        <p:outputPanel id="createVentePanel">
+                <h:form id="createVenteForm">
+                    <ui:include src="/pages/vente/venteEditInclude.xhtml">
+                        <ui:param name="hideMedicamentSelectInput" value="true" />
+                    </ui:include>
+                    <div style="text-align: center; margin: 10px">
+                        <p:commandButton
+                            action="#{medicamentBean.updateVente(venteBean.vente)}"
+                            value="#{messages.label_save}" icon="ui-icon-disk"
+                            actionListener="#{venteBean.persist}"
+                            update=":medicamentVentesPanel :createVentePanel :growlForm:growl"
+                            oncomplete="if(!args.validationFailed) PF('createVenteDialogWidget').hide()" />
+                        <p:commandButton value="#{messages.label_close}"
+                            icon="ui-icon-close"
+                            onclick="PF('createVenteDialogWidget').hide()"
+                            type="button" />
+                    </div>
+                </h:form>
+            </p:outputPanel>
+    </p:dialog>
+    
+  </ui:define>
+</ui:composition>
+</html>

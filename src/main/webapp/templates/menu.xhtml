@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+<ui:composition>
+  <h:form>
+  <p:menu>
+    <p:submenu label="#{messages.menu_pages}">
+      
+      <p:menuitem value="#{messages.menu_infoss}" url="/pages/infos/infos.xhtml" icon="icon-entity" ajax="false" async="false" />
+      
+      <p:menuitem value="#{messages.menu_hopitals}" url="/pages/hopital/hopital.xhtml" icon="icon-entity" ajax="false" async="false" />
+      
+      <p:menuitem value="#{messages.menu_services}" url="/pages/service/service.xhtml" icon="icon-entity" ajax="false" async="false" />
+      
+      <p:menuitem value="#{messages.menu_medicaments}" url="/pages/medicament/medicament.xhtml" icon="icon-entity" ajax="false" async="false" />
+      
+      <p:menuitem value="#{messages.menu_familles}" url="/pages/famille/famille.xhtml" icon="icon-entity" ajax="false" async="false" />
+      
+      <p:menuitem value="#{messages.menu_fournisseurs}" url="/pages/fournisseur/fournisseur.xhtml" icon="icon-entity" ajax="false" async="false" />
+      
+      <p:menuitem value="#{messages.menu_ventes}" url="/pages/vente/vente.xhtml" icon="icon-entity" ajax="false" async="false" />
+      
+      <p:menuitem value="#{messages.menu_patients}" url="/pages/patient/patient.xhtml" icon="icon-entity" ajax="false" async="false" />
+      
+      <p:menuitem value="#{messages.menu_creneaus}" url="/pages/creneau/creneau.xhtml" icon="icon-entity" ajax="false" async="false" />
+      
+      <p:menuitem value="#{messages.menu_rendezvouss}" url="/pages/rendezvous/rendezvous.xhtml" icon="icon-entity" ajax="false" async="false" />
+      
+      <p:menuitem value="#{messages.menu_consultations}" url="/pages/consultation/consultation.xhtml" icon="icon-entity" ajax="false" async="false" />
+      
+      <p:menuitem value="#{messages.menu_examens}" url="/pages/examen/examen.xhtml" icon="icon-entity" ajax="false" async="false" />
+      
+      <p:menuitem value="#{messages.menu_labos}" url="/pages/labo/labo.xhtml" icon="icon-entity" ajax="false" async="false" />
+      
+      <p:menuitem value="#{messages.menu_societeAbonnements}" url="/pages/societeAbonnement/societeAbonnement.xhtml" icon="icon-entity" ajax="false" async="false" />
+      
+      <p:menuitem value="#{messages.menu_abonnements}" url="/pages/abonnement/abonnement.xhtml" icon="icon-entity" ajax="false" async="false" />
+      
+      <p:menuitem value="#{messages.menu_salles}" url="/pages/salle/salle.xhtml" icon="icon-entity" ajax="false" async="false" />
+      
+      <p:menuitem value="#{messages.menu_hospitalisations}" url="/pages/hospitalisation/hospitalisation.xhtml" icon="icon-entity" ajax="false" async="false" />
+      
+      <p:menuitem value="#{messages.menu_pavillons}" url="/pages/pavillon/pavillon.xhtml" icon="icon-entity" ajax="false" async="false" />
+      
+      <p:menuitem value="#{messages.menu_ordonnances}" url="/pages/ordonnance/ordonnance.xhtml" icon="icon-entity" ajax="false" async="false" />
+      
+    </p:submenu>
+    
+    <p:submenu label="#{messages.menu_admin}" rendered="#{p:ifGranted('Administrator')}">
+      <p:menuitem value="#{messages.menu_user_management}" url="/pages/admin/user.xhtml" icon="ui-icon-person" ajax="false" async="false"/>
+    </p:submenu>
+    
+  </p:menu>
+  </h:form>
+</ui:composition>
+</html>

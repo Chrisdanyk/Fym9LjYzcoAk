@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:o="http://omnifaces.org/ui">
+<ui:composition template="/templates/layout.xhtml">
+  <ui:define name="content">
+
+    <h:form prependId="false" id="fournisseurDataForm" onkeypress="if (event.keyCode == 13) {return false; }">
+
+        <p:dataTable id="fournisseurTable" value="#{fournisseurBean.lazyModel}" var="fournisseur" resizableColumns="true" paginator="true"
+                paginatorTemplate=" {CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                rowsPerPageTemplate="5,10,25,50" rows="10" draggableColumns="true" lazy="true"
+                paginatorPosition="bottom" widgetVar="fournisseurTable" emptyMessage="#{messages.label_no_records_found}"
+                reflow="true">
+        
+          <f:facet name="header" >
+
+              <p:commandButton value="#{messages.create_new_fournisseur}" icon="ui-icon-plusthick" action="#{fournisseurBean.prepareNewFournisseur()}"
+                      resetValues="true" update=":editFournisseurDialog" oncomplete="PF('editFournisseurDialogWidget').show()"
+                      rendered="#{fournisseurBean.isPermitted('fournisseur:create')}" style="float:left" />
+              
+              <p:commandButton id="toggler" type="button" value="#{messages.table_select_columns}" icon="ui-icon-calculator" />
+              <p:columnToggler datasource="fournisseurTable" trigger="toggler" />
+          </f:facet>
+          
+          <p:column headerText="#{messages.label_image}">
+              <o:graphicImage value="#{fournisseur.image.content}" dataURI="true"
+                  rendered="#{not empty fournisseur.image.content}" width="50px"/>
+          </p:column>
+          
+          <p:column  headerText="#{messages.field_label_fournisseur_nom}" sortBy="#{fournisseur.nom}" filterBy="#{fournisseur.nom}">
+            <f:facet name="filter">
+                <p:inputText id="nomFilter"
+                        onkeypress="if (event.keyCode == 13) {PF('fournisseurTable').filter(); updateNomFilter(); return false; }" >
+                    <p:remoteCommand name="updateNomFilter" update="fournisseurTable:nomFilter" />
+                </p:inputText>
+            </f:facet>
+            <h:outputText value="#{fournisseur.nom}" />
+          </p:column>
+
+          <p:column  headerText="#{messages.field_label_fournisseur_adresse}" sortBy="#{fournisseur.adresse}" filterBy="#{fournisseur.adresse}">
+            <f:facet name="filter">
+                <p:inputText id="adresseFilter"
+                        onkeypress="if (event.keyCode == 13) {PF('fournisseurTable').filter(); updateAdresseFilter(); return false; }" >
+                    <p:remoteCommand name="updateAdresseFilter" update="fournisseurTable:adresseFilter" />
+                </p:inputText>
+            </f:facet>
+            <h:outputText value="#{fournisseur.adresse}" />
+          </p:column>
+
+          <p:column  headerText="#{messages.field_label_fournisseur_telephone}" sortBy="#{fournisseur.telephone}" filterBy="#{fournisseur.telephone}">
+            <f:facet name="filter">
+                <p:inputText id="telephoneFilter"
+                        onkeypress="if (event.keyCode == 13) {PF('fournisseurTable').filter(); updateTelephoneFilter(); return false; }" >
+                    <p:remoteCommand name="updateTelephoneFilter" update="fournisseurTable:telephoneFilter" />
+                </p:inputText>
+            </f:facet>
+            <h:outputText value="#{fournisseur.telephone}" />
+          </p:column>
+
+          <p:column  headerText="#{messages.field_label_fournisseur_mail}" sortBy="#{fournisseur.mail}" filterBy="#{fournisseur.mail}">
+            <f:facet name="filter">
+                <p:inputText id="mailFilter"
+                        onkeypress="if (event.keyCode == 13) {PF('fournisseurTable').filter(); updateMailFilter(); return false; }" >
+                    <p:remoteCommand name="updateMailFilter" update="fournisseurTable:mailFilter" />
+                </p:inputText>
+            </f:facet>
+            <h:outputText value="#{fournisseur.mail}" />
+          </p:column>
+
+          <p:column headerText="#{messages.field_label_fournisseur_medicament_plural}" styleClass="action-column" exportable="false">
+            
+            <p:commandButton icon="ui-icon-transfer-e-w"  title="#{messages.field_label_fournisseur_medicament_plural}" action="#{fournisseurBean.onMedicamentsDialog(fournisseur)}" oncomplete="PF('fournisseurMedicamentsDialogWidget').show()" update=":fournisseurMedicamentsDialog"/>
+            
+          </p:column>
+          
+          <p:column styleClass="action-column" headerText="#{messages.table_actions_column}" width="115" exportable="false">
+            
+            <p:commandButton icon="ui-icon-zoomin" update=":viewFournisseurDialog" oncomplete="PF('viewFournisseurDialogWidget').show()" title="#{messages.label_view}">
+              <f:setPropertyActionListener value="#{fournisseur}" target="#{fournisseurBean.fournisseur}" />
+            </p:commandButton>
+
+            <p:commandButton icon="ui-icon-pencil" update=":editFournisseurDialog"
+                resetValues="true" rendered="#{fournisseurBean.isPermitted(fournisseur, 'fournisseur:update')}"
+                action="#{fournisseurBean.onDialogOpen(fournisseur)}"
+                oncomplete="PF('editFournisseurDialogWidget').show()"
+                title="#{messages.label_edit}" >
+            </p:commandButton>
+
+            <p:commandButton icon="ui-icon-close" rendered="#{fournisseurBean.isPermitted(fournisseur, 'fournisseur:delete')}"
+                oncomplete="PF('deleteFournisseurDialogWidget').show()"
+                title="#{messages.label_delete}" >
+                <f:setPropertyActionListener value="#{fournisseur}"
+                    target="#{fournisseurBean.fournisseur}" />
+            </p:commandButton>
+    
+          </p:column>
+          
+        </p:dataTable>
+        
+    </h:form>
+
+    <p:confirmDialog id="deleteFournisseurDialog" widgetVar="deleteFournisseurDialogWidget"
+        rendered="#{fournisseurBean.isPermitted(fournisseurBean.fournisseur, 'fournisseur:delete')}" header="#{messages.label_confirm_deletion}"
+        severity="alarm">
+        <f:facet name="message"><h:outputText value="#{messages.label_delete_record}" escape="false"/></f:facet>
+        <p:outputPanel>
+          <h:form>
+            <div style="text-align: center; margin:10px">
+              <p:commandButton value="#{messages.label_yes}" action="#{fournisseurBean.delete}" update=":fournisseurDataForm :growlForm:growl" oncomplete="PF('deleteFournisseurDialogWidget').hide()" />
+              <p:commandButton value="#{messages.label_no}" onclick="PF('deleteFournisseurDialogWidget').hide()" type="button" />
+            </div>
+          </h:form>
+        </p:outputPanel>
+    </p:confirmDialog>
+    
+    <p:dialog dynamic="true" id="editFournisseurDialog" header="#{messages.label_fournisseur_caption}"
+            modal="true" widgetVar="editFournisseurDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{fournisseurBean.reset}"/>
+        <h:form id="editFournisseurForm" >
+            <p:outputPanel id="fournisseurEditPanel">
+                <ui:include src="/pages/fournisseur/fournisseurEditInclude.xhtml"/>
+                <div style="text-align: center; margin:10px">
+                    <p:commandButton value="#{messages.label_save}"
+                            icon="ui-icon-disk" action="#{fournisseurBean.persist}"
+                            update=":editFournisseurForm:fournisseurEditPanel :fournisseurDataForm :growlForm:growl"
+                            oncomplete="if(!args.validationFailed) PF('editFournisseurDialogWidget').hide()" />
+                    <p:commandButton value="#{messages.label_close}" icon="ui-icon-close" onclick="PF('editFournisseurDialogWidget').hide()" type="button" />
+                </div>
+            </p:outputPanel>
+        </h:form>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="viewFournisseurDialog" header="#{messages.label_fournisseur_caption}" modal="true" widgetVar="viewFournisseurDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{fournisseurBean.reset}" />
+        <h:form id="viewFournisseurForm">
+          <ui:include src="/pages/fournisseur/fournisseurViewInclude.xhtml"/>
+          <div style="text-align: center; margin:10px">
+              <p:commandButton value="#{messages.label_close}" icon="ui-icon-close" onclick="PF('viewFournisseurDialogWidget').hide()" type="button" />
+          </div>
+        </h:form>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="fournisseurMedicamentsDialog" header="#{messages.dialog_header_fournisseur_medicament_plural}" modal="true" widgetVar="fournisseurMedicamentsDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{fournisseurBean.reset}" />
+        <p:outputPanel id="fournisseurMedicamentsPanel">
+            <h:form id="fournisseurMedicamentsForm">
+                <ui:include src="/pages/fournisseur/fournisseurMedicamentInclude.xhtml" />
+                <div style="text-align: center; margin:10px">
+                    <p:commandButton value="#{messages.label_save}"
+                        icon="ui-icon-disk"
+                        action="#{fournisseurBean.onMedicamentsSubmit}"
+                        update=":growlForm:growl"
+                        oncomplete="if(!args.validationFailed) PF('fournisseurMedicamentsDialogWidget').hide()"
+                        rendered="#{fournisseurBean.isPermitted(fournisseurBean.fournisseur, 'fournisseur:update')}"
+                        partialSubmit="true" process="@this" />
+                    <p:commandButton value="#{messages.label_close}" icon="ui-icon-close" onclick="PF('fournisseurMedicamentsDialogWidget').hide()" type="button" />
+                </div>
+            </h:form>
+        </p:outputPanel>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="createMedicamentDialog"
+        rendered="#{fournisseurBean.isPermitted('medicament:create')}"
+        header="#{messages.dialog_fournisseur_create_medicament}" modal="true"
+        widgetVar="createMedicamentDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{medicamentBean.reset}" />
+        <p:outputPanel id="createMedicamentPanel">
+                <h:form id="createMedicamentForm">
+                    <ui:include src="/pages/medicament/medicamentEditInclude.xhtml">
+                        <ui:param name="hideFournisseursSelectInput" value="true" />
+                    </ui:include>
+                    <div style="text-align: center; margin: 10px">
+                        <p:commandButton
+                            action="#{fournisseurBean.updateMedicament(medicamentBean.medicament)}"
+                            value="#{messages.label_save}" icon="ui-icon-disk"
+                            actionListener="#{medicamentBean.persist}"
+                            update=":fournisseurMedicamentsPanel :createMedicamentPanel :growlForm:growl"
+                            oncomplete="if(!args.validationFailed) PF('createMedicamentDialogWidget').hide()" />
+                        <p:commandButton value="#{messages.label_close}"
+                            icon="ui-icon-close"
+                            onclick="PF('createMedicamentDialogWidget').hide()"
+                            type="button" />
+                    </div>
+                </h:form>
+            </p:outputPanel>
+    </p:dialog>
+    
+  </ui:define>
+</ui:composition>
+</html>

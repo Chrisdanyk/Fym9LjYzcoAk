@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:o="http://omnifaces.org/ui">
+<ui:composition template="/templates/layout.xhtml">
+  <ui:define name="content">
+
+    <h:form prependId="false" id="infosDataForm" onkeypress="if (event.keyCode == 13) {return false; }">
+
+        <p:dataTable id="infosTable" value="#{infosBean.lazyModel}" var="infos" resizableColumns="true" paginator="true"
+                paginatorTemplate=" {CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                rowsPerPageTemplate="5,10,25,50" rows="10" draggableColumns="true" lazy="true"
+                paginatorPosition="bottom" widgetVar="infosTable" emptyMessage="#{messages.label_no_records_found}"
+                reflow="true">
+        
+          <f:facet name="header" >
+
+              <p:commandButton value="#{messages.create_new_infos}" icon="ui-icon-plusthick" action="#{infosBean.prepareNewInfos()}"
+                      resetValues="true" update=":editInfosDialog" oncomplete="PF('editInfosDialogWidget').show()"
+                      rendered="#{infosBean.isPermitted('infos:create')}" style="float:left" />
+              
+              <p:commandButton id="toggler" type="button" value="#{messages.table_select_columns}" icon="ui-icon-calculator" />
+              <p:columnToggler datasource="infosTable" trigger="toggler" />
+          </f:facet>
+          
+          <p:column headerText="#{messages.label_image}">
+              <o:graphicImage value="#{infos.image.content}" dataURI="true"
+                  rendered="#{not empty infos.image.content}" width="50px"/>
+          </p:column>
+          
+          <p:column  headerText="#{messages.field_label_infos_nom}" sortBy="#{infos.nom}" filterBy="#{infos.nom}">
+            <f:facet name="filter">
+                <p:inputText id="nomFilter"
+                        onkeypress="if (event.keyCode == 13) {PF('infosTable').filter(); updateNomFilter(); return false; }" >
+                    <p:remoteCommand name="updateNomFilter" update="infosTable:nomFilter" />
+                </p:inputText>
+            </f:facet>
+            <h:outputText value="#{infos.nom}" />
+          </p:column>
+
+          <p:column  headerText="#{messages.field_label_infos_postnom}" sortBy="#{infos.postnom}" filterBy="#{infos.postnom}">
+            <f:facet name="filter">
+                <p:inputText id="postnomFilter"
+                        onkeypress="if (event.keyCode == 13) {PF('infosTable').filter(); updatePostnomFilter(); return false; }" >
+                    <p:remoteCommand name="updatePostnomFilter" update="infosTable:postnomFilter" />
+                </p:inputText>
+            </f:facet>
+            <h:outputText value="#{infos.postnom}" />
+          </p:column>
+
+          <p:column  headerText="#{messages.field_label_infos_prenom}" sortBy="#{infos.prenom}" filterBy="#{infos.prenom}">
+            <f:facet name="filter">
+                <p:inputText id="prenomFilter"
+                        onkeypress="if (event.keyCode == 13) {PF('infosTable').filter(); updatePrenomFilter(); return false; }" >
+                    <p:remoteCommand name="updatePrenomFilter" update="infosTable:prenomFilter" />
+                </p:inputText>
+            </f:facet>
+            <h:outputText value="#{infos.prenom}" />
+          </p:column>
+
+          <p:column headerText="#{messages.field_label_infos_dateNaissance}" sortBy="#{infos.dateNaissance}" filterBy="#{infos.dateNaissance}">
+            <f:facet name="filter">
+                <p:inputText id="dateNaissanceFilter"
+                        onkeyup="if (event.keyCode == 13) {PF('infosTable').filter(); updateDateNaissanceFilter(); return false;}" >
+                    <p:remoteCommand name="updateDateNaissanceFilter" update="infosTable:dateNaissanceFilter" />
+                    <f:convertDateTime />
+                </p:inputText>
+            </f:facet>
+            <h:outputText value="#{infos.dateNaissance}"><f:convertDateTime /></h:outputText>
+          </p:column>
+
+          <p:column  headerText="#{messages.field_label_infos_telephone}" sortBy="#{infos.telephone}" filterBy="#{infos.telephone}">
+            <f:facet name="filter">
+                <p:inputText id="telephoneFilter"
+                        onkeypress="if (event.keyCode == 13) {PF('infosTable').filter(); updateTelephoneFilter(); return false; }" >
+                    <p:remoteCommand name="updateTelephoneFilter" update="infosTable:telephoneFilter" />
+                </p:inputText>
+            </f:facet>
+            <h:outputText value="#{infos.telephone}" />
+          </p:column>
+
+          <p:column  headerText="#{messages.field_label_infos_adresse}" sortBy="#{infos.adresse}" filterBy="#{infos.adresse}">
+            <f:facet name="filter">
+                <p:inputText id="adresseFilter"
+                        onkeypress="if (event.keyCode == 13) {PF('infosTable').filter(); updateAdresseFilter(); return false; }" >
+                    <p:remoteCommand name="updateAdresseFilter" update="infosTable:adresseFilter" />
+                </p:inputText>
+            </f:facet>
+            <h:outputText value="#{infos.adresse}" />
+          </p:column>
+
+          <p:column styleClass="action-column" headerText="#{messages.table_actions_column}" width="115" exportable="false">
+            
+            <p:commandButton icon="ui-icon-zoomin" update=":viewInfosDialog" oncomplete="PF('viewInfosDialogWidget').show()" title="#{messages.label_view}">
+              <f:setPropertyActionListener value="#{infos}" target="#{infosBean.infos}" />
+            </p:commandButton>
+
+            <p:commandButton icon="ui-icon-pencil" update=":editInfosDialog"
+                resetValues="true" rendered="#{infosBean.isPermitted(infos, 'infos:update')}"
+                action="#{infosBean.onDialogOpen(infos)}"
+                oncomplete="PF('editInfosDialogWidget').show()"
+                title="#{messages.label_edit}" >
+            </p:commandButton>
+
+            <p:commandButton icon="ui-icon-close" rendered="#{infosBean.isPermitted(infos, 'infos:delete')}"
+                oncomplete="PF('deleteInfosDialogWidget').show()"
+                title="#{messages.label_delete}" >
+                <f:setPropertyActionListener value="#{infos}"
+                    target="#{infosBean.infos}" />
+            </p:commandButton>
+    
+          </p:column>
+          
+        </p:dataTable>
+        
+    </h:form>
+
+    <p:confirmDialog id="deleteInfosDialog" widgetVar="deleteInfosDialogWidget"
+        rendered="#{infosBean.isPermitted(infosBean.infos, 'infos:delete')}" header="#{messages.label_confirm_deletion}"
+        severity="alarm">
+        <f:facet name="message"><h:outputText value="#{messages.label_delete_record}" escape="false"/></f:facet>
+        <p:outputPanel>
+          <h:form>
+            <div style="text-align: center; margin:10px">
+              <p:commandButton value="#{messages.label_yes}" action="#{infosBean.delete}" update=":infosDataForm :growlForm:growl" oncomplete="PF('deleteInfosDialogWidget').hide()" />
+              <p:commandButton value="#{messages.label_no}" onclick="PF('deleteInfosDialogWidget').hide()" type="button" />
+            </div>
+          </h:form>
+        </p:outputPanel>
+    </p:confirmDialog>
+    
+    <p:dialog dynamic="true" id="editInfosDialog" header="#{messages.label_infos_caption}"
+            modal="true" widgetVar="editInfosDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{infosBean.reset}"/>
+        <h:form id="editInfosForm" >
+            <p:outputPanel id="infosEditPanel">
+                <ui:include src="/pages/infos/infosEditInclude.xhtml"/>
+                <div style="text-align: center; margin:10px">
+                    <p:commandButton value="#{messages.label_save}"
+                            icon="ui-icon-disk" action="#{infosBean.persist}"
+                            update=":editInfosForm:infosEditPanel :infosDataForm :growlForm:growl"
+                            oncomplete="if(!args.validationFailed) PF('editInfosDialogWidget').hide()" />
+                    <p:commandButton value="#{messages.label_close}" icon="ui-icon-close" onclick="PF('editInfosDialogWidget').hide()" type="button" />
+                </div>
+            </p:outputPanel>
+        </h:form>
+    </p:dialog>
+    
+    <p:dialog dynamic="true" id="viewInfosDialog" header="#{messages.label_infos_caption}" modal="true" widgetVar="viewInfosDialogWidget" maximizable="true">
+        <p:ajax event="close" listener="#{infosBean.reset}" />
+        <h:form id="viewInfosForm">
+          <ui:include src="/pages/infos/infosViewInclude.xhtml"/>
+          <div style="text-align: center; margin:10px">
+              <p:commandButton value="#{messages.label_close}" icon="ui-icon-close" onclick="PF('viewInfosDialogWidget').hide()" type="button" />
+          </div>
+        </h:form>
+    </p:dialog>
+    
+  </ui:define>
+</ui:composition>
+</html>
